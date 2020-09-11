@@ -35,17 +35,15 @@ after_success:
   - ./sbtx coveralls
 
 before_deploy:
-  - echo "Ensure assembly jar file(s) is created for a $TRAVIS_TAG"
+  - echo "Ensure assembly jar file is created for a $TRAVIS_TAG"
   - ./sbtx clean assembly
   - export JAR_VERSION=${TRAVIS_TAG#v}
   - echo "Jar artifact version $JAR_VERSION"
   - mkdir -p artifacts
-  - cp storage/target/scala-2.12/exasol-cloud-storage-*.jar artifacts/
-  - cp streaming-kafka/target/scala-2.12/exasol-kafka-connector-*.jar artifacts/
-  - cp streaming-kinesis/target/scala-2.12/exasol-kinesis-connector-*.jar artifacts/
-  - echo "Create SHA256 Checksum(s)"
+  - cp target/scala-2.12/exasol-kafka-connector-extension-${JAR_VERSION}.jar artifacts/
+  - echo "Create SHA256 Checksum"
   - cd artifacts
-  - sha256sum *-${JAR_VERSION}.jar > checksums.sha256.txt
+  - sha256sum exasol-kafka-connector-extension-${JAR_VERSION}.jar > checksum.sha256.txt
   - cd ../
   - ls -lh artifacts/
 
@@ -62,13 +60,11 @@ deploy:
       shq9MLKBeFQBahsH7T5sWaW/m2MeAbVBCG+r9qyN17dlDnQiD8KDjVQeu73lvwTUMdFZzDMfoiGrV31tTddSMfYa/CX
       9p2j0tcPrxJW/fgX10YLJ44Zgy/26CVGYLJ1NYAZed3D7U=
   file:
-    - artifacts/exasol-cloud-storage-extension-${JAR_VERSION}.jar
     - artifacts/exasol-kafka-connector-extension-${JAR_VERSION}.jar
-    - artifacts/exasol-kinesis-connector-extension-${JAR_VERSION}.jar
-    - artifacts/checksums.sha256.txt
+    - artifacts/checksum.sha256.txt
   skip_cleanup: true
   on:
-    repo: exasol/cloud-storage-etl-udfs
+    repo: exasol/kafka-connector-extension
     tags: true
     condition: $RELEASE = true && $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$
 
