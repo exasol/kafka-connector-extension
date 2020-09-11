@@ -1,0 +1,90 @@
+language: scala
+
+sudo: required
+dist: trusty
+services: docker
+
+addons:
+  apt:
+    packages:
+      - shellcheck
+
+env:
+  matrix:
+    - RELEASE=false
+
+before_install:
+  - git fetch --tags
+  - docker pull exasol/docker-db:latest
+  - docker pull exasol/docker-db:6.2.7-d1
+
+matrix:
+  include:
+    - jdk: openjdk11
+      scala: 2.12.12
+
+    - jdk: oraclejdk11
+      scala: 2.12.12
+      env: RELEASE=true
+
+script:
+  - travis_wait 30 ./scripts/ci.sh
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - ./sbtx coveralls
+
+before_deploy:
+  - echo "Ensure assembly jar file(s) is created for a $TRAVIS_TAG"
+  - ./sbtx clean assembly
+  - export JAR_VERSION=${TRAVIS_TAG#v}
+  - echo "Jar artifact version $JAR_VERSION"
+  - mkdir -p artifacts
+  - cp storage/target/scala-2.12/exasol-cloud-storage-*.jar artifacts/
+  - cp streaming-kafka/target/scala-2.12/exasol-kafka-connector-*.jar artifacts/
+  - cp streaming-kinesis/target/scala-2.12/exasol-kinesis-connector-*.jar artifacts/
+  - echo "Create SHA256 Checksum(s)"
+  - cd artifacts
+  - sha256sum *-${JAR_VERSION}.jar > checksums.sha256.txt
+  - cd ../
+  - ls -lh artifacts/
+
+deploy:
+  provider: releases
+  api_key:
+    secure: |-
+      u8cr+1uVDUU2k1/OIEJzzUVfHezB8yHfCtupxJgOy7xp3cwInetJ6l5AO1+2FWTEzhiS0PN5srqLdk0mZxAAUBWVDv2
+      RTxZ9c6iduNLxuaL1BFX6D/lgVJ/zGW69ghOcn8Pa40V2OAocB2JxiKb3Mob9PBC0CBirlr1V9RI2+cIwP2JGb0WJYf
+      Mg6JSF9zYqQiXYPhCjVLKE7wDVeO2M0SfI1kURcM+4iDMB1DPfMy7G0ATKoefq8xzSl7/8DwvOT+r3T1L1QO0fk1z62
+      V2toJzcBfiXK3kU8b2+YPGnyx8YEqcsWfciKaBJqFHiAtGMlq/ea7isHsG+BiJxVUR0hcLqJvi+S4HbldchP35mMgnG
+      EP6vwtTExTgsWuH84ApH4uDCwJZkqngLrUpblt26f7iye9F8e5zG0mGfkxgZBrJgYkJPod7ntH0nYGb0Y4ZC+px/oIe
+      D5t7yvmwxGT3ARvNS7vOlgl7IQ3dRn4hcrMjqPQmwet6nmo1vv9RtUrY6vTJeh8blkPRjExbC/lCfKkT6AOr1OUuR3f
+      shq9MLKBeFQBahsH7T5sWaW/m2MeAbVBCG+r9qyN17dlDnQiD8KDjVQeu73lvwTUMdFZzDMfoiGrV31tTddSMfYa/CX
+      9p2j0tcPrxJW/fgX10YLJ44Zgy/26CVGYLJ1NYAZed3D7U=
+  file:
+    - artifacts/exasol-cloud-storage-extension-${JAR_VERSION}.jar
+    - artifacts/exasol-kafka-connector-extension-${JAR_VERSION}.jar
+    - artifacts/exasol-kinesis-connector-extension-${JAR_VERSION}.jar
+    - artifacts/checksums.sha256.txt
+  skip_cleanup: true
+  on:
+    repo: exasol/cloud-storage-etl-udfs
+    tags: true
+    condition: $RELEASE = true && $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$
+
+cache:
+  directories:
+    - "$HOME/.sbt/1.0"
+    - "$HOME/.sbt/boot/scala*"
+    - "$HOME/.sbt/cache"
+    - "$HOME/.sbt/launchers"
+    - "$HOME/.ivy2"
+    - "$HOME/.coursier"
+
+before_cache:
+  - du -h -d 1 $HOME/.ivy2/
+  - du -h -d 2 $HOME/.sbt/
+  - du -h -d 4 $HOME/.coursier/
+  - find $HOME/.sbt -name "*.lock" -type f -delete
+  - find $HOME/.ivy2/cache -name "ivydata-*.properties" -type f -delete
+  - find $HOME/.coursier/cache -name "*.lock" -type f -delete
