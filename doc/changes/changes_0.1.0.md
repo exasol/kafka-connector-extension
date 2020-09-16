@@ -2,5 +2,5 @@
 
 ## Features
 
-#1: Added initial implementation (PR #3)
-#2: Updated documentation (PR #4)
+* #1: Added initial implementation (PR #3)
+* #2: Updated documentation (PR #4)
