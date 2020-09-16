@@ -1,0 +1,393 @@
+# User Guide
+
+Exasol Kafka Connector Extension allows you to connect to Apache Kafka and
+import Avro formatted data from Kafka topics.  
+
+Using the connector you can import data from a Kafka topic into an Exasol table.
+
+## Getting Started
+
+We assume you already have running Exasol cluster with version `6.0` or later
+and Apacke Kafka cluster with version `2.0.0` or later.
+
+If you use the Confluent Kafka distribution, it should have the version `5.0.0`
+or later.
+
+### Parallelism
+
+The connector accesses Kafka topic data in parallel. It starts parallel running
+importer processes that are defined by the Kafka topic partitions.
+
+That is, when importing data from Kafka topic, we will be importing from each
+topic partition in parallel. Therefore, it is recommended to configure your
+Kafka topics with several partitions.
+
+### Schema Registry
+
+Kafka connector requires Schema Registry. As a result, you should set it up
+together with Kafka cluster.
+
+Schema Registry is used to store, serve and manage Avro schemas for each Kafka
+topic. Thus, it allows you to obtain the latest schema for a given Kafka topic.
+
+## Deployment
+
+In this section describes how to deploy and prepare the user-defined functions
+(UDFs) for Kafka integration.
+
+
+### Download the latest JAR file
+
+Please download and save the latest assembled (with all dependencies included)
+jar file from the [Github Releases][gh-releases].
+
+Please ensure that the SHA256 sum of the downloaded jar is same as the checksum
+provided together with the jar file.
+
+To check the SHA256 sum of downloaded jar, run the command:
+
+```sh
+sha256sum exasol-kafka-connector-extension-<VERSION>.jar
+```
+
+### Building from source
+
+Additionally, you can build the assembled jar from the source. This allows you
+to use the latest commits that may not be released yet.
+
+Clone the repository,
+
+```bash
+git clone https://github.com/exasol/kafka-connector-extension
+
+cd kafka-connector-extension
+```
+
+Create assembled jar file,
+
+```bash
+./sbtx assembly
+```
+
+The packaged jar file should be located at
+`target/scala-2.12/exasol-kafka-connector-extension-<VERSION>.jar`.
+
+### Create an Exasol BucketFS Bucket
+
+To store the connector jar, we need to create a bucket in the Exasol Bucket File
+System (BucketFS).
+
+> Please see the section "The synchronous cluster file system BucketFS"
+> in the EXASolution User Manual for more details about BucketFS.
+
+This allows us to references the jar file in the UDF scripts.
+
+### Upload the JAR file to the bucket
+
+Now you can upload the jar file to the bucket. However, before uploading the
+jar, please make sure the BucketFS ports are open.
+
+> In this guide, we use the port number `2580` for the HTTP protocol.
+
+Upload the jar file using `curl` command:
+
+```bash
+curl -X PUT -T exasol-kafka-connector-extension-<VERSION>.jar \
+  http://w:<WRITE_PASSWORD>@<EXASOL_DATANODE>:2580/<BUCKET_NAME>/
+```
+
+Please ensure that the file was uploaded. 
+
+Check the bucket contents:
+
+```bash
+curl -X GET http://r:<READ_PASSWORD>@<EXASOL_DATANODE>:2580/<BUCKET_NAME>/
+```
+
+### Create UDF Scripts
+
+Create the UDF scripts that help with importing the data.
+
+First, create a schema that will contains the UDF scripts.
+
+```sql
+CREATE SCHEMA KAFKA_EXTENSION;
+```
+
+Run the following SQL statements to create the Kafka extension UDF scripts.
+
+```sql
+OPEN SCHEMA KAFKA_EXTENSION;
+
+CREATE OR REPLACE JAVA SET SCRIPT KAFKA_PATH(...) EMITS (...) AS
+  %scriptclass com.exasol.cloudetl.scriptclasses.KafkaPath;
+  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
+/
+
+CREATE OR REPLACE JAVA SET SCRIPT KAFKA_IMPORT(...) EMITS (...) AS
+  %scriptclass com.exasol.cloudetl.scriptclasses.KafkaImport;
+  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
+/
+
+CREATE OR REPLACE JAVA SET SCRIPT KAFKA_METADATA(
+  params VARCHAR(2000), 
+  kafka_partition DECIMAL(18, 0), 
+  kafka_offset DECIMAL(36, 0)
+)
+EMITS (partition_index DECIMAL(18, 0), max_offset DECIMAL(36,0)) AS
+  %scriptclass com.exasol.cloudetl.scriptclasses.KafkaMetadata;
+  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
+```
+
+Please do not change the UDF script names.
+
+Similarly, do not forget to change the bucket name or the latest jar version
+according to your deployment setup.
+
+## Prepare Exasol Table
+
+You should create a corresponding table in Exasol that stores the data from
+Kafka topic.
+
+The table column names and types should match the Kafka topic Avro schema names
+and types.
+
+Additionally, add two extra columns to the beginning of the table. These columns
+store the Kafka metadata and help keeping track of the already imported records.
+
+For example, create an Exasol table:
+
+```sql
+CREATE OR REPLACE TABLE <schema_name>.<table_name> (
+    -- Required for Kafka import UDF
+    KAFKA_PARTITION DECIMAL(18, 0),
+    KAFKA_OFFSET DECIMAL(36, 0),
+
+    -- These columns match the Kafka topic schema
+    SALES_ID    INTEGER,
+    POSITION_ID SMALLINT,
+    ARTICLE_ID  SMALLINT,
+    AMOUNT      SMALLINT,
+    PRICE       DECIMAL(9,2),
+    VOUCHER_ID  SMALLINT,
+    CANCELED    BOOLEAN
+);
+```
+
+The first two columns are used to store the metadata about Kafka topic partition
+and record offset inside a partition:
+
+- KAFKA_PARTITION DECIMAL(18,0)
+- KAFKA_OFFSET    DECIMAL(36, 0)
+
+## Import from Kafka cluster
+
+There are several property values that are required in order to access the Kafka
+cluster when importing data from Kafka topics using the connector.
+
+You should provide these key value parameters:
+
+- ``BOOTSTRAP_SERVERS``
+- ``SCHEMA_REGISTRY_URL``
+- ``TOPICS``
+- ``TABLE_NAME``
+
+The **BOOTSTRAP_SERVERS** is a comma separated list of host port pairs used to
+establish initial connection to the Kafka cluster. The UDF connector will
+contact all servers in Kafka cluster, irrespective of servers specified with
+this parameter. This list only defines initial hosts used to discover full list
+of Kafka servers.
+
+The **SCHEMA_REGISTRY_URL** is an URL to the Schema Registry server. It is used
+to retrieve Avro schemas of Kafka topics.
+
+The **TOPICS** is the name of the Kafka topic we want to import Avro data from.
+Please note that even though it is in plural form, curently only single topic
+data imports are supported.
+
+The **TABLE_NAME** is the Exasol table name that we have prepared and we are
+going to import Kafka topic data.
+
+For more information on Kafka import parameters, please refer to the [Kafka
+consumer properties](#kafka-consumer-properties).
+
+### Import Kafka topic data
+
+```sql
+IMPORT INTO <schema_name>.<table_name>
+FROM SCRIPT KAFKA_PATH WITH
+  BOOTSTRAP_SERVERS   = '<kafka_bootstap_servers>'
+  SCHEMA_REGISTRY_URL = '<schema_registry_url>'
+  TOPICS              = '<kafka_topic>
+  TABLE_NAME          = '<schema_name>.<table_name>'
+  GROUP_ID            = 'exasol-kafka-udf-consumers';
+```
+
+For example, given the Kafka topic named `SALES-POSITIONS`, we can import its
+data into `RETAIL.SALES_POSITIONS` table in Exasol:
+
+```sql
+IMPORT INTO RETAIL.SALES_POSITIONS
+FROM SCRIPT KAFKA_PATH WITH
+  BOOTSTRAP_SERVERS   = 'kafka01.internal:9092,kafka02.internal:9093,kafka03.internal:9094'
+  SCHEMA_REGISTRY_URL = 'http://schema-registry.internal:8081'
+  TOPICS              = 'SALES-POSITIONS'
+  TABLE_NAME          = 'RETAIL.SALES_POSITIONS'
+  GROUP_ID            = 'exasol-kafka-udf-consumers';
+```
+
+## Secure connection to Kafka cluster
+
+Since the recent releases, Apache Kafka supports authentication of connections
+to Kafka brokers from clients (producers and consumers) using either SSL or
+SASL. Currently, Exasol Kafka connector supports **SSL**.
+
+In order to use the secure connections to Kafka cluster from the UDF, you need
+to upload the consumer Truststore and Keystore files to Exasol BucketFS
+bucket so that we can access them when running the Kafka import UDF.
+
+Upload the consumer Java Keystore format (JKS) files:
+
+```bash
+# Upload consumer client truststore JKS file
+
+curl -X PUT -T certs/kafka.consumer.truststore.jks \
+  http://w:<WRITE_PASSWORD>@<EXASOL_DATANODE>:2580/<BUCKET>/kafka.consumer.truststore.jks
+
+# Upload consumer client keystore JKS file
+
+curl -X PUT -T certs/kafka.consumer.keystore.jks \
+  http://w:<WRITE_PASSWORD>@<EXASOL_DATANODE>:2580/<BUCKET>/kafka.consumer.keystore.jks
+```
+
+Please check out the Apache Kafka documentation on [security][kafka-security]
+and [Kafka client configurations][kafka-secure-clients] for more information.
+
+Additionally, we have to provide extra parameters to the UDF in order to enable
+secure connection to Kafka cluster. Please check out the [Kafka consumer
+properties](#kafka-consumer-properties) for secure property descriptions.
+
+### Import Kafka topic data with SSL enabled
+
+First, create an Exasol named connection object and encode JKS files credentials
+and locations with key value pairs separated by semicolon (`;`).
+
+```sql
+CREATE OR REPLACE CONNECTION KAFKA_SSL_CONNECTION
+TO ''
+USER ''
+IDENTIFIED BY 'SSL_KEY_PASSWORD=<PASSWORD>;SSL_KEYSTORE_PASSWORD=<SSLPASSWORD>;SSL_KEYSTORE_LOCATION=/buckets/bfsdefault/<BUCKET>/keystore.jks';SSL_TRUSTSTORE_PASSWORD=<TRUSTSTOREPASS>;SSL_TRUSTSTORE_LOCATION=/buckets/bfsdefault/<BUCKET>/truststore.jks'
+```
+
+Then use the connection object with Kafka import statement:
+
+```sql
+IMPORT INTO <schema_name>.<table_name>
+FROM SCRIPT KAFKA_PATH WITH
+  BOOTSTRAP_SERVERS       = '<kafka_bootstap_servers>'
+  SCHEMA_REGISTRY_URL     = '<schema_registry_url>'
+  TOPICS                  = '<kafka_topic>'
+  TABLE_NAME              = '<schema_name>.<table_name>'
+  GROUP_ID                = 'exasol-kafka-udf-consumers';
+  -- Secure connection properties
+  SSL_ENABLED             = 'true'
+  SECURITY_PROTOCOL       = 'SSL'
+  CONNECTION_NAME         = 'KAFKA_SSL_CONNECTION';
+```
+
+## Kafka Consumer Properties
+
+The following properties are related to UDFs when importing data from Kafka
+clusters. Most of these properties are exactly same as [Kafka consumer
+configurations][kafka-consumer-configs].
+
+### Required Properties
+
+* ``BOOTSTRAP_SERVERS`` - It is a comma separated host-port pairs of Kafka
+  brokers. These addresses will be used to establish the initial connection to
+  the Kafka cluster.
+
+* ``SCHEMA_REGISTRY_URL`` - It specifies an URL to the Confluent [Schema
+  Registry][schema-registry] which stores Avro schemas as metadata. Schema
+  Registry will be used to parse the Kafka topic Avro data schemas.
+
+* ``TOPICS`` - It defines Kafka topic name that we want to import data from.
+  Currently, we only support single topic data imports. Therefore, it should not
+  contain comma separated list of more than one topic names.
+
+* ``TABLE_NAME`` - It defines the Exasol table name the data will be imported.
+  This is required as user provided parameter since unfortunately we cannot
+  obtain table name from inside UDF even though we are importing data into it.
+
+### Optional Properties
+
+These are optional parameters with their default values.
+
+* ``GROUP_ID`` - It defines the id for this type of consumers. Default value is
+  **EXASOL_KAFKA_UDFS_CONSUMERS**. It is a unique string that identifies the
+  consumer group this consumer belongs to.
+
+* ``POLL_TIMEOUT_MS`` - It defines the timeout value that is the number of
+  milliseconds to wait for the consumer poll function to return any data.
+  Default value is **30000** milliseconds.
+
+* ``MIN_RECORDS_PER_RUN`` - It is an upper bound on the minimum number of
+  records to consumer per UDF run. Default value is **100**. That is, if the
+  pull function returns fewer records than this number, we consume returned
+  records and finish the UDF process. Otherwise, we continue polling more data
+  until total number of records reaches certain threshold, for example,
+  `MAX_RECORD_PER_RUN`.
+
+* ``MAX_RECORD_PER_RUN`` - It is a lower bound on the maximum number of records
+  to consumer per UDF run. Default value is **1000000**. When the returned
+  number of records from poll is more than `MIN_RECORDS_PER_RUN`, we continue
+  polling for more records until total number reaches this number.
+
+* ``MAX_POLL_RECORDS`` - It is the maximum number of records returned in a
+  single call from the consumer poll method. Default value is **500**.
+
+* ``FETCH_MIN_BYTES`` - It is the minimum amount of data the server should
+  return for a fetch request. If insufficient data is available the request will
+  wait for that much data to accumulate before answering the request. Default
+  value is **1**.
+
+* ``FETCH_MAX_BYTES`` - It is the maximum amount of data the server should
+  return for a fetch request. Default value is **52428800**.
+
+* ``MAX_PARTITION_FETCH_BYTES`` - It is the maximum amount of data per
+  partition the server will return. Default value is **1048576**.
+
+The following properties should be provided to enable secure connection to the
+Kafka clusters.
+
+* ``SSL_ENABLED`` - It is a boolean property that should be set to `true` in
+  order to use the secure connections to the Kafka cluster. Default value is
+  **'false'**.
+
+* ``SECURITY_PROTOCOL`` - It is the protocol used to communicate with Kafka
+  servers. Default value is **PLAINTEXT**.
+
+* ``SSL_KEY_PASSWORD`` - It represents the password of the private key inside
+  the keystore file.
+
+* ``SSL_KEYSTORE_PASSWORD`` - It the store password for the keystore file.
+
+* ``SSL_KEYSTORE_LOCATION`` - It represents the location of the keystore file.
+  This location value should point to the keystore file that is available via
+  Exasol bucket in BucketFS.
+
+* ``SSL_TRUSTSTORE_PASSWORD`` - It is the password for the truststore file.
+
+* ``SSL_TRUSTSTORE_LOCATION`` - It is the location of the truststore file, and
+  it should refer to the truststore file stored inside bucket in Exasol
+  BucketFS.
+
+* ``SSL_ENDPOINT_IDENTIFICATION_ALGORITHM`` - It is the endpoint identification
+  algorithm to validate server hostname using server certificate. Default value
+  is **https**.
+
+[gh-releases]: https://github.com/exasol/kafka-connector-extension/releases
+[schema-registry]: https://docs.confluent.io/current/schema-registry/index.html
+[kafka-security]: https://kafka.apache.org/documentation/#security
+[kafka-secure-clients]: https://kafka.apache.org/documentation/#security_configclients
+[kafka-consumer-configs]: https://kafka.apache.org/documentation/#consumerconfigs

@@ -2,6 +2,21 @@
 
 Kafka connector extension based on Exasol user defined functions (UDF).
 
+## Features
+
+* Imports Apache Avro formatted data from Apache Kafka clusters
+* Allows secure connection to Apache Kafka clusters
+
+## Information for Users
+
+* [User Guide](doc/user_guide/user_guide.md)
+* [Changelog](doc/changes/changelog.md)
+
+## Information for Contributors
+
+* [Developer Guide](doc/development/developer_guide.md)
+* [Releasing Guide](doc/development/releasing.md)
+
 ## Dependencies
 
 ### Runtime Dependencies
