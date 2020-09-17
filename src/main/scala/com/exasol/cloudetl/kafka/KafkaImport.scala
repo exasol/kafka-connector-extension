@@ -53,7 +53,7 @@ object KafkaImport extends LazyLogging {
           val metadata: Seq[Object] =
             Seq(record.partition().asInstanceOf[AnyRef], record.offset().asInstanceOf[AnyRef])
           val row = AvroRow(record.value())
-          val allColumns: Seq[Object] = metadata ++ row.getValues().map(_.asInstanceOf[AnyRef])
+          val allColumns: Seq[Object] = row.getValues().map(_.asInstanceOf[AnyRef]) ++ metadata
           iterator.emit(allColumns: _*)
         }
         logger.info(

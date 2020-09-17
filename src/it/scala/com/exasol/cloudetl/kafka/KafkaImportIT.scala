@@ -22,25 +22,25 @@ class KafkaImportIT extends KafkaIntegrationTest {
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
+      anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong],
-      anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong]
     )
     verify(iter, times(1)).emit(
-      JInt.valueOf(0),
-      JLong.valueOf(0),
       "abc",
       JInt.valueOf(3),
-      JLong.valueOf(13)
+      JLong.valueOf(13),
+      JInt.valueOf(0),
+      JLong.valueOf(0)
     )
     verify(iter, times(1)).emit(
-      JInt.valueOf(0),
-      JLong.valueOf(1),
       "hello",
       JInt.valueOf(4),
-      JLong.valueOf(14)
+      JLong.valueOf(14),
+      JInt.valueOf(0),
+      JLong.valueOf(1)
     )
   }
 
@@ -57,25 +57,25 @@ class KafkaImportIT extends KafkaIntegrationTest {
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
+      anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong],
-      anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong]
     )
     verify(iter, times(1)).emit(
-      JInt.valueOf(0),
-      JLong.valueOf(2),
       "def",
       JInt.valueOf(7),
-      JLong.valueOf(17)
+      JLong.valueOf(17),
+      JInt.valueOf(0),
+      JLong.valueOf(2)
     )
     verify(iter, times(1)).emit(
-      JInt.valueOf(0),
-      JLong.valueOf(3),
       "xyz",
       JInt.valueOf(13),
-      JLong.valueOf(23)
+      JLong.valueOf(23),
+      JInt.valueOf(0),
+      JLong.valueOf(3)
     )
   }
 
@@ -97,9 +97,9 @@ class KafkaImportIT extends KafkaIntegrationTest {
 
     verify(iter, times(4)).emit(Seq(any[Object]): _*)
     verify(iter, times(4)).emit(
+      anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong],
-      anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong]
     )
