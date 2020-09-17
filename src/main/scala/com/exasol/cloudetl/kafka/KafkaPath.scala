@@ -14,9 +14,12 @@ object KafkaPath {
   ): String = {
     val kafkaProperties = KafkaConsumerProperties(importSpec.getParameters.asScala.toMap)
     val tableName = kafkaProperties.getTableName()
-    val topics = kafkaProperties.getTopics()
-    if (topics.contains(",")) {
-      throw new IllegalArgumentException("Only single topic can be consumed using Kafka import!")
+    val topic = kafkaProperties.getTopic()
+    if (topic.contains(",")) {
+      throw new IllegalArgumentException(
+        "Please provide only a single topic name. Importing data " +
+          "from multiple topics is not supported."
+      )
     }
     val kvPairs = kafkaProperties.mkString()
     val scriptSchema = metadata.getScriptSchema

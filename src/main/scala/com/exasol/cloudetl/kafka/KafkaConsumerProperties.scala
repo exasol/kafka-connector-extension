@@ -43,8 +43,8 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     get(GROUP_ID.userPropertyName).fold(GROUP_ID.defaultValue)(identity)
 
   /** Returns the user provided topic name. */
-  final def getTopics(): String =
-    getString(TOPICS)
+  final def getTopic(): String =
+    getString(TOPIC_NAME)
 
   /**
    * Returns the user provided Exasol table name; otherwise returns
@@ -278,7 +278,7 @@ object KafkaConsumerProperties extends CommonProperties {
    * A required property key name for a Kafka topic name to import data
    * from.
    */
-  private[kafka] final val TOPICS: String = "TOPICS"
+  private[kafka] final val TOPIC_NAME: String = "TOPIC_NAME"
 
   /**
    * A required property key name for a Exasol table name to import data

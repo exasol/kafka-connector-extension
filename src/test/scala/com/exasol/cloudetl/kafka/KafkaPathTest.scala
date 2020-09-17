@@ -10,7 +10,7 @@ class KafkaPathTest extends PathTest {
 
   private[this] val kafkaConsumerProperties = Map(
     "BOOTSTRAP_SERVERS" -> "kafka.broker01.example.com:9092",
-    "TOPICS" -> "kafkaTopic",
+    "TOPIC_NAME" -> "kafkaTopic",
     "TABLE_NAME" -> "exasolTable"
   )
 
@@ -62,21 +62,21 @@ class KafkaPathTest extends PathTest {
   }
 
   test("generateSqlForImportSpec throws if topics property is not set") {
-    properties -= "TOPICS"
+    properties -= "TOPIC_NAME"
     when(importSpec.getParameters()).thenReturn(properties.asJava)
     val thrown = intercept[IllegalArgumentException] {
       KafkaPath.generateSqlForImportSpec(metadata, importSpec)
     }
-    assert(thrown.getMessage === "Please provide a value for the TOPICS property!")
+    assert(thrown.getMessage === "Please provide a value for the TOPIC_NAME property!")
   }
 
   test("generateSqlForImportSpec throws if topics contains more than one topic") {
-    properties += ("TOPICS" -> "topic1,topic2,topic3")
+    properties += ("TOPIC_NAME" -> "topic1,topic2,topic3")
     when(importSpec.getParameters()).thenReturn(properties.asJava)
     val thrown = intercept[IllegalArgumentException] {
       KafkaPath.generateSqlForImportSpec(metadata, importSpec)
     }
-    assert(thrown.getMessage === "Only single topic can be consumed using Kafka import!")
+    assert(thrown.getMessage.contains("Please provide only a single topic name."))
   }
 
 }

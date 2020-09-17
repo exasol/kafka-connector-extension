@@ -33,7 +33,7 @@ object KafkaMetadata extends LazyLogging {
         throw ex
 
       case Success(kafkaConsumer) =>
-        val topics = kafkaProperties.getTopics()
+        val topics = kafkaProperties.getTopic()
         val topicPartitions =
           kafkaConsumer.partitionsFor(topics).asScala.toList.map(_.partition())
 

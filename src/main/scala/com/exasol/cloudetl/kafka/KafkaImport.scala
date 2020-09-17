@@ -27,40 +27,51 @@ object KafkaImport extends LazyLogging {
         s"partition=$partitionId and startOffset=$partitionNextOffset"
     )
 
-    val topics = kafkaProperties.getTopics()
-    val timeout = kafkaProperties.getPollTimeoutMs()
-    val maxRecords = kafkaProperties.getMaxRecordsPerRun()
-    val minRecords = kafkaProperties.getMinRecordsPerRun()
-    val topicPartition = new TopicPartition(topics, partitionId)
-
+    val topic = kafkaProperties.getTopic()
+    val topicPartition = new TopicPartition(topic, partitionId)
     val kafkaConsumer = kafkaProperties.build(metadata)
     kafkaConsumer.assign(Arrays.asList(topicPartition))
     kafkaConsumer.seek(topicPartition, partitionNextOffset)
 
-    try {
-      var recordsCount = 0
-      var total = 0
+    val maxRecords = kafkaProperties.getMaxRecordsPerRun()
+    val minRecords = kafkaProperties.getMinRecordsPerRun()
+    val timeout = kafkaProperties.getPollTimeoutMs()
 
+    try {
+      var recordCount = 0
+      var totalRecordCount = 0
       do {
         val records = kafkaConsumer.poll(Duration.ofMillis(timeout))
-        recordsCount = records.count()
-        total += recordsCount
+        recordCount = records.count()
+        totalRecordCount += recordCount
         records.asScala.foreach { record =>
           logger.debug(
-            s"Read partition=${record.partition()} offset=${record.offset()} " +
+            s"Read record partition=${record.partition()} offset=${record.offset()} " +
               s"key=${record.key()} value=${record.value()}"
           )
-          val metadata: Seq[Object] =
-            Seq(record.partition().asInstanceOf[AnyRef], record.offset().asInstanceOf[AnyRef])
-          val row = AvroRow(record.value())
-          val allColumns: Seq[Object] = metadata ++ row.getValues().map(_.asInstanceOf[AnyRef])
-          iterator.emit(allColumns: _*)
+          val metadata: Seq[Object] = Seq(
+            record.partition().asInstanceOf[AnyRef],
+            record.offset().asInstanceOf[AnyRef]
+          )
+          val avroRow = AvroRow(record.value()).getValues().map(_.asInstanceOf[AnyRef])
+          val exasolRow: Seq[Object] = metadata ++ avroRow
+          iterator.emit(exasolRow: _*)
         }
         logger.info(
-          s"Emitted total=$total records in node=$nodeId, vm=$vmId, partition=$partitionId"
+          s"Emitted total=$totalRecordCount records in " +
+            s"node=$nodeId, vm=$vmId, partition=$partitionId"
         )
-
-      } while (recordsCount >= minRecords && total < maxRecords)
+      } while (recordCount >= minRecords && totalRecordCount < maxRecords)
+    } catch {
+      case exception: Throwable =>
+        logger.error(
+          s"Could not consume data from Kafka topic: '$topic', partition: '$partitionId' " +
+            s" in node: '$nodeId' and vm: '$vmId'"
+        )
+        throw new RuntimeException(
+          "Error consuming Kafka topic data. Cause: " + exception.getMessage(),
+          exception
+        )
     } finally {
       kafkaConsumer.close();
     }
