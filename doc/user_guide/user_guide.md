@@ -152,17 +152,13 @@ Kafka topic.
 The table column names and types should match the Kafka topic Avro schema names
 and types.
 
-Additionally, add two extra columns to the beginning of the table. These columns
-store the Kafka metadata and help keeping track of the already imported records.
+Additionally, add two extra columns to the end of the table. These columns store
+the Kafka metadata and help keeping track of the already imported records.
 
 For example, create an Exasol table:
 
 ```sql
 CREATE OR REPLACE TABLE <schema_name>.<table_name> (
-    -- Required for Kafka import UDF
-    KAFKA_PARTITION DECIMAL(18, 0),
-    KAFKA_OFFSET DECIMAL(36, 0),
-
     -- These columns match the Kafka topic schema
     SALES_ID    INTEGER,
     POSITION_ID SMALLINT,
@@ -171,6 +167,9 @@ CREATE OR REPLACE TABLE <schema_name>.<table_name> (
     PRICE       DECIMAL(9,2),
     VOUCHER_ID  SMALLINT,
     CANCELED    BOOLEAN
+    -- Required for Kafka import UDF
+    KAFKA_PARTITION DECIMAL(18, 0),
+    KAFKA_OFFSET DECIMAL(36, 0),
 );
 ```
 
