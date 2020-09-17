@@ -1,6 +1,31 @@
 # Kafka Connector Extension
 
-Kafka connector extension based on Exasol user defined functions (UDF).
+[![Build Status][travis-badge]][travis-link]
+[![Coveralls][coveralls-badge]][coveralls-link]
+[![GitHub Release][gh-release-badge]][gh-release-link]
+
+Exasol Kafka Extension provides UDF scripts that allow accessing Apache Kafka
+and importing data from a Kafka topic into an Exasol table.
+
+## Features
+
+* Imports Apache Avro formatted data from Apache Kafka clusters
+* Allows secure connection to Apache Kafka clusters
+
+## Information for Users
+
+* [User Guide](doc/user_guide/user_guide.md)
+* [Changelog](doc/changes/changelog.md)
+
+Additional resources:
+
+* [Tech Blog: How to import data from Apache Kafka with Exasol][tech-blog-part1]
+* [Tech Blog: How to import data from Apache Kafka using our user-defined functions][tech-blog-part2]
+
+## Information for Contributors
+
+* [Developer Guide](doc/development/developer_guide.md)
+* [Releasing Guide](doc/development/releasing.md)
 
 ## Dependencies
 
@@ -43,6 +68,12 @@ These plugins help with project development.
 | [SBT Explicit Dependencies][sbt-expdep-link]| Checks which direct libraries required to compile your code     | Apache License 2.0   |
 | [SBT Git][sbt-git-link]                     | A plugin for Git integration, used to version the release jars  | BSD 2-Clause License |
 
+[travis-badge]: https://img.shields.io/travis/exasol/kafka-connector-extension/master.svg?logo=travis
+[travis-link]: https://travis-ci.com/exasol/kafka-connector-extension
+[coveralls-badge]: https://coveralls.io/repos/github/exasol/kafka-connector-extension/badge.svg?branch=master
+[coveralls-link]: https://coveralls.io/github/exasol/kafka-connector-extension?branch=master
+[gh-release-badge]: https://img.shields.io/github/release/exasol/kafka-connector-extension.svg?logo=github
+[gh-release-link]: https://github.com/exasol/kafka-connector-extension/releases/latest
 [exasol-script-api-link]: https://docs.exasol.com/database_concepts/udf_scripts.htm
 [ieudf]: https://github.com/exasol/import-export-udf-common-scala
 [kafka-clients-link]: https://github.com/apache/kafka/tree/trunk/clients
@@ -65,3 +96,5 @@ These plugins help with project development.
 [sbt-depgraph-link]: https://github.com/jrudolph/sbt-dependency-graph
 [sbt-git-link]: https://github.com/sbt/sbt-git
 [sbt-expdep-link]: https://github.com/cb372/sbt-explicit-dependencies
+[tech-blog-part1]: https://community.exasol.com/t5/tech-blog/how-to-import-data-from-apache-kafka-with-exasol/ba-p/1409
+[tech-blog-part2]: https://community.exasol.com/t5/tech-blog/how-to-import-data-from-apache-kafka-using-our-user-defined/ba-p/1699
