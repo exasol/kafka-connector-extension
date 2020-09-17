@@ -2,7 +2,7 @@
 
 This guide provides development workflows that are used to develop and maintain
 the kafka-connector-extension. It is intended for those who wish to address the
-issues, merge pull request, perform release or deep dive into the codebase of
+issues, merge a pull request, perform release or deep dive into the codebase of
 the project.
 
 ## Contributing
@@ -13,7 +13,7 @@ Please feel free to report a bug, suggest an idea for a feature, or ask a
 question about the code.
 
 Please keep in mind that contributions are not only pull requests. They can be
-any helpful comment on issues, improving documentation, enhancing build process
+any helpful comment on issues, improving documentation, enhancing the build process
 and many other tasks.
 
 ### Getting in touch
@@ -27,13 +27,13 @@ requests][gh-pulls].
 
 If you do not know where to start, please have a look at [open
 issues][open-issues]. You can choose the ones that interest you the most. If you
-are new to the project, checkout the issues labeled as
+are new to the project, check out the issues labeled as
 [good-first-issue][first-issue].
 
 ### Submitting a pull request
 
 Once you have found an interesting feature or issue to contribute, you can
-follow steps below to submit your patches.
+follow the steps below to submit your patches.
 
 - Create a new feature branch, `git checkout -b "cool-new-feature"`
 - Code
@@ -98,14 +98,14 @@ end-to-end build process. This file is intended to be run in continuous
 integration (CI) environment. For the continuous integration we use the [Travis
 CI](https://travis-ci.com/).
 
-Please run this file to make sure that everything is working before commiting
+Please run this file to make sure that everything is working before committing
 code or submitting a pull request.
 
 ```bash
 ./scripts/ci.sh
 ```
 
-Additionally, ensure that the `ci.sh` scripts works with different versions of
+Additionally, ensure that the `ci.sh` scripts work with different versions of
 the Scala programming language. You can check that with the following command:
 
 ```bash
@@ -122,7 +122,7 @@ file.
 
 ![alt text](../images/code_coverage_example.png "Code Coverage Example")
 
-You can also generage the coverage reports using the `sbt` command line, by
+You can also generate the coverage reports using the `sbt` command line, by
 running:
 
 ```bash
@@ -150,7 +150,7 @@ dependencyUpdates
 
 ### Dependency tree and artifact eviction
 
-You can check the dependency tree by running the comman below:
+You can check the dependency tree by running the command below:
 
 ```bash
 dependencyTree
@@ -167,7 +167,7 @@ evicted
 ## Short description on UDF scripts
 
 * The UDF scripts use the [`IMPORT FROM SCRIPT`][import-export-udf] statement.
-* The `KAFKA_PATH` is an entry point which internally uses two other scripts
+* The `KAFKA_PATH` is an entry point that internally uses two other scripts
   (`KAFKA_IMPORT` and `KAFKA_METADATA `) to generate an import query. 
 * The complete import process runs as a single transaction in the Exasol
   database.
@@ -177,7 +177,7 @@ evicted
 We try to keep the codebase code editor agnostic. But we tested that it works
 with IntelliJ.
 
-Any setups required for editors is out of scope. However, this can change when
+Any setups required for editors are out of scope. However, this can change when
 we get contributors who use those code editors :)
 
 ## Conclusion

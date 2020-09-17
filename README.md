@@ -4,8 +4,8 @@
 [![Coveralls][coveralls-badge]][coveralls-link]
 [![GitHub Release][gh-release-badge]][gh-release-link]
 
-Exasol Kafka Extension provides UDF scripts that allow to access Apache Kafka
-and import data from Kafka topic into an Exasol table.
+Exasol Kafka Extension provides UDF scripts that allow accessing Apache Kafka
+and importing data from a Kafka topic into an Exasol table.
 
 ## Features
 

@@ -28,7 +28,7 @@ and publish the artifacts.
 ## Post release process
 
 After the release process, the new [Github release][gh-releases] notes should be
-added. It should be same as the pre-release update to the
+added. It should be the same as the pre-release update to the
 `doc/changes/changes_VERSION.md` file.
 
 Click on the "Edit release" button on the latest release version on the Github
