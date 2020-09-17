@@ -1,5 +1,9 @@
 # Kafka Connector Extension
 
+[![Build Status][travis-badge]][travis-link]
+[![Coveralls][coveralls-badge]][coveralls-link]
+[![GitHub Release][gh-release-badge]][gh-release-link]
+
 Exasol Kafka Extension provides UDF scripts that allow to access Apache Kafka
 and import data from Kafka topic into an Exasol table.
 
@@ -64,6 +68,12 @@ These plugins help with project development.
 | [SBT Explicit Dependencies][sbt-expdep-link]| Checks which direct libraries required to compile your code     | Apache License 2.0   |
 | [SBT Git][sbt-git-link]                     | A plugin for Git integration, used to version the release jars  | BSD 2-Clause License |
 
+[travis-badge]: https://img.shields.io/travis/exasol/kafka-connector-extension/master.svg?logo=travis
+[travis-link]: https://travis-ci.com/exasol/kafka-connector-extension
+[coveralls-badge]: https://coveralls.io/repos/github/exasol/kafka-connector-extension/badge.svg?branch=master
+[coveralls-link]: https://coveralls.io/github/exasol/kafka-connector-extension?branch=master
+[gh-release-badge]: https://img.shields.io/github/release/exasol/kafka-connector-extension.svg?logo=github
+[gh-release-link]: https://github.com/exasol/kafka-connector-extension/releases/latest
 [exasol-script-api-link]: https://docs.exasol.com/database_concepts/udf_scripts.htm
 [ieudf]: https://github.com/exasol/import-export-udf-common-scala
 [kafka-clients-link]: https://github.com/apache/kafka/tree/trunk/clients
