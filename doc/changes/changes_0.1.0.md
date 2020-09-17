@@ -2,5 +2,8 @@
 
 ## Features
 
-* #1: Added initial implementation (PR #3)
-* #2: Updated documentation (PR #4)
+* [#1](https://github.com/exasol/kafka-connector-extension/issues/1): Added initial implementation (PR [#3](https://github.com/exasol/kafka-connector-extension/pull/3))
+
+## Documentation
+
+* [#2](https://github.com/exasol/kafka-connector-extension/issues/2): Updated documentation (PR [#6](https://github.com/exasol/kafka-connector-extension/pull/6))

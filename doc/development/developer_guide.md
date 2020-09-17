@@ -62,7 +62,7 @@ machine.
 
 Additionally, we assume you have some experience doing Scala development. If you
 have any questions in general or about the development process, please feel free
-to [get in touch](#getting-in-touch).
+to get in touch.
 
 ## Building the project
 

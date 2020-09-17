@@ -1,6 +1,7 @@
 # Kafka Connector Extension
 
-Kafka connector extension based on Exasol user defined functions (UDF).
+Exasol Kafka Extension provides UDF scripts that allow to access Apache Kafka
+and import data from Kafka topic into an Exasol table.
 
 ## Features
 
@@ -11,6 +12,11 @@ Kafka connector extension based on Exasol user defined functions (UDF).
 
 * [User Guide](doc/user_guide/user_guide.md)
 * [Changelog](doc/changes/changelog.md)
+
+Additional resources:
+
+* [Tech Blog: How to import data from Apache Kafka with Exasol][tech-blog-part1]
+* [Tech Blog: How to import data from Apache Kafka using our user-defined functions][tech-blog-part2]
 
 ## Information for Contributors
 
@@ -80,3 +86,5 @@ These plugins help with project development.
 [sbt-depgraph-link]: https://github.com/jrudolph/sbt-dependency-graph
 [sbt-git-link]: https://github.com/sbt/sbt-git
 [sbt-expdep-link]: https://github.com/cb372/sbt-explicit-dependencies
+[tech-blog-part1]: https://community.exasol.com/t5/tech-blog/how-to-import-data-from-apache-kafka-with-exasol/ba-p/1409
+[tech-blog-part2]: https://community.exasol.com/t5/tech-blog/how-to-import-data-from-apache-kafka-using-our-user-defined/ba-p/1699
