@@ -35,8 +35,7 @@ topic. Thus, it allows you to obtain the latest schema for a given Kafka topic.
 This section describes how to deploy and prepare the user-defined functions
 (UDFs) for Kafka integration.
 
-
-### Download the latest JAR file
+### Download the Latest JAR File
 
 Please download and save the latest assembled (with all dependencies included)
 jar file from the [Github Releases][gh-releases].
@@ -50,7 +49,7 @@ To check the SHA256 sum of the downloaded jar, run the command:
 sha256sum exasol-kafka-connector-extension-<VERSION>.jar
 ```
 
-### Building from source
+### Building From Source
 
 Additionally, you can build the assembled jar from the source. This allows you
 to use the latest commits that may not be released yet.
@@ -82,7 +81,7 @@ System (BucketFS).
 
 This allows us to references the jar file in the UDF scripts.
 
-### Upload the JAR file to the bucket
+### Upload the JAR File to the Bucket
 
 Now you can upload the jar file to the bucket. However, before uploading the
 jar, please make sure the BucketFS ports are open.
@@ -180,7 +179,7 @@ and record offset inside a partition:
 - KAFKA_PARTITION DECIMAL(18,0)
 - KAFKA_OFFSET    DECIMAL(36, 0)
 
-## Import from Kafka cluster
+## Import From Kafka Cluster
 
 Several property values are required to access the Kafka
 cluster when importing data from Kafka topics using the connector.
@@ -211,7 +210,7 @@ going to import Kafka topic data.
 For more information on Kafka import parameters, please refer to the [Kafka
 consumer properties](#kafka-consumer-properties).
 
-### Import Kafka topic data
+### Import Kafka Topic Data
 
 ```sql
 IMPORT INTO <schema_name>.<table_name>
@@ -236,7 +235,7 @@ FROM SCRIPT KAFKA_PATH WITH
   GROUP_ID            = 'exasol-kafka-udf-consumers';
 ```
 
-## Secure connection to Kafka cluster
+## Secure Connection to Kafka Cluster
 
 Since the recent releases, Apache Kafka supports authentication of connections
 to Kafka brokers from clients (producers and consumers) using either SSL or
@@ -267,7 +266,7 @@ Additionally, we have to provide extra parameters to the UDF in order to enable
 a secure connection to the Kafka cluster. Please check out the [Kafka consumer
 properties](#kafka-consumer-properties) for secure property descriptions.
 
-### Import Kafka topic data with SSL enabled
+### Import Kafka Topic Data With SSL Enabled
 
 First, create an Exasol named connection object and encode JKS files credentials
 and locations with key-value pairs separated by a semicolon (`;`).
