@@ -1,16 +1,15 @@
-package com.exasol.cloudetl.scriptclasses
+package com.exasol.cloudetl.kafka
 
 import java.lang.{Integer => JInt}
 import java.lang.{Long => JLong}
 
 import com.exasol.ExaMetadata
-import com.exasol.cloudetl.kafka.KafkaIntegrationTest
 
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 
-class KafkaImportIT extends KafkaIntegrationTest {
+class KafkaTopicDataImporterIT extends KafkaIntegrationTest {
 
   test("run emits records from starting initial offset") {
     createCustomTopic(topic)
@@ -18,7 +17,7 @@ class KafkaImportIT extends KafkaIntegrationTest {
     publishToKafka(topic, AvroRecord("hello", 4, 14))
 
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    KafkaImport.run(mock[ExaMetadata], iter)
+    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -53,7 +52,7 @@ class KafkaImportIT extends KafkaIntegrationTest {
 
     // records at 0, 1 are already read, committed
     val iter = mockExasolIterator(properties, Seq(0), Seq(1))
-    KafkaImport.run(mock[ExaMetadata], iter)
+    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -93,7 +92,7 @@ class KafkaImportIT extends KafkaIntegrationTest {
 
     // comsumer in two batches each with 2 records
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    KafkaImport.run(mock[ExaMetadata], iter)
+    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
 
     verify(iter, times(4)).emit(Seq(any[Object]): _*)
     verify(iter, times(4)).emit(

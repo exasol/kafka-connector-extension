@@ -118,13 +118,13 @@ Run the following SQL statements to create the Kafka extension UDF scripts.
 ```sql
 OPEN SCHEMA KAFKA_EXTENSION;
 
-CREATE OR REPLACE JAVA SET SCRIPT KAFKA_PATH(...) EMITS (...) AS
-  %scriptclass com.exasol.cloudetl.scriptclasses.KafkaPath;
+CREATE OR REPLACE JAVA SET SCRIPT KAFKA_CONSUMER(...) EMITS (...) AS
+  %scriptclass com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator;
   %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
 /
 
 CREATE OR REPLACE JAVA SET SCRIPT KAFKA_IMPORT(...) EMITS (...) AS
-  %scriptclass com.exasol.cloudetl.scriptclasses.KafkaImport;
+  %scriptclass com.exasol.cloudetl.kafka.KafkaTopicDataImporter;
   %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
 /
 
@@ -134,7 +134,7 @@ CREATE OR REPLACE JAVA SET SCRIPT KAFKA_METADATA(
   kafka_offset DECIMAL(36, 0)
 )
 EMITS (partition_index DECIMAL(18, 0), max_offset DECIMAL(36,0)) AS
-  %scriptclass com.exasol.cloudetl.scriptclasses.KafkaMetadata;
+  %scriptclass com.exasol.cloudetl.kafka.KafkaTopicMetadataReader;
   %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
 ```
 
@@ -187,7 +187,7 @@ You should provide these key-value parameters:
 
 - ``BOOTSTRAP_SERVERS``
 - ``SCHEMA_REGISTRY_URL``
-- ``TOPICS``
+- ``TOPIC_NAME``
 - ``TABLE_NAME``
 
 The **BOOTSTRAP_SERVERS** is a comma-separated list of host port pairs used to
@@ -199,9 +199,8 @@ list of Kafka servers.
 The **SCHEMA_REGISTRY_URL** is an URL to the Schema Registry server. It is used
 to retrieve Avro schemas of Kafka topics.
 
-The **TOPICS** is the name of the Kafka topic we want to import Avro data from.
-Please note that even though it is in plural form, currently only a single topic
-data imports are supported.
+The **TOPIC_NAME** is the name of the Kafka topic we want to import Avro data
+from. Please note that we only support a single topic data imports.
 
 The **TABLE_NAME** is the Exasol table name that we have prepared and we are
 going to import Kafka topic data.
@@ -213,10 +212,10 @@ consumer properties](#kafka-consumer-properties).
 
 ```sql
 IMPORT INTO <schema_name>.<table_name>
-FROM SCRIPT KAFKA_PATH WITH
+FROM SCRIPT KAFKA_CONSUMER WITH
   BOOTSTRAP_SERVERS   = '<kafka_bootstap_servers>'
   SCHEMA_REGISTRY_URL = '<schema_registry_url>'
-  TOPICS              = '<kafka_topic>
+  TOPIC_NAME          = '<kafka_topic>
   TABLE_NAME          = '<schema_name>.<table_name>'
   GROUP_ID            = 'exasol-kafka-udf-consumers';
 ```
@@ -226,10 +225,10 @@ data into `RETAIL.SALES_POSITIONS` table in Exasol:
 
 ```sql
 IMPORT INTO RETAIL.SALES_POSITIONS
-FROM SCRIPT KAFKA_PATH WITH
+FROM SCRIPT KAFKA_CONSUMER WITH
   BOOTSTRAP_SERVERS   = 'kafka01.internal:9092,kafka02.internal:9093,kafka03.internal:9094'
   SCHEMA_REGISTRY_URL = 'http://schema-registry.internal:8081'
-  TOPICS              = 'SALES-POSITIONS'
+  TOPIC_NAME          = 'SALES-POSITIONS'
   TABLE_NAME          = 'RETAIL.SALES_POSITIONS'
   GROUP_ID            = 'exasol-kafka-udf-consumers';
 ```
@@ -281,10 +280,10 @@ Then use the connection object with a Kafka import statement:
 
 ```sql
 IMPORT INTO <schema_name>.<table_name>
-FROM SCRIPT KAFKA_PATH WITH
+FROM SCRIPT KAFKA_CONSUMER WITH
   BOOTSTRAP_SERVERS       = '<kafka_bootstap_servers>'
   SCHEMA_REGISTRY_URL     = '<schema_registry_url>'
-  TOPICS                  = '<kafka_topic>'
+  TOPIC_NAME              = '<kafka_topic>'
   TABLE_NAME              = '<schema_name>.<table_name>'
   GROUP_ID                = 'exasol-kafka-udf-consumers';
   -- Secure connection properties
@@ -309,8 +308,8 @@ configurations][kafka-consumer-configs].
   Registry][schema-registry] which stores Avro schemas as metadata. Schema
   Registry will be used to parse the Kafka topic Avro data schemas.
 
-* ``TOPICS`` - It defines a Kafka topic name that we want to import data from.
-  Currently, we only support single topic data imports. Therefore, it should not
+* ``TOPIC_NAME`` - It defines a Kafka topic name that we want to import data
+  from.  We only support a single topic data imports. Therefore, it should not
   contain comma-separated list of more than one topic name.
 
 * ``TABLE_NAME`` - It defines the Exasol table name the data will be imported.

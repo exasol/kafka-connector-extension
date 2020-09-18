@@ -22,7 +22,7 @@ trait KafkaIntegrationTest
   val properties = Map(
     "BOOTSTRAP_SERVERS" -> "localhost:6001",
     "SCHEMA_REGISTRY_URL" -> "http://localhost:6002",
-    "TOPICS" -> topic,
+    "TOPIC_NAME" -> topic,
     "TABLE_NAME" -> "exasolTable"
   )
 

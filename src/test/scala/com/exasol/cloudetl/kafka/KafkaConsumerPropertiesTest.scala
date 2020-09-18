@@ -42,15 +42,15 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   }
 
   test("getTopics returns topics property value") {
-    properties = Map("TOPICS" -> "Metamorphosis")
-    assert(BaseProperties(properties).getTopics() === "Metamorphosis")
+    properties = Map("TOPIC_NAME" -> "Metamorphosis")
+    assert(BaseProperties(properties).getTopic() === "Metamorphosis")
   }
 
   test("getTopics throws if topics property is not set") {
     val thrown = intercept[IllegalArgumentException] {
-      BaseProperties(properties).getTopics()
+      BaseProperties(properties).getTopic()
     }
-    assert(thrown.getMessage === errorMessage("TOPICS"))
+    assert(thrown.getMessage === errorMessage("TOPIC_NAME"))
   }
 
   test("getTableName returns Exasol table name property value") {
@@ -260,21 +260,6 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     // default value is intentionally hardcoded, should alert if things
     // change
     assert(BaseProperties(properties).getSSLEndpointIdentificationAlgorithm() === "https")
-  }
-
-  test("build throws if required BOOTSTRAP_SERVERS property is not provided") {
-    val thrown = intercept[IllegalArgumentException] {
-      BaseProperties(properties).build(mock[ExaMetadata])
-    }
-    assert(thrown.getMessage === errorMessage("BOOTSTRAP_SERVERS"))
-  }
-
-  test("build throws if required SCHEMA_REGISTRY_URL property is not provided") {
-    properties = Map("BOOTSTRAP_SERVERS" -> "kafka01.internal:9092")
-    val thrown = intercept[IllegalArgumentException] {
-      BaseProperties(properties).build(mock[ExaMetadata])
-    }
-    assert(thrown.getMessage === errorMessage("SCHEMA_REGISTRY_URL"))
   }
 
   test("getProperties returns Java map properties") {
