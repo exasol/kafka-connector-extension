@@ -151,17 +151,13 @@ a Kafka topic.
 The table column names and types should match the Kafka topic Avro schema names
 and types.
 
-Additionally, add two extra columns to the beginning of the table. These columns
+Additionally, add two extra columns to the end of the table. These columns
 store the Kafka metadata and help to keep track of the already imported records.
 
 For example, create an Exasol table:
 
 ```sql
 CREATE OR REPLACE TABLE <schema_name>.<table_name> (
-    -- Required for Kafka import UDF
-    KAFKA_PARTITION DECIMAL(18, 0),
-    KAFKA_OFFSET DECIMAL(36, 0),
-
     -- These columns match the Kafka topic schema
     SALES_ID    INTEGER,
     POSITION_ID SMALLINT,
@@ -170,6 +166,9 @@ CREATE OR REPLACE TABLE <schema_name>.<table_name> (
     PRICE       DECIMAL(9,2),
     VOUCHER_ID  SMALLINT,
     CANCELED    BOOLEAN
+    -- Required for Kafka import UDF
+    KAFKA_PARTITION DECIMAL(18, 0),
+    KAFKA_OFFSET DECIMAL(36, 0),
 );
 ```
 
@@ -194,8 +193,8 @@ You should provide these key-value parameters:
 The **BOOTSTRAP_SERVERS** is a comma-separated list of host port pairs used to
 establish an initial connection to the Kafka cluster. The UDF connector will
 contact all servers in the Kafka cluster, irrespective of servers specified with
-this parameter. This list only defines initial hosts used to discover the full list
-of Kafka servers.
+this parameter. This list only defines initial hosts used to discover the full
+list of Kafka servers.
 
 The **SCHEMA_REGISTRY_URL** is an URL to the Schema Registry server. It is used
 to retrieve Avro schemas of Kafka topics.
@@ -240,8 +239,8 @@ Since the recent releases, Apache Kafka supports authentication of connections
 to Kafka brokers from clients (producers and consumers) using either SSL or
 SASL. Currently, Exasol Kafka connector supports **SSL**.
 
-In order to use the secure connections to the Kafka cluster from the UDF, you need
-to upload the consumer Truststore and Keystore files to the Exasol BucketFS
+In order to use the secure connections to the Kafka cluster from the UDF, you
+need to upload the consumer Truststore and Keystore files to the Exasol BucketFS
 bucket so that we can access them when running the Kafka import UDF.
 
 Upload the consumer Java Keystore format (JKS) files:
@@ -321,8 +320,8 @@ configurations][kafka-consumer-configs].
 
 These are optional parameters with their default values.
 
-* ``GROUP_ID`` - It defines the id for this type of consumer. The default value is
-  **EXASOL_KAFKA_UDFS_CONSUMERS**. It is a unique string that identifies the
+* ``GROUP_ID`` - It defines the id for this type of consumer. The default value
+  is **EXASOL_KAFKA_UDFS_CONSUMERS**. It is a unique string that identifies the
   consumer group this consumer belongs to.
 
 * ``POLL_TIMEOUT_MS`` - It defines the timeout value that is the number of
@@ -330,24 +329,25 @@ These are optional parameters with their default values.
   The default value is **30000** milliseconds.
 
 * ``MIN_RECORDS_PER_RUN`` - It is an upper bound on the minimum number of
-  records to the consumer per UDF run. The default value is **100**. That is, if the
-  pull function returns fewer records than this number, we consume returned
+  records to the consumer per UDF run. The default value is **100**. That is, if
+  the pull function returns fewer records than this number, we consume returned
   records and finish the UDF process. Otherwise, we continue polling more data
   until the total number of records reaches a certain threshold, for example,
   `MAX_RECORD_PER_RUN`.
 
 * ``MAX_RECORD_PER_RUN`` - It is a lower bound on the maximum number of records
-  to the consumer per UDF run. The default value is **1000000**. When the returned
-  number of records from the poll is more than `MIN_RECORDS_PER_RUN`, we continue
-  polling for more records until the total number reaches this number.
+  to the consumer per UDF run. The default value is **1000000**. When the
+  returned number of records from the poll is more than `MIN_RECORDS_PER_RUN`,
+  we continue polling for more records until the total number reaches this
+  number.
 
 * ``MAX_POLL_RECORDS`` - It is the maximum number of records returned in a
   single call from the consumer poll method. The default value is **500**.
 
 * ``FETCH_MIN_BYTES`` - It is the minimum amount of data the server should
   return for a fetch request. If insufficient data is available the request will
-  wait for that much data to accumulate before answering the request. The default
-  value is **1**.
+  wait for that much data to accumulate before answering the request. The
+  default value is **1**.
 
 * ``FETCH_MAX_BYTES`` - It is the maximum amount of data the server should
   return for a fetch request. The default value is **52428800**.
@@ -381,8 +381,8 @@ Kafka clusters.
   BucketFS.
 
 * ``SSL_ENDPOINT_IDENTIFICATION_ALGORITHM`` - It is the endpoint identification
-  algorithm to validate server hostname using a server certificate. Default value
-  is **https**.
+  algorithm to validate server hostname using a server certificate. Default
+  value is **https**.
 
 [gh-releases]: https://github.com/exasol/kafka-connector-extension/releases
 [schema-registry]: https://docs.confluent.io/current/schema-registry/index.html
