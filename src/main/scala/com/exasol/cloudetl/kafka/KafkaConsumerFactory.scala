@@ -43,8 +43,7 @@ object KafkaConsumerFactory {
     } catch {
       case exception: Throwable =>
         throw new KafkaConnectorException(
-          s"Error creating a Kafka consumer for topic '$topic'. " +
-            "Cause: " + exception.getMessage(),
+          s"Error creating a Kafka consumer for topic '$topic'. Cause: " + exception.getMessage(),
           exception
         )
     }

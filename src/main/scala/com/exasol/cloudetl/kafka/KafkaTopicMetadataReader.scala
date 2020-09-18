@@ -42,8 +42,8 @@ object KafkaTopicMetadataReader extends LazyLogging {
     } catch {
       case exception: Throwable =>
         throw new KafkaConnectorException(
-          s"Error emitting metadata information for topic '$topic'. " +
-            "Cause: " + exception.getMessage(),
+          s"Error emitting metadata information for topic '$topic'. Cause: " + exception
+            .getMessage(),
           exception
         )
     } finally {
