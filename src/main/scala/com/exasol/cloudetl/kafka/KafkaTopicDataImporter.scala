@@ -68,7 +68,7 @@ object KafkaTopicDataImporter extends LazyLogging {
             record.offset().asInstanceOf[AnyRef]
           )
           val avroRow = AvroRow(record.value()).getValues().map(_.asInstanceOf[AnyRef])
-          val exasolRow: Seq[Object] = metadata ++ avroRow
+          val exasolRow: Seq[Object] = avroRow ++ metadata
           iterator.emit(exasolRow: _*)
         }
         logger.info(
