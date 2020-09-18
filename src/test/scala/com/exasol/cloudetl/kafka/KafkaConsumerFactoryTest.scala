@@ -1,24 +1,24 @@
 package com.exasol.cloudetl.kafka
 
-import org.scalatest.BeforeAndAfterEach
+import com.exasol.ExaMetadata
+
+import org.apache.avro.generic.GenericRecord
+import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.mockito.MockitoSugar
 
-class KafkaConsumerFactoryTest extends AnyFunSuite with BeforeAndAfterEach with MockitoSugar {
+class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
 
-  test("apply throws if required BOOTSTRAP_SERVERS property is not provided") {
-    val thrown = intercept[IllegalArgumentException] {
-      KafkaConsumerFactory(KafkaConsumerProperties(Map.empty[String, String]))
-    }
-    assert(thrown.getMessage === "Please provide a value for the BOOTSTRAP_SERVERS property!")
-  }
-
-  test("apply throws if required SCHEMA_REGISTRY_URL property is not provided") {
-    val properties = Map("BOOTSTRAP_SERVERS" -> "kafka01.internal:9092")
-    val thrown = intercept[IllegalArgumentException] {
-      KafkaConsumerFactory(KafkaConsumerProperties(properties))
-    }
-    assert(thrown.getMessage === "Please provide a value for the SCHEMA_REGISTRY_URL property!")
+  test("apply returns a default kafka consumer type") {
+    val properties = Map(
+      "BOOTSTRAP_SERVERS" -> "localhost:6001",
+      "SCHEMA_REGISTRY_URL" -> "http://localhost:6002",
+      "TOPIC_NAME" -> "topic",
+      "TABLE_NAME" -> "exasolTable"
+    )
+    val consumerProperties = KafkaConsumerProperties(properties)
+    val kafkaConsumer = KafkaConsumerFactory(consumerProperties, mock[ExaMetadata])
+    assert(kafkaConsumer.isInstanceOf[KafkaConsumer[String, GenericRecord]])
   }
 
 }
