@@ -118,13 +118,13 @@ Run the following SQL statements to create the Kafka extension UDF scripts.
 ```sql
 OPEN SCHEMA KAFKA_EXTENSION;
 
-CREATE OR REPLACE JAVA SET SCRIPT KAFKA_PATH(...) EMITS (...) AS
-  %scriptclass com.exasol.cloudetl.scriptclasses.KafkaPath;
+CREATE OR REPLACE JAVA SET SCRIPT KAFKA_CONSUMER(...) EMITS (...) AS
+  %scriptclass com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator;
   %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
 /
 
 CREATE OR REPLACE JAVA SET SCRIPT KAFKA_IMPORT(...) EMITS (...) AS
-  %scriptclass com.exasol.cloudetl.scriptclasses.KafkaImport;
+  %scriptclass com.exasol.cloudetl.kafka.KafkaTopicDataImporter;
   %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
 /
 
@@ -134,7 +134,7 @@ CREATE OR REPLACE JAVA SET SCRIPT KAFKA_METADATA(
   kafka_offset DECIMAL(36, 0)
 )
 EMITS (partition_index DECIMAL(18, 0), max_offset DECIMAL(36,0)) AS
-  %scriptclass com.exasol.cloudetl.scriptclasses.KafkaMetadata;
+  %scriptclass com.exasol.cloudetl.kafka.KafkaTopicMetadataReader;
   %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
 ```
 
@@ -213,7 +213,7 @@ consumer properties](#kafka-consumer-properties).
 
 ```sql
 IMPORT INTO <schema_name>.<table_name>
-FROM SCRIPT KAFKA_PATH WITH
+FROM SCRIPT KAFKA_CONSUMER WITH
   BOOTSTRAP_SERVERS   = '<kafka_bootstap_servers>'
   SCHEMA_REGISTRY_URL = '<schema_registry_url>'
   TOPIC_NAME          = '<kafka_topic>
@@ -226,7 +226,7 @@ data into `RETAIL.SALES_POSITIONS` table in Exasol:
 
 ```sql
 IMPORT INTO RETAIL.SALES_POSITIONS
-FROM SCRIPT KAFKA_PATH WITH
+FROM SCRIPT KAFKA_CONSUMER WITH
   BOOTSTRAP_SERVERS   = 'kafka01.internal:9092,kafka02.internal:9093,kafka03.internal:9094'
   SCHEMA_REGISTRY_URL = 'http://schema-registry.internal:8081'
   TOPIC_NAME          = 'SALES-POSITIONS'
@@ -281,7 +281,7 @@ Then use the connection object with a Kafka import statement:
 
 ```sql
 IMPORT INTO <schema_name>.<table_name>
-FROM SCRIPT KAFKA_PATH WITH
+FROM SCRIPT KAFKA_CONSUMER WITH
   BOOTSTRAP_SERVERS       = '<kafka_bootstap_servers>'
   SCHEMA_REGISTRY_URL     = '<schema_registry_url>'
   TOPIC_NAME              = '<kafka_topic>'

@@ -1,7 +1,5 @@
 package com.exasol.cloudetl.kafka
 
-import java.nio.file.{Files, Paths}
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable.{Map => MMap}
 
@@ -10,14 +8,9 @@ import com.exasol.common.AbstractProperties
 import com.exasol.common.CommonProperties
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
-import io.confluent.kafka.serializers.KafkaAvroDeserializer
-import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.serialization.Deserializer
-import org.apache.kafka.common.serialization.StringDeserializer
 
 /**
  * A specific implementation of [[com.exasol.common.AbstractProperties]]
@@ -174,17 +167,6 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
   final def getSSLEndpointIdentificationAlgorithm(): String =
     get(SSL_ENDPOINT_IDENTIFICATION_ALGORITHM.userPropertyName)
       .fold(SSL_ENDPOINT_IDENTIFICATION_ALGORITHM.defaultValue)(identity)
-
-  /**
-   * Returns a [[org.apache.kafka.clients.consumer.KafkaConsumer]] class.
-   *
-   * At the moment Avro based specific {@code KafkaConsumer[String,
-   * GenericRecord]} consumer is returned. Therefore, in order to define
-   * the schema of [[org.apache.avro.generic.GenericRecord]] the {@code
-   * SCHEMA_REGISTRY_URL} value should be provided.
-   */
-  final def build(exaMetadata: ExaMetadata): KafkaConsumer[String, GenericRecord] =
-    KafkaConsumerProperties.createKafkaConsumer(this, exaMetadata)
 
   /** Returns the Kafka consumer properties as Java map. */
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
@@ -546,65 +528,5 @@ object KafkaConsumerProperties extends CommonProperties {
    */
   def apply(string: String): KafkaConsumerProperties =
     apply(mapFromString(string))
-
-  /**
-   * Creates a [[org.apache.kafka.clients.consumer.KafkaConsumer]] from
-   * [[KafkaConsumerProperties]].
-   */
-  def createKafkaConsumer(
-    kafkaConsumerProperties: KafkaConsumerProperties,
-    exaMetadata: ExaMetadata
-  ): KafkaConsumer[String, GenericRecord] = {
-    val properties = kafkaConsumerProperties.mergeWithConnectionObject(exaMetadata)
-    validate(properties)
-
-    new KafkaConsumer[String, GenericRecord](
-      properties.getProperties(),
-      new StringDeserializer,
-      getAvroDeserializer(properties.getSchemaRegistryUrl())
-        .asInstanceOf[Deserializer[GenericRecord]]
-    )
-  }
-
-  private[this] def validate(properties: KafkaConsumerProperties): Unit = {
-    if (!properties.containsKey(BOOTSTRAP_SERVERS.userPropertyName)) {
-      throw new IllegalArgumentException(
-        s"Please provide a value for the "
-          + s"${BOOTSTRAP_SERVERS.userPropertyName} property!"
-      )
-    }
-
-    if (!properties.hasSchemaRegistryUrl()) {
-      throw new IllegalArgumentException(
-        s"Please provide a value for the "
-          + s"${SCHEMA_REGISTRY_URL.userPropertyName} property!"
-      )
-    }
-
-    if (properties.isSSLEnabled()) {
-      if (!Files.isRegularFile(Paths.get(properties.getSSLKeystoreLocation()))) {
-        throw new KafkaConnectorException(
-          s"Unable to find the SSL keystore: ${properties.getSSLKeystoreLocation()}"
-        )
-      }
-
-      if (!Files.isRegularFile(Paths.get(properties.getSSLTruststoreLocation()))) {
-        throw new KafkaConnectorException(
-          s"Unable to find the SSL truststore: ${properties.getSSLTruststoreLocation()}"
-        )
-      }
-    }
-  }
-
-  private[this] def getAvroDeserializer(schemaRegistryUrl: String): KafkaAvroDeserializer = {
-    // The schema registry url should be provided here since the one
-    // configured in consumer properties is not for the deserializer.
-    val deserializerConfig = Map(
-      AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG -> schemaRegistryUrl
-    )
-    val kafkaAvroDeserializer = new KafkaAvroDeserializer
-    kafkaAvroDeserializer.configure(deserializerConfig.asJava, false)
-    kafkaAvroDeserializer
-  }
 
 }

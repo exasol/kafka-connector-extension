@@ -1,12 +1,10 @@
-package com.exasol.cloudetl.scriptclasses
+package com.exasol.cloudetl.kafka
 
 import scala.collection.JavaConverters._
 
-import com.exasol.cloudetl.kafka.KafkaConsumerProperties
-
 import org.mockito.Mockito._
 
-class KafkaPathTest extends PathTest {
+class KafkaConsumerQueryGeneratorTest extends PathTest {
 
   private[this] val kafkaConsumerProperties = Map(
     "BOOTSTRAP_SERVERS" -> "kafka.broker01.example.com:9092",
@@ -47,7 +45,8 @@ class KafkaPathTest extends PathTest {
          |  partition_index;
          |""".stripMargin
 
-    assert(KafkaPath.generateSqlForImportSpec(metadata, importSpec) === expectedSQLStatement)
+    val generatedSQL = KafkaConsumerQueryGenerator.generateSqlForImportSpec(metadata, importSpec)
+    assert(generatedSQL === expectedSQLStatement)
     verify(metadata, atLeastOnce).getScriptSchema
     verify(importSpec, times(1)).getParameters
   }
@@ -56,7 +55,7 @@ class KafkaPathTest extends PathTest {
     properties -= ("TABLE_NAME")
     when(importSpec.getParameters()).thenReturn(properties.asJava)
     val thrown = intercept[IllegalArgumentException] {
-      KafkaPath.generateSqlForImportSpec(metadata, importSpec)
+      KafkaConsumerQueryGenerator.generateSqlForImportSpec(metadata, importSpec)
     }
     assert(thrown.getMessage === "Please provide a value for the TABLE_NAME property!")
   }
@@ -65,7 +64,7 @@ class KafkaPathTest extends PathTest {
     properties -= "TOPIC_NAME"
     when(importSpec.getParameters()).thenReturn(properties.asJava)
     val thrown = intercept[IllegalArgumentException] {
-      KafkaPath.generateSqlForImportSpec(metadata, importSpec)
+      KafkaConsumerQueryGenerator.generateSqlForImportSpec(metadata, importSpec)
     }
     assert(thrown.getMessage === "Please provide a value for the TOPIC_NAME property!")
   }
@@ -74,7 +73,7 @@ class KafkaPathTest extends PathTest {
     properties += ("TOPIC_NAME" -> "topic1,topic2,topic3")
     when(importSpec.getParameters()).thenReturn(properties.asJava)
     val thrown = intercept[IllegalArgumentException] {
-      KafkaPath.generateSqlForImportSpec(metadata, importSpec)
+      KafkaConsumerQueryGenerator.generateSqlForImportSpec(metadata, importSpec)
     }
     assert(thrown.getMessage.contains("Please provide only a single topic name."))
   }

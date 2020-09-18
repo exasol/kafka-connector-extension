@@ -262,21 +262,6 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(BaseProperties(properties).getSSLEndpointIdentificationAlgorithm() === "https")
   }
 
-  test("build throws if required BOOTSTRAP_SERVERS property is not provided") {
-    val thrown = intercept[IllegalArgumentException] {
-      BaseProperties(properties).build(mock[ExaMetadata])
-    }
-    assert(thrown.getMessage === errorMessage("BOOTSTRAP_SERVERS"))
-  }
-
-  test("build throws if required SCHEMA_REGISTRY_URL property is not provided") {
-    properties = Map("BOOTSTRAP_SERVERS" -> "kafka01.internal:9092")
-    val thrown = intercept[IllegalArgumentException] {
-      BaseProperties(properties).build(mock[ExaMetadata])
-    }
-    assert(thrown.getMessage === errorMessage("SCHEMA_REGISTRY_URL"))
-  }
-
   test("getProperties returns Java map properties") {
     import KafkaConsumerProperties._
     val requiredProperties = Map(

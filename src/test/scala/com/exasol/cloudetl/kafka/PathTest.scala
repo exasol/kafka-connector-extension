@@ -1,4 +1,4 @@
-package com.exasol.cloudetl.scriptclasses
+package com.exasol.cloudetl.kafka
 
 import com.exasol.ExaExportSpecification
 import com.exasol.ExaImportSpecification
@@ -13,9 +13,9 @@ import org.scalatestplus.mockito.MockitoSugar
  */
 trait PathTest extends AnyFunSuite with BeforeAndAfterEach with MockitoSugar {
 
-  private[scriptclasses] val schema = "myDBSchema"
+  private[kafka] val schema = "myDBSchema"
 
-  private[scriptclasses] var properties = Map(
+  private[kafka] var properties = Map(
     "BUCKET_PATH" -> "s3a://my_bucket/folder1/*",
     "DATA_FORMAT" -> "PARQUET",
     "S3_ENDPOINT" -> "s3.eu-central-1.com",
@@ -23,9 +23,9 @@ trait PathTest extends AnyFunSuite with BeforeAndAfterEach with MockitoSugar {
     "S3_SECRET_KEY" -> "s3_secret_key"
   )
 
-  private[scriptclasses] var metadata: ExaMetadata = _
-  private[scriptclasses] var importSpec: ExaImportSpecification = _
-  private[scriptclasses] var exportSpec: ExaExportSpecification = _
+  private[kafka] var metadata: ExaMetadata = _
+  private[kafka] var importSpec: ExaImportSpecification = _
+  private[kafka] var exportSpec: ExaExportSpecification = _
 
   @SuppressWarnings(Array("org.wartremover.contrib.warts.UnsafeInheritance"))
   override def beforeEach(): Unit = {

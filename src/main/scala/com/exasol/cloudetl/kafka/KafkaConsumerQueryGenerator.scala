@@ -1,13 +1,27 @@
-package com.exasol.cloudetl.scriptclasses
+package com.exasol.cloudetl.kafka
 
 import scala.collection.JavaConverters._
 
 import com.exasol.ExaImportSpecification
 import com.exasol.ExaMetadata
-import com.exasol.cloudetl.kafka.KafkaConsumerProperties
 
-object KafkaPath {
+/**
+ * This object is referenced from the UDF script that is called from the
+ * Exasol's {@code IMPORT FROM SCRIPT} SQL statement.
+ *
+ * It returns an SQL query that is run to import data from a Kafka
+ * topic.
+ */
+object KafkaConsumerQueryGenerator {
 
+  /**
+   * An entry point for the Exasol IMPORT FROM SCRIPT user-defined
+   * function.
+   *
+   * The generated SQL query calls metadata and import UDF scripts
+   * internally. Additionally, the generated query runs in a single
+   * transaction.
+   */
   def generateSqlForImportSpec(
     metadata: ExaMetadata,
     importSpec: ExaImportSpecification
