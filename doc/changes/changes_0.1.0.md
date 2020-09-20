@@ -17,3 +17,4 @@ user guide for the updated deployment, configuration and usage steps.
 
 * [#4](https://github.com/exasol/kafka-connector-extension/issues/4): Changed the metadata columns positions (PR [#7](https://github.com/exasol/kafka-connector-extension/pull/7))
 * [#5](https://github.com/exasol/kafka-connector-extension/issues/5): Changed the UDF script and referenced class names (PR [#8](https://github.com/exasol/kafka-connector-extension/pull/8))
+* [#10](https://github.com/exasol/kafka-connector-extension/issues/10): Removed used provided SSL credentials parameters (PR [#11](https://github.com/exasol/kafka-connector-extension/pull/11))
