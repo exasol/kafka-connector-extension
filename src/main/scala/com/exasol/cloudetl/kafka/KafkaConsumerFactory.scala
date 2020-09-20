@@ -30,8 +30,6 @@ object KafkaConsumerFactory {
    * SCHEMA_REGISTRY_URL} value should be provided.
    */
   def apply(properties: KafkaConsumerProperties): KafkaConsumer[String, GenericRecord] = {
-    validateRequiredProperties(properties)
-    validateSSLProperties(properties)
     val topic = properties.getTopic()
     try {
       new KafkaConsumer[String, GenericRecord](
@@ -61,33 +59,44 @@ object KafkaConsumerFactory {
     properties: KafkaConsumerProperties,
     exasolMetadata: ExaMetadata
   ): KafkaConsumer[String, GenericRecord] = {
-    val consumerProperties = properties.mergeWithConnectionObject(exasolMetadata)
-    apply(consumerProperties)
-  }
-
-  private[this] def validateRequiredProperties(properties: KafkaConsumerProperties): Unit = {
-    if (!properties.containsKey(BOOTSTRAP_SERVERS.userPropertyName)) {
-      throw new IllegalArgumentException(
-        s"Please provide a value for the ${BOOTSTRAP_SERVERS.userPropertyName} property!"
-      )
-    }
-    if (!properties.hasSchemaRegistryUrl()) {
-      throw new IllegalArgumentException(
-        s"Please provide a value for the ${SCHEMA_REGISTRY_URL.userPropertyName} property!"
-      )
+    validateNoSSLCredentials(properties)
+    if (properties.hasNamedConnection()) {
+      val newProperties = properties.mergeWithConnectionObject(exasolMetadata)
+      validateSSLLocationFilesExist(newProperties)
+      apply(newProperties)
+    } else {
+      apply(properties)
     }
   }
 
-  private[this] def validateSSLProperties(properties: KafkaConsumerProperties): Unit =
+  private[this] def validateNoSSLCredentials(properties: KafkaConsumerProperties): Unit =
+    if (properties.isSSLEnabled()) {
+      val secureConnectionProperties = List(
+        SSL_KEYSTORE_LOCATION,
+        SSL_KEYSTORE_PASSWORD,
+        SSL_KEY_PASSWORD,
+        SSL_TRUSTSTORE_LOCATION,
+        SSL_TRUSTSTORE_PASSWORD
+      ).map(_.userPropertyName)
+      if (secureConnectionProperties.exists(p => properties.containsKey(p))) {
+        throw new KafkaConnectorException(
+          "Please use a named connection object to provide secure SSL properties."
+        )
+      }
+    }
+
+  private[this] def validateSSLLocationFilesExist(properties: KafkaConsumerProperties): Unit =
     if (properties.isSSLEnabled()) {
       if (!Files.isRegularFile(Paths.get(properties.getSSLKeystoreLocation()))) {
         throw new KafkaConnectorException(
-          s"Unable to find the SSL keystore file '${properties.getSSLKeystoreLocation()}'."
+          s"Unable to find the SSL keystore file '${properties.getSSLKeystoreLocation()}'. " +
+            s"Please make sure it is successfully uploaded to BucketFS bucket."
         )
       }
       if (!Files.isRegularFile(Paths.get(properties.getSSLTruststoreLocation()))) {
         throw new KafkaConnectorException(
-          s"Unable to find the SSL truststore file '${properties.getSSLTruststoreLocation()}'."
+          s"Unable to find the SSL truststore file '${properties.getSSLTruststoreLocation()}'. " +
+            s"Please make sure it is successfully uploaded to BucketFS bucket."
         )
       }
     }

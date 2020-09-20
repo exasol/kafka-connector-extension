@@ -334,26 +334,6 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     )
   }
 
-  test("mergeWithConnectionObject throws exception during validation") {
-    val conflictingProperties = Map(
-      "BOOTSTRAP_SERVERS" -> "kafka.broker.com:9092",
-      "CONNECTION_NAME" -> "MY_CONNECTION",
-      "SSL_KEY_PASSWORD" -> "sslK3YP@ssword"
-    )
-
-    val kafkaConsumerProperties = new BaseProperties(conflictingProperties)
-    val exaMetadata = mock[ExaMetadata]
-    val thrown = intercept[KafkaConnectorException] {
-      kafkaConsumerProperties.mergeWithConnectionObject(exaMetadata)
-    }
-    assert(
-      thrown.getMessage ===
-        """Please provide either CONNECTION_NAME property
-          | or server / credentials parameters, but not both!""".stripMargin
-          .replace("\n", "")
-    )
-  }
-
   private[this] case class BaseProperties(val params: Map[String, String])
       extends KafkaConsumerProperties(params)
 

@@ -199,32 +199,11 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    * Returns a new [[KafkaConsumerProperties]] that merges the key-value pairs
    * parsed from user provided Exasol named connection object.
    */
-  final def mergeWithConnectionObject(exaMetadata: ExaMetadata): KafkaConsumerProperties =
-    if (hasNamedConnection()) {
-      validateConnectionObject()
-      val connectionParsedMap =
-        parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName, Option(exaMetadata))
-      val newProperties = properties ++ connectionParsedMap
-      new KafkaConsumerProperties(newProperties)
-    } else {
-      this
-    }
-
-  private[this] def validateConnectionObject(): Unit = {
-    val connectionProperties = List(
-      "SSL_KEYSTORE_LOCATION",
-      "SSL_KEYSTORE_PASSWORD",
-      "SSL_KEY_PASSWORD",
-      "SSL_TRUSTSTORE_LOCATION",
-      "SSL_TRUSTSTORE_PASSWORD"
-    )
-
-    if (connectionProperties.exists(p => containsKey(p))) {
-      throw new KafkaConnectorException(
-        "Please provide either CONNECTION_NAME property or " +
-          "server / credentials parameters, but not both!"
-      )
-    }
+  final def mergeWithConnectionObject(exaMetadata: ExaMetadata): KafkaConsumerProperties = {
+    val connectionParsedMap =
+      parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName, Option(exaMetadata))
+    val newProperties = properties ++ connectionParsedMap
+    new KafkaConsumerProperties(newProperties)
   }
 
   /**
