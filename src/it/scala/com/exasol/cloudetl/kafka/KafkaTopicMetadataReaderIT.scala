@@ -3,6 +3,8 @@ package com.exasol.cloudetl.kafka
 import java.lang.{Integer => JInt}
 import java.lang.{Long => JLong}
 
+import com.exasol.ExaDataTypeException
+import com.exasol.ExaIterationException
 import com.exasol.ExaMetadata
 
 import org.mockito.ArgumentMatchers.anyInt
@@ -68,6 +70,27 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
       KafkaTopicMetadataReader.run(mock[ExaMetadata], iter)
     }
     assert(thrown.getMessage.contains("Error creating a Kafka consumer for topic"))
+  }
+
+  test("run catches when emit throws an ExaDataTypeException") {
+    val thrown = intercept[KafkaConnectorException] {
+      emitThrowsAnException(classOf[ExaDataTypeException])
+    }
+    assert(thrown.getMessage.contains("Error emitting metadata information for topic"))
+  }
+
+  test("run catches when emit throws an ExaIterationException") {
+    val thrown = intercept[KafkaConnectorException] {
+      emitThrowsAnException(classOf[ExaIterationException])
+    }
+    assert(thrown.getMessage.contains("Error emitting metadata information for topic"))
+  }
+
+  def emitThrowsAnException[T <: Throwable](exception: Class[T]): Unit = {
+    createCustomTopic(topic, partitions = 2)
+    val iter = mockExasolIterator(properties, Seq(1, 3), Seq(7, 17))
+    when(iter.emit(JInt.valueOf(1), JLong.valueOf(7))).thenThrow(exception)
+    KafkaTopicMetadataReader.run(mock[ExaMetadata], iter)
   }
 
 }

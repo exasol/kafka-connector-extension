@@ -3,11 +3,13 @@ package com.exasol.cloudetl.kafka
 import java.lang.{Integer => JInt}
 import java.lang.{Long => JLong}
 
+import com.exasol.ExaDataTypeException
 import com.exasol.ExaMetadata
 
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.when
 
 class KafkaTopicDataImporterIT extends KafkaIntegrationTest {
 
@@ -102,6 +104,22 @@ class KafkaTopicDataImporterIT extends KafkaIntegrationTest {
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong]
     )
+  }
+
+  test("run catches when emit throws ExaDataTypeException") {
+    createCustomTopic(topic)
+    publishToKafka(topic, AvroRecord("first", 1, 2))
+    publishToKafka(topic, AvroRecord("second", 3, 4))
+    val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
+    when(
+      iter.emit("second", JInt.valueOf(3), JLong.valueOf(4), JInt.valueOf(0), JLong.valueOf(1))
+    ).thenThrow(classOf[ExaDataTypeException])
+    val thrown = intercept[KafkaConnectorException] {
+      KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    }
+    val msg = thrown.getMessage()
+    assert(msg.contains("Error consuming Kafka topic 'exasol-kafka-topic' data."))
+    assert(msg.contains("It occurs for partition '0' in node '0' and vm"))
   }
 
 }

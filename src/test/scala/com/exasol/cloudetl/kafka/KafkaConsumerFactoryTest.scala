@@ -1,5 +1,6 @@
 package com.exasol.cloudetl.kafka
 
+import java.nio.file.Path
 import java.nio.file.Paths
 
 import com.exasol.ExaConnectionInformation
@@ -19,37 +20,14 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
     "TOPIC_NAME" -> "topic",
     "TABLE_NAME" -> "exasolTable"
   )
+  private[this] val DUMMY_KEYSTORE_FILE =
+    Paths.get(getClass.getResource("/kafka.consumer.keystore.jks").toURI).toAbsolutePath
+  private[this] val DUMMY_TRUSTSTORE_FILE =
+    Paths.get(getClass.getResource("/kafka.consumer.truststore.jks").toURI).toAbsolutePath
 
   test("apply returns a default kafka consumer type") {
     val consumerProperties = KafkaConsumerProperties(defaultProperties)
     val kafkaConsumer = KafkaConsumerFactory(consumerProperties, mock[ExaMetadata])
-    assert(kafkaConsumer.isInstanceOf[KafkaConsumer[String, GenericRecord]])
-  }
-
-  test("apply returns a SSL enabled kafka consumer") {
-    val properties = defaultProperties ++ Map(
-      "SSL_ENABLED" -> "true",
-      "SECURITY_PROTOCOL" -> "SSL",
-      "CONNECTION_NAME" -> "SSL_CONNECTION"
-    )
-    val consumerProperties = KafkaConsumerProperties(properties)
-    val exaMetadata = mock[ExaMetadata]
-    val exaConnectionInformation = mock[ExaConnectionInformation]
-    val keystoreFile =
-      Paths.get(getClass.getResource("/kafka.consumer.keystore.jks").toURI).toAbsolutePath
-    val truststoreFile =
-      Paths.get(getClass.getResource("/kafka.consumer.truststore.jks").toURI).toAbsolutePath
-    when(exaMetadata.getConnection("SSL_CONNECTION")).thenReturn(exaConnectionInformation)
-    when(exaConnectionInformation.getUser()).thenReturn("")
-    when(exaConnectionInformation.getPassword()).thenReturn(
-      s"""SSL_KEY_PASSWORD=pass123;
-         |SSL_KEYSTORE_LOCATION=$keystoreFile;
-         |SSL_KEYSTORE_PASSWORD=pass123;
-         |SSL_TRUSTSTORE_LOCATION=$truststoreFile;
-         |SSL_TRUSTSTORE_PASSWORD=pass123
-      """.stripMargin.replace("\n", "")
-    )
-    val kafkaConsumer = KafkaConsumerFactory(consumerProperties, exaMetadata)
     assert(kafkaConsumer.isInstanceOf[KafkaConsumer[String, GenericRecord]])
   }
 
@@ -96,7 +74,33 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
     )
   }
 
-  test("apply throws if secure SSL JKS files are not available") {
+  test("apply returns a SSL enabled kafka consumer") {
+    val kafkaConsumer = createSSLEnabledKafkaConsumer(DUMMY_KEYSTORE_FILE, DUMMY_TRUSTSTORE_FILE)
+    assert(kafkaConsumer.isInstanceOf[KafkaConsumer[String, GenericRecord]])
+  }
+
+  test("apply throws if SSL Keystore JKS file is not available") {
+    val thrown = intercept[KafkaConnectorException] {
+      createSSLEnabledKafkaConsumer(Paths.get("ssl_keystore_file"), DUMMY_TRUSTSTORE_FILE)
+    }
+    val msg = thrown.getMessage()
+    assert(msg.contains("Unable to find the SSL keystore file"))
+    assert(msg.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
+  }
+
+  test("apply throws if SSL Truststore JKS file is not available") {
+    val thrown = intercept[KafkaConnectorException] {
+      createSSLEnabledKafkaConsumer(DUMMY_KEYSTORE_FILE, Paths.get("ssl_truststore_file"))
+    }
+    val msg = thrown.getMessage()
+    assert(msg.contains("Unable to find the SSL truststore file"))
+    assert(msg.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
+  }
+
+  final def createSSLEnabledKafkaConsumer(
+    keystoreFile: Path,
+    truststoreFile: Path
+  ): KafkaConsumer[String, GenericRecord] = {
     val properties = defaultProperties ++ Map(
       "SSL_ENABLED" -> "true",
       "SECURITY_PROTOCOL" -> "SSL",
@@ -109,20 +113,13 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
     when(exaConnectionInformation.getUser()).thenReturn("")
     when(exaConnectionInformation.getPassword()).thenReturn(
       s"""SSL_KEY_PASSWORD=pass123;
-         |SSL_KEYSTORE_LOCATION=SSL_KeystoreFile;
+         |SSL_KEYSTORE_LOCATION=$keystoreFile;
          |SSL_KEYSTORE_PASSWORD=pass123;
-         |SSL_TRUSTSTORE_LOCATION=SSL_TruststoreFile;
+         |SSL_TRUSTSTORE_LOCATION=$truststoreFile;
          |SSL_TRUSTSTORE_PASSWORD=pass123
       """.stripMargin.replace("\n", "")
     )
-    val thrown = intercept[KafkaConnectorException] {
-      KafkaConsumerFactory(consumerProperties, exaMetadata)
-    }
-    assert(thrown.getMessage.contains("Unable to find the SSL keystore file"))
-    assert(
-      thrown.getMessage
-        .contains("Please make sure it is successfully uploaded to BucketFS bucket")
-    )
+    KafkaConsumerFactory(consumerProperties, exaMetadata)
   }
 
 }
