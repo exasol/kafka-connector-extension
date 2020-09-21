@@ -80,7 +80,7 @@ object KafkaTopicDataImporter extends LazyLogging {
       case exception: Throwable =>
         throw new KafkaConnectorException(
           s"Error consuming Kafka topic '$topic' data. " +
-            s"It occurs for partition '$partitionId' in node '$nodeId' and vm '$vmId'" +
+            s"It occurs for partition '$partitionId' in node '$nodeId' and vm '$vmId' " +
             "Cause: " + exception.getMessage(),
           exception
         )
