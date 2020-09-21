@@ -50,14 +50,14 @@ deploy:
   provider: releases
   api_key:
     secure: |-
-      u8cr+1uVDUU2k1/OIEJzzUVfHezB8yHfCtupxJgOy7xp3cwInetJ6l5AO1+2FWTEzhiS0PN5srqLdk0mZxAAUBWVDv2
-      RTxZ9c6iduNLxuaL1BFX6D/lgVJ/zGW69ghOcn8Pa40V2OAocB2JxiKb3Mob9PBC0CBirlr1V9RI2+cIwP2JGb0WJYf
-      Mg6JSF9zYqQiXYPhCjVLKE7wDVeO2M0SfI1kURcM+4iDMB1DPfMy7G0ATKoefq8xzSl7/8DwvOT+r3T1L1QO0fk1z62
-      V2toJzcBfiXK3kU8b2+YPGnyx8YEqcsWfciKaBJqFHiAtGMlq/ea7isHsG+BiJxVUR0hcLqJvi+S4HbldchP35mMgnG
-      EP6vwtTExTgsWuH84ApH4uDCwJZkqngLrUpblt26f7iye9F8e5zG0mGfkxgZBrJgYkJPod7ntH0nYGb0Y4ZC+px/oIe
-      D5t7yvmwxGT3ARvNS7vOlgl7IQ3dRn4hcrMjqPQmwet6nmo1vv9RtUrY6vTJeh8blkPRjExbC/lCfKkT6AOr1OUuR3f
-      shq9MLKBeFQBahsH7T5sWaW/m2MeAbVBCG+r9qyN17dlDnQiD8KDjVQeu73lvwTUMdFZzDMfoiGrV31tTddSMfYa/CX
-      9p2j0tcPrxJW/fgX10YLJ44Zgy/26CVGYLJ1NYAZed3D7U=
+      BZYwbVYGcA0yQ3JvC6SCB0otKsuY/u7aF/ajlLqrpAcu1w+ucs77kvceNAjPUzkhBthaagJXGfURQU71DEebjL9Nynl
+      /UWHMnwx7wonbNOH3lvTSo/LTkw0XcW9rH55rJtBHmMTdzZ0EMaDTdoetuv3TNVK8Fv6j0Me55+SO+Ch3e1taLNa/3E
+      mu1Z4mVL6+lEgbBMcrDM639DbhyJWpJ3dcp48U9TXoyXKvAAiW3MrSo3EvBuRDyhOeooEoT2/9R0VaFURrjEVv+dq1R
+      u4SriQ/To4OcWXQGyGO09BkEJwI3qZiPY78+yysGUUl6g6DX6f/k3FcadM0cdZ5yDU3yk9FtdqELTEAXYV7e7sNfktu
+      1oaEy6/gsaw+36nUjGVWC73Wu5BdJg9O0G5HL8uv5UzQRHLebecogJlTXKwJwrPkNiinvvgACtsr/++2SshFH0VOsVO
+      +t9MvNBKbmU8TjtEvB0gvzqmmzjo1nyy81Dg20+Gvfc2wQAjkmDJ6YR2VblpSAxtaBrGm70MoEIKa0kTeRetEa1i4T3
+      KwRFCj0pqMhpVf7HFO232FscrcLv6l1DCCGDUbn1lPZSHECYYLYVgueIUYZEQAW7t0AZDlpss7yvKsHg+bqnp/CknW3
+      2i11sPvH7ggvf3CmSlN0PykCK3fErTNm9xdkYp48UyfG14=
   file:
     - artifacts/exasol-kafka-connector-extension-${JAR_VERSION}.jar
     - artifacts/checksum.sha256.txt
