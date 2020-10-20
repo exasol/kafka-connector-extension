@@ -34,6 +34,7 @@ object KafkaTopicMetadataReader extends LazyLogging {
 
     val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, metadata)
     val topicPartitions = kafkaConsumer.partitionsFor(topic).asScala.toList.map(_.partition())
+    logger.info(s"Reading metadata for '${topicPartitions.mkString(",")}' topic partitions")
     try {
       topicPartitions.foreach { partitionId =>
         val offset: JLong = seenPartitionOffsets.getOrElse(partitionId, -1L)
