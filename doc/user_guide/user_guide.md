@@ -5,6 +5,16 @@ import Avro formatted data from Kafka topics.
 
 Using the connector you can import data from a Kafka topic into an Exasol table.
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Deployment](#deployment)
+- [Prepare Exasol Table](#prepare-exasol-table)
+- [Avro Data Mapping](#avro-data-mapping)
+- [Import From Kafka Cluster](#import-from-kafka-cluster)
+- [Secure Connection to Kafka Cluster](#secure-connection-to-kafka-cluster)
+- [Kafka Consumer Properties](#kafka-consumer-properties)
+
 ## Getting Started
 
 We assume you already have running Exasol cluster with version `6.0` or later
@@ -177,6 +187,66 @@ and record offset inside a partition:
 
 - KAFKA_PARTITION DECIMAL(18,0)
 - KAFKA_OFFSET    DECIMAL(36, 0)
+
+## Avro Data Mapping
+
+[Avro][avro-spec] supports several primitive and complex type. The following
+table shows how they are mapped to the Exasol types.
+
+| Avro Data Type | Avro Logical Attribute | Recommended Exasol Column Types |
+|:--------------:|:----------------------:|:-------------------------------:|
+| boolean        |                        | BOOLEAN                         |
+| int            |                        | INT, INTEGER, DECIMAL(18, 0)    |
+| int            | date                   | DATE                            |
+| long           |                        | BIGINT, DECIMAL(36, 0)          |
+| long           | timestamp-millis       | TIMESTAMP                       |
+| long           | timestamp-micros       | TIMESTAMP                       |
+| float          |                        | FLOAT                           |
+| double         |                        | DOUBLE, DOUBLE PRECISION        |
+| bytes          |                        | VARCHAR(n), CHAR(n)             |
+| bytes          | decimal(p, s)          | DECIMAL(p, s)                   |
+| fixed          |                        | VARCHAR(n), CHAR(n)             |
+| fixed          | decimal(p, s)          | DECIMAL(p, s)                   |
+| string         |                        | VARCHAR(n), CHAR(n)             |
+| enum           |                        | VARCHAR(n), CHAR(n)             |
+| union          |                        | Corresponding Non Null Type     |
+| array          |                        | VARCHAR(n), CHAR(n)             |
+| map            |                        | VARCHAR(n), CHAR(n)             |
+| record         |                        | VARCHAR(n), CHAR(n)             |
+
+You can also enrich regular Avro types with logical type attributes, and use the
+suggested [Exasol column types][exasol-types] when preparing the table.
+
+For example, given the following Avro record schema,
+
+```json
+{
+  "type": "record",
+  "name": "KafkaExasolAvroRecord",
+  "fields": [
+    { "name": "product", "type": "string" },
+    { "name": "price", "type": { "type": "bytes", "precision": 4, "scale": 2, "logicalType": "decimal" }}
+    { "name": "sale_time", "type": { "type": "long", "logicalType": "timestamp-millis" }}
+  ]
+}
+```
+
+you can define the following Exasol table with column types mapped respectively.
+
+```sql
+CREATE OR REPLACE TABLE <schema_name>.<table_name> (
+    PRODUCT     VARCHAR(500),
+    PRICE       DECIMAL(4, 2),
+    SALE_TIME   TIMESTAMP,
+
+    KAFKA_PARTITION DECIMAL(18, 0),
+    KAFKA_OFFSET DECIMAL(36, 0)
+);
+```
+
+Please notice that we convert Avro complex types to the JSON Strings. Use Exasol
+`VARCHAR(n)` column type to store them. Depending on the size of complex type,
+set the number of characters in the VARCHAR type accordingly.
 
 ## Import From Kafka Cluster
 
@@ -389,3 +459,5 @@ Kafka clusters.
 [kafka-security]: https://kafka.apache.org/documentation/#security
 [kafka-secure-clients]: https://kafka.apache.org/documentation/#security_configclients
 [kafka-consumer-configs]: https://kafka.apache.org/documentation/#consumerconfigs
+[avro-spec]: https://avro.apache.org/docs/current/spec.html
+[exasol-types]: https://docs.exasol.com/sql_references/data_types/datatypesoverview.htm

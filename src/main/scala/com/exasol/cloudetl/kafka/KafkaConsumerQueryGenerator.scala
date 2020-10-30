@@ -5,6 +5,8 @@ import scala.collection.JavaConverters._
 import com.exasol.ExaImportSpecification
 import com.exasol.ExaMetadata
 
+import com.typesafe.scalalogging.LazyLogging
+
 /**
  * This object is referenced from the UDF script that is called from the
  * Exasol's {@code IMPORT FROM SCRIPT} SQL statement.
@@ -12,7 +14,7 @@ import com.exasol.ExaMetadata
  * It returns an SQL query that is run to import data from a Kafka
  * topic.
  */
-object KafkaConsumerQueryGenerator {
+object KafkaConsumerQueryGenerator extends LazyLogging {
 
   /**
    * An entry point for the Exasol IMPORT FROM SCRIPT user-defined
@@ -35,6 +37,7 @@ object KafkaConsumerQueryGenerator {
           "from multiple topics is not supported."
       )
     }
+    logger.info(s"Generating a SQL query to import from '$topic'.")
     val kvPairs = kafkaProperties.mkString()
     val scriptSchema = metadata.getScriptSchema
 

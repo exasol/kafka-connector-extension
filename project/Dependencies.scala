@@ -7,16 +7,14 @@ import sbt.librarymanagement.InclExclRule
 object Dependencies {
 
   // Runtime dependencies versions
-  private val ExasolVersion = "6.1.7"
-  private val ImportExportUDFVersion = "0.1.0"
+  private val ImportExportUDFVersion = "0.2.0"
   private val KafkaClientsVersion = "2.5.0"
   private val KafkaAvroSerializerVersion = "5.4.0"
-  private val TypesafeLoggingVersion = "3.9.2"
 
   // Test dependencies versions
   private val ScalaTestVersion = "3.2.2"
   private val ScalaTestPlusVersion = "1.0.0-M2"
-  private val MockitoCoreVersion = "3.5.10"
+  private val MockitoCoreVersion = "3.6.0"
   private val KafkaSchemaRegistryVersion = "5.4.0"
 
   val Resolvers: Seq[Resolver] = Seq(
@@ -25,12 +23,7 @@ object Dependencies {
   )
 
   lazy val RuntimeDependencies: Seq[ModuleID] = Seq(
-    "com.exasol" % "exasol-script-api" % ExasolVersion,
     "com.exasol" %% "import-export-udf-common-scala" % ImportExportUDFVersion,
-    "com.typesafe.scala-logging" %% "scala-logging" % TypesafeLoggingVersion
-      exclude ("org.slf4j", "slf4j-api")
-      exclude ("org.scala-lang", "scala-library")
-      exclude ("org.scala-lang", "scala-reflect"),
     "org.apache.kafka" % "kafka-clients" % KafkaClientsVersion,
     "io.confluent" % "kafka-avro-serializer" % KafkaAvroSerializerVersion
       exclude ("org.slf4j", "slf4j-api")
