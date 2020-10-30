@@ -33,11 +33,9 @@ Additional resources:
 
 | Dependency                                  | Purpose                                                         | License            |
 |---------------------------------------------|-----------------------------------------------------------------|--------------------|
-| [Exasol Script API][exasol-script-api-link] | Accessing Exasol IMPORT / EXPORT API                            | MIT License        |
-| [Exasol Import Export UDF Common][ieudf]    | Common Import Export Libraries                                  | MIT License        |
+| [Exasol Import Export UDF Common][ieudf]    | Common Import Export Library for Scala UDFs                     | MIT License        |
 | [Apache Kafka Clients][kafka-clients-link]  | An Apache Kafka client support for Java / Scala                 | Apache License 2.0 |
 | [Kafka Avro Serializer][kafka-avro-link]    | Support for serializing / deserializing Avro formats with Kafka | Apache License 2.0 |
-| [Scala Logging Library][scala-logging-link] | Scala logging library wrapping SLF4J                            | Apache License 2.0 |
 
 ### Test Dependencies
 
@@ -74,11 +72,9 @@ These plugins help with project development.
 [coveralls-link]: https://coveralls.io/github/exasol/kafka-connector-extension?branch=master
 [gh-release-badge]: https://img.shields.io/github/release/exasol/kafka-connector-extension.svg?logo=github
 [gh-release-link]: https://github.com/exasol/kafka-connector-extension/releases/latest
-[exasol-script-api-link]: https://docs.exasol.com/database_concepts/udf_scripts.htm
 [ieudf]: https://github.com/exasol/import-export-udf-common-scala
 [kafka-clients-link]: https://github.com/apache/kafka/tree/trunk/clients
 [kafka-avro-link]: https://github.com/confluentinc/schema-registry/tree/master/avro-serializer
-[scala-logging-link]: https://github.com/lightbend/scala-logging
 [scalatest-link]: http://www.scalatest.org/
 [scalatestplus-link]: https://github.com/scalatest/scalatestplus-mockito
 [mockitocore-link]: https://site.mockito.org/

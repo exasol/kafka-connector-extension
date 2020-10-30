@@ -1,4 +1,4 @@
-# Kafka Connector Extension 0.2.0, released 2020-10-DD
+# Kafka Connector Extension 0.2.0, released 2020-10-30
 
 ## Summary
 

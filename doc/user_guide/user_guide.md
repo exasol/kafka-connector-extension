@@ -194,7 +194,7 @@ and record offset inside a partition:
 table shows how they are mapped to the Exasol types.
 
 | Avro Data Type | Avro Logical Attribute | Recommended Exasol Column Types |
-|:--------------:|:----------------------:|:-------------------------------:|
+|:---------------|:-----------------------|:--------------------------------|
 | boolean        |                        | BOOLEAN                         |
 | int            |                        | INT, INTEGER, DECIMAL(18, 0)    |
 | int            | date                   | DATE                            |
