@@ -214,9 +214,10 @@ table shows how they are mapped to the Exasol types.
 | map            |                        | VARCHAR(n), CHAR(n)             |
 | record         |                        | VARCHAR(n), CHAR(n)             |
 
-You can also enrich regular Avro types with logical type attributes.
+You can also enrich regular Avro types with logical type attributes, and use the
+suggested [Exasol column types][exasol-types] when preparing the table.
 
-For example, the following Avro record schema,
+For example, given the following Avro record schema,
 
 ```json
 {
@@ -230,7 +231,7 @@ For example, the following Avro record schema,
 }
 ```
 
-can be mapped to the following Exasol table,
+you can define the following Exasol table with column types mapped respectively.
 
 ```sql
 CREATE OR REPLACE TABLE <schema_name>.<table_name> (
@@ -242,9 +243,6 @@ CREATE OR REPLACE TABLE <schema_name>.<table_name> (
     KAFKA_OFFSET DECIMAL(36, 0)
 );
 ```
-
-You can use the suggested [Exasol column types][exasol-types] when preparing the
-table.
 
 Please notice that we convert Avro complex types to the JSON Strings. Use Exasol
 `VARCHAR(n)` column type to store them. Depending on the size of complex type,
