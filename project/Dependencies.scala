@@ -7,14 +7,14 @@ import sbt.librarymanagement.InclExclRule
 object Dependencies {
 
   // Runtime dependencies versions
-  private val ImportExportUDFVersion = "0.1.1-SNAPSHOT"
+  private val ImportExportUDFVersion = "0.2.0"
   private val KafkaClientsVersion = "2.5.0"
   private val KafkaAvroSerializerVersion = "5.4.0"
 
   // Test dependencies versions
   private val ScalaTestVersion = "3.2.2"
   private val ScalaTestPlusVersion = "1.0.0-M2"
-  private val MockitoCoreVersion = "3.5.10"
+  private val MockitoCoreVersion = "3.6.0"
   private val KafkaSchemaRegistryVersion = "5.4.0"
 
   val Resolvers: Seq[Resolver] = Seq(
