@@ -35,6 +35,14 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
   final def getGroupId(): String =
     get(GROUP_ID.userPropertyName).fold(GROUP_ID.defaultValue)(identity)
 
+  /**
+   * Returns user provided boolean,
+   * if it is not provided by user
+   * returns default value of false.
+   */
+  final def getSingleColJson(): Boolean =
+    isEnabled(AS_JSON_DOC)
+
   /** Returns the user provided topic name. */
   final def getTopic(): String =
     getString(TOPIC_NAME)
@@ -341,6 +349,14 @@ object KafkaConsumerProperties extends CommonProperties {
     ConsumerConfig.GROUP_ID_CONFIG,
     "EXASOL_KAFKA_UDFS_CONSUMERS"
   )
+
+  /**
+   *
+   * It is a boolean that defines whether data should be imported as
+   * JSON in single column when [[AS_JSON_DOC]] is set to 'true'
+   * or as avro message when [[AS_JSON_DOC]] is 'false' or not set
+   */
+  private[kafka] final val AS_JSON_DOC: String = "AS_JSON_DOC"
 
   /**
    * This is the {@code max.poll.records} configuration setting.

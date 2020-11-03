@@ -49,6 +49,7 @@ object KafkaTopicDataImporter extends LazyLogging {
     val maxRecords = kafkaProperties.getMaxRecordsPerRun()
     val minRecords = kafkaProperties.getMinRecordsPerRun()
     val timeout = kafkaProperties.getPollTimeoutMs()
+    val singleColJson = kafkaProperties.getSingleColJson()
 
     try {
       var recordCount = 0
@@ -67,9 +68,17 @@ object KafkaTopicDataImporter extends LazyLogging {
             record.partition().asInstanceOf[AnyRef],
             record.offset().asInstanceOf[AnyRef]
           )
-          val avroRow = AvroRow(record.value()).getValues().map(_.asInstanceOf[AnyRef])
-          val exasolRow: Seq[Object] = avroRow ++ metadata
-          iterator.emit(exasolRow: _*)
+
+          if (singleColJson) {
+            val rec = record.value()
+            val exasolRow: Seq[Object] = Seq(s"$rec") ++ metadata
+            iterator.emit(exasolRow: _*)
+          } else {
+            val avroRow = AvroRow(record.value()).getValues().map(_.asInstanceOf[AnyRef])
+            val exasolRow: Seq[Object] = avroRow ++ metadata
+            iterator.emit(exasolRow: _*)
+          }
+
         }
         logger.info(
           s"Emitted total '$totalRecordCount' records for partition " +
