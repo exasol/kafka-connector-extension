@@ -10,6 +10,7 @@ import com.exasol.ExaMetadata
 import com.exasol.common.avro.AvroRow
 
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.avro.generic.GenericData
 import org.apache.kafka.common.TopicPartition
 
 /**
@@ -17,6 +18,13 @@ import org.apache.kafka.common.TopicPartition
  * a Kafka topic into an Exasol table.
  */
 object KafkaTopicDataImporter extends LazyLogging {
+
+  private def getAvroRow(singleJson: Boolean, recordValue: GenericData.Record): Seq[Object] =
+    if (singleJson) {
+      Seq(s"$recordValue")
+    } else {
+      AvroRow(recordValue).getValues().map(_.asInstanceOf[AnyRef])
+    }
 
   /**
    * Consumes Kafka topic records and emits them into an Exasol table.
@@ -49,7 +57,7 @@ object KafkaTopicDataImporter extends LazyLogging {
     val maxRecords = kafkaProperties.getMaxRecordsPerRun()
     val minRecords = kafkaProperties.getMinRecordsPerRun()
     val timeout = kafkaProperties.getPollTimeoutMs()
-    val singleColJson = kafkaProperties.getSingleColJson()
+    val singleColumnJson = kafkaProperties.getSingleColJson()
 
     try {
       var recordCount = 0
@@ -64,20 +72,15 @@ object KafkaTopicDataImporter extends LazyLogging {
               s"'${record.offset()}' with key '${record.key()}' and " +
               s"value '${record.value()}'"
           )
+
           val metadata: Seq[Object] = Seq(
             record.partition().asInstanceOf[AnyRef],
             record.offset().asInstanceOf[AnyRef]
           )
 
-          if (singleColJson) {
-            val rec = record.value()
-            val exasolRow: Seq[Object] = Seq(s"$rec") ++ metadata
-            iterator.emit(exasolRow: _*)
-          } else {
-            val avroRow = AvroRow(record.value()).getValues().map(_.asInstanceOf[AnyRef])
-            val exasolRow: Seq[Object] = avroRow ++ metadata
-            iterator.emit(exasolRow: _*)
-          }
+          val recordValue = record.value().asInstanceOf[GenericData.Record]
+          val exasolRow: Seq[Object] = getAvroRow(singleColumnJson, recordValue) ++ metadata
+          iterator.emit(exasolRow: _*)
 
         }
         logger.info(

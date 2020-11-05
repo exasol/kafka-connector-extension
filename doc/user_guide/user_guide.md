@@ -190,7 +190,7 @@ consumer properties](#optional-properties)) then create table like this:
 
 ```sql
 CREATE OR REPLACE TABLE <schema_name>.<table_name> (
-    -- These columns match the Kafka topic schema
+    -- Single column as JSON string for Kafka topic record
     JSON_DOC_COL    VARCHAR(2000000),
     -- Required for Kafka import UDF
     KAFKA_PARTITION DECIMAL(18, 0),
