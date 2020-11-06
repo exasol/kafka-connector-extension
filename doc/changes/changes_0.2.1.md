@@ -7,5 +7,4 @@ as whole JSON document in a single column in database
 
 ## Features
 
-* #18: Option-to-import-JSON-as-is (PR #18)
-
+* #16: Option-to-import-JSON-as-is (PR #18)
