@@ -155,6 +155,8 @@ according to your deployment setup.
 
 ## Prepare Exasol Table
 
+### Avro preparation
+
 You should create a corresponding table in Exasol that stores the data from
 a Kafka topic.
 
@@ -181,8 +183,21 @@ CREATE OR REPLACE TABLE <schema_name>.<table_name> (
     KAFKA_OFFSET DECIMAL(36, 0),
 );
 ```
+### JSON preparation
 
-The first two columns are used to store the metadata about Kafka topic partition
+In case you want to add whole json document in one single column, (see **AS_JSON_DOC** on: [Optional
+consumer properties](#optional-properties)) then create table like this:
+
+```sql
+CREATE OR REPLACE TABLE <schema_name>.<table_name> (
+    -- Single column as JSON string for Kafka topic record
+    JSON_DOC_COL    VARCHAR(2000000),
+    -- Required for Kafka import UDF
+    KAFKA_PARTITION DECIMAL(18, 0),
+    KAFKA_OFFSET DECIMAL(36, 0),
+```
+
+The last two columns are used to store the metadata about Kafka topic partition
 and record offset inside a partition:
 
 - KAFKA_PARTITION DECIMAL(18,0)
@@ -424,6 +439,10 @@ These are optional parameters with their default values.
 
 * ``MAX_PARTITION_FETCH_BYTES`` - It is the maximum amount of data per
   partition the server will return. The default value is **1048576**.
+
+* ``AS_JSON_DOC`` - It defines the way the data will be imported into the database.
+  If set to **'true'** data will be imported as one JSON document in one column. 
+  Default value is **'false'**
 
 The following properties should be provided to enable a secure connection to the
 Kafka clusters.
