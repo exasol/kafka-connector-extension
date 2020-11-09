@@ -1,37 +1,62 @@
 package com.exasol.cloudetl.kafka
 
+import scala.collection.JavaConverters._
+import scala.util.Random
+
 import com.exasol.ExaIterator
 
+import io.confluent.kafka.serializers.KafkaAvroSerializer
 import net.manub.embeddedkafka.schemaregistry.EmbeddedKafka
 import org.apache.avro.AvroRuntimeException
 import org.apache.avro.Schema
 import org.apache.avro.specific.SpecificRecordBase
+import org.apache.kafka.common.serialization.Serializer
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.mockito.MockitoSugar
 
 trait KafkaIntegrationTest
     extends AnyFunSuite
+    with BeforeAndAfterAll
     with BeforeAndAfterEach
     with MockitoSugar
     with EmbeddedKafka {
 
-  val topic = "exasol-kafka-topic"
+  var topic: String = _
+  var properties: Map[String, String] = _
+  val schemaRegistryUrl = "http://localhost:6002"
+  val bootstrapServers = "localhost:6001"
 
-  val properties = Map(
-    "BOOTSTRAP_SERVERS" -> "localhost:6001",
-    "SCHEMA_REGISTRY_URL" -> "http://localhost:6002",
-    "TOPIC_NAME" -> topic,
+  val defaultProperties = Map(
+    "BOOTSTRAP_SERVERS" -> bootstrapServers,
+    "SCHEMA_REGISTRY_URL" -> schemaRegistryUrl,
     "TABLE_NAME" -> "exasolTable"
   )
 
+  def getTopic(): String =
+    Random.alphanumeric.take(4).mkString
+
+  implicit val serializer: Serializer[AvroRecord] = {
+    val properties = Map("schema.registry.url" -> schemaRegistryUrl)
+    val serializer = new KafkaAvroSerializer()
+    serializer.configure(properties.asJava, false)
+    serializer.asInstanceOf[Serializer[AvroRecord]]
+  }
+
   override final def beforeEach(): Unit = {
+    topic = getTopic()
+    properties = defaultProperties ++ Map("TOPIC_NAME" -> topic)
+    ()
+  }
+
+  override final def beforeAll(): Unit = {
     EmbeddedKafka.start()
     ()
   }
 
-  override final def afterEach(): Unit = {
+  override final def afterAll(): Unit = {
     EmbeddedKafka.stop()
     ()
   }
@@ -55,16 +80,18 @@ trait KafkaIntegrationTest
   }
 
   private[this] val avroRecordSchema =
-    new Schema.Parser().parse(s"""{
-                                 | "namespace": "com.exasol.cloudetl",
-                                 | "type": "record",
-                                 | "name": "AvroRecordSchemaForIT",
-                                 | "fields": [
-                                 |     {"name": "col_str", "type": "string"},
-                                 |     {"name": "col_int", "type": "int"},
-                                 |     {"name": "col_long", "type": "long"}
-                                 | ]
-                                 |}""".stripMargin)
+    new Schema.Parser().parse(
+      s"""|{
+          | "namespace": "com.exasol.cloudetl",
+          | "type": "record",
+          | "name": "AvroRecordSchemaForIT",
+          | "fields": [
+          |     {"name": "col_str", "type": "string"},
+          |     {"name": "col_int", "type": "int"},
+          |     {"name": "col_long", "type": "long"}
+          | ]
+          |}""".stripMargin
+    )
 
   case class AvroRecord(var col_str: String, var col_int: Int, var col_long: Long)
       extends SpecificRecordBase {

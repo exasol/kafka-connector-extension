@@ -188,7 +188,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   test("getSecurityProtocol returns default value if security protocol is not set") {
     // default value is intentionally hardcoded, should alert if things
     // change
-    assert(BaseProperties(properties).getSecurityProtocol() === "TLS")
+    assert(BaseProperties(properties).getSecurityProtocol() === "TLSv1.3")
   }
 
   test("getSSLKeyPassword returns ssl key password property value") {
