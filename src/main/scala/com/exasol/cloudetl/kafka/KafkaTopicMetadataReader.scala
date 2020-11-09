@@ -3,8 +3,8 @@ package com.exasol.cloudetl.kafka
 import java.lang.{Integer => JInt}
 import java.lang.{Long => JLong}
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable.HashMap
+import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaIterator
 import com.exasol.ExaMetadata

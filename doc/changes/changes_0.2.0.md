@@ -16,6 +16,10 @@ addition, it fixes a bug related to the missing logging dependency.
 
 ## Dependency Updates
 
+### Runtime Dependency Updates
+
+* Updated `com.exasol:import-export-udf-common-scala` from `0.1.0` to `0.2.0`.
+
 ### Test Dependency Updates
 
 * Updated `org.mockito:mockito-core` from `3.5.10` to `3.6.0`.

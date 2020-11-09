@@ -1,7 +1,7 @@
 package com.exasol.cloudetl.kafka
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable.{Map => MMap}
+import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaMetadata
 import com.exasol.common.AbstractProperties

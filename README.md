@@ -36,6 +36,7 @@ Additional resources:
 | [Exasol Import Export UDF Common][ieudf]    | Common Import Export Library for Scala UDFs                     | MIT License        |
 | [Apache Kafka Clients][kafka-clients-link]  | An Apache Kafka client support for Java / Scala                 | Apache License 2.0 |
 | [Kafka Avro Serializer][kafka-avro-link]    | Support for serializing / deserializing Avro formats with Kafka | Apache License 2.0 |
+| [Scala Collection Compat][scala-compat-link]| Support for cross building Scala 2.13.x code on older versions  | Apache License 2.0 |
 
 ### Test Dependencies
 
@@ -75,6 +76,7 @@ These plugins help with project development.
 [ieudf]: https://github.com/exasol/import-export-udf-common-scala
 [kafka-clients-link]: https://github.com/apache/kafka/tree/trunk/clients
 [kafka-avro-link]: https://github.com/confluentinc/schema-registry/tree/master/avro-serializer
+[scala-compat-link]: https://github.com/scala/scala-collection-compat
 [scalatest-link]: http://www.scalatest.org/
 [scalatestplus-link]: https://github.com/scalatest/scalatestplus-mockito
 [mockitocore-link]: https://site.mockito.org/

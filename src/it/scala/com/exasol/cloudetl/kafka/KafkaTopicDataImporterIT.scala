@@ -118,7 +118,7 @@ class KafkaTopicDataImporterIT extends KafkaIntegrationTest {
       KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
     }
     val msg = thrown.getMessage()
-    assert(msg.contains("Error consuming Kafka topic 'exasol-kafka-topic' data."))
+    assert(msg.contains(s"Error consuming Kafka topic '$topic' data."))
     assert(msg.contains("It occurs for partition '0' in node '0' and vm"))
   }
 
