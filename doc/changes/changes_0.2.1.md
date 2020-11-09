@@ -25,5 +25,3 @@ in a single column in database
 
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry` from `5.4.0` to `6.0.0`.
 * Updated `org.scalatest:scalatest` from `3.2.2` to `3.2.3`.
-
-### Plugin Updates
