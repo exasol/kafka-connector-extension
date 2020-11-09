@@ -3,7 +3,7 @@ package com.exasol.cloudetl.kafka
 import java.time.Duration
 import java.util.Arrays
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaIterator
 import com.exasol.ExaMetadata

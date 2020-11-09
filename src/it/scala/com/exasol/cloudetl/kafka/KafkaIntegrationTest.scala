@@ -1,6 +1,6 @@
 package com.exasol.cloudetl.kafka
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Random
 
 import com.exasol.ExaIterator

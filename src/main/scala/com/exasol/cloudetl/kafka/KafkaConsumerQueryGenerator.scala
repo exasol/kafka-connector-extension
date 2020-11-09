@@ -1,6 +1,6 @@
 package com.exasol.cloudetl.kafka
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaImportSpecification
 import com.exasol.ExaMetadata
