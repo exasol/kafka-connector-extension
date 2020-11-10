@@ -1,9 +1,9 @@
-# Kafka Connector Extension 0.2.1, released DD-MM-YYYY
+# Kafka Connector Extension 0.2.1, released 2020-11-10
 
 ## Summary
 
 This release includes new feature to import Kafka message as whole JSON document
-in a single column in database
+in a single column in database.
 
 ## Features / Improvements
 
