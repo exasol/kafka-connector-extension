@@ -45,7 +45,7 @@ before_deploy:
   - export JAR_VERSION=${TRAVIS_TAG}
   - echo "Jar artifact version $JAR_VERSION"
   - mkdir -p artifacts
-  - cp target/scala-2.12/exasol-kafka-connector-extension-${JAR_VERSION}.jar artifacts/
+  - cp target/scala-2.13/exasol-kafka-connector-extension-${JAR_VERSION}.jar artifacts/
   - echo "Create SHA256 Checksum"
   - cd artifacts
   - sha256sum exasol-kafka-connector-extension-${JAR_VERSION}.jar > checksum.sha256.txt
