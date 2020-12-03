@@ -9,13 +9,13 @@ object Dependencies {
   // Runtime dependencies versions
   private val ImportExportUDFVersion = "0.2.0"
   private val KafkaClientsVersion = "2.6.0"
-  private val KafkaAvroSerializerVersion = "6.0.0"
-  private val ScalaCollectionCompatVersion = "2.2.0"
+  private val KafkaAvroSerializerVersion = "6.0.1"
+  private val ScalaCollectionCompatVersion = "2.3.1"
 
   // Test dependencies versions
   private val ScalaTestVersion = "3.2.3"
   private val ScalaTestPlusVersion = "1.0.0-M2"
-  private val MockitoCoreVersion = "3.6.0"
+  private val MockitoCoreVersion = "3.6.28"
   private val KafkaSchemaRegistryVersion = "6.0.0"
 
   val Resolvers: Seq[Resolver] = Seq(
