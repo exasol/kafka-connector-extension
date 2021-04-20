@@ -1,17 +1,13 @@
 package com.exasol.cloudetl.kafka
 
-import java.lang.{Integer => JInt}
-import java.lang.{Long => JLong}
+import java.lang.{Integer => JInt, Long => JLong}
 
-import com.exasol.ExaDataTypeException
-import com.exasol.ExaMetadata
+import com.exasol.{ExaDataTypeException, ExaMetadata}
 
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 
-class KafkaTopicDataImporterIT extends KafkaIntegrationTest {
+class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT {
 
   test("run emits records from starting initial offset") {
     createCustomTopic(topic)
@@ -121,5 +117,4 @@ class KafkaTopicDataImporterIT extends KafkaIntegrationTest {
     assert(msg.contains(s"Error consuming Kafka topic '$topic' data."))
     assert(msg.contains("It occurs for partition '0' in node '0' and vm"))
   }
-
 }

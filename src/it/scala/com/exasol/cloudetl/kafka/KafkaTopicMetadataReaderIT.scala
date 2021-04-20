@@ -16,6 +16,9 @@ import org.mockito.Mockito._
 )
 class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
 
+  override def additionalProperties: Map[String, String] =
+    Map("SCHEMA_REGISTRY_URL" -> KafkaTopicDataImporterAvroIT.schemaRegistryUrl)
+
   // Default case where Exasol table is empty.
   test("run emits default partitionId maxOffset pairs with single topic partition") {
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))

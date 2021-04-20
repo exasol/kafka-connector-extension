@@ -1,7 +1,7 @@
 # User Guide
 
 Exasol Kafka Connector Extension allows you to connect to Apache Kafka and
-import Avro formatted data from Kafka topics.  
+import Avro or Json formatted data from Kafka topics.  
 
 Using the connector you can import data from a Kafka topic into an Exasol table.
 
@@ -34,11 +34,13 @@ Kafka topics with several partitions.
 
 ### Schema Registry
 
-Kafka connector requires Schema Registry. As a result, you should set it up
-together with a Kafka cluster.
+Kafka connector requires a Schema Registry when importing avro messages that are 
+serialized with a confluent schema registry on the producer side. 
 
 Schema Registry is used to store, serve and manage Avro schemas for each Kafka
 topic. Thus, it allows you to obtain the latest schema for a given Kafka topic.
+As a result, you should set it up together with a Kafka cluster when you use
+ ``RECORD_FORMAT=AVRO``.
 
 ## Deployment
 
@@ -263,7 +265,49 @@ Please notice that we convert Avro complex types to the JSON Strings. Use Exasol
 `VARCHAR(n)` column type to store them. Depending on the size of complex type,
 set the number of characters in the VARCHAR type accordingly.
 
-## Import From Kafka Cluster
+## Importing Raw JSON
+
+When specifying ``RECORD_FORMAT=JSON`` the connector expects a valid UTF-8
+serialized JSON record per message. 
+When using ``ÀS_JSON_DOC=true``, the record is inserted as a whole and 
+the table has to be [prepared for it](#json-preparation)
+
+If you choose to import certain fields from the json record, specify the 
+``RECORD_FIELDS`` parameter with a comma separated list of fields to be imported
+
+``RECORD_FIELDS=age,lastName,address``
+
+and a json record like this
+
+```json
+  "firstName": "John",
+  "lastName": "Smith",
+  "isAlive": true,
+  "age": 27,
+  "address": {
+    "streetAddress": "21 2nd Street",
+    "city": "New York",
+    "state": "NY",
+    "postalCode": "10021-3100"
+  }
+```
+would allow you to import into a table with the following structure
+
+```sql
+CREATE OR REPLACE TABLE <schema_name>.<table_name> (
+    AGE         INTEGER,
+    LAST_NAME   VARCHAR(255),
+    ADDRESS     VARCHAR(10000),
+    -- Required for Kafka import UDF
+    KAFKA_PARTITION DECIMAL(18, 0),
+    KAFKA_OFFSET DECIMAL(36, 0),
+);
+```
+
+Note that the ``RECORD_FIELDS`` parameter is required when inserting JSON into
+columns as the order of fields in json records is not deterministic.
+
+# Import From Kafka Cluster
 
 Several property values are required to access the Kafka
 cluster when importing data from Kafka topics using the connector.
@@ -271,7 +315,7 @@ cluster when importing data from Kafka topics using the connector.
 You should provide these key-value parameters:
 
 - ``BOOTSTRAP_SERVERS``
-- ``SCHEMA_REGISTRY_URL``
+- ``SCHEMA_REGISTRY_URL`` (only when using avro)
 - ``TOPIC_NAME``
 - ``TABLE_NAME``
 
@@ -389,10 +433,6 @@ configurations][kafka-consumer-configs].
   brokers. These addresses will be used to establish the initial connection to
   the Kafka cluster.
 
-* ``SCHEMA_REGISTRY_URL`` - It specifies an URL to the Confluent [Schema
-  Registry][schema-registry] which stores Avro schemas as metadata. Schema
-  Registry will be used to parse the Kafka topic Avro data schemas.
-
 * ``TOPIC_NAME`` - It defines a Kafka topic name that we want to import data
   from.  We only support a single topic data imports. Therefore, it should not
   contain comma-separated list of more than one topic name.
@@ -404,6 +444,17 @@ configurations][kafka-consumer-configs].
 ### Optional Properties
 
 These are optional parameters with their default values.
+
+* ``SCHEMA_REGISTRY_URL`` - It specifies an URL to the Confluent [Schema
+  Registry][schema-registry] which stores Avro schemas as metadata. Schema
+  Registry will be used to parse the Kafka topic Avro data schemas.
+
+* ``RECORD_FORMAT`` - One of [avro, json]. Tje default value is **avro**
+
+* ``RECORD_FIELDS`` - A comma separated list of fields to import from the
+  source record. This can help when the structure of the avro is not under your
+  control and the order and/or the number of fields in the record can change at
+  any time. For ``RECORD_FORMAT=json`` this is required.
 
 * ``GROUP_ID`` - It defines the id for this type of consumer. The default value
   is **EXASOL_KAFKA_UDFS_CONSUMERS**. It is a unique string that identifies the

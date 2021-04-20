@@ -7,10 +7,9 @@ import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaIterator
 import com.exasol.ExaMetadata
-import com.exasol.common.avro.AvroRow
+import com.exasol.cloudetl.kafka.deserialization.{AvroDeserialization, JsonDeserialization}
 
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.avro.generic.GenericData
 import org.apache.kafka.common.TopicPartition
 
 /**
@@ -18,13 +17,6 @@ import org.apache.kafka.common.TopicPartition
  * a Kafka topic into an Exasol table.
  */
 object KafkaTopicDataImporter extends LazyLogging {
-
-  private def getAvroRow(singleJson: Boolean, recordValue: GenericData.Record): Seq[Object] =
-    if (singleJson) {
-      Seq(s"$recordValue")
-    } else {
-      AvroRow(recordValue).getValues().map(_.asInstanceOf[AnyRef])
-    }
 
   /**
    * Consumes Kafka topic records and emits them into an Exasol table.
@@ -50,14 +42,24 @@ object KafkaTopicDataImporter extends LazyLogging {
 
     val topic = kafkaProperties.getTopic()
     val topicPartition = new TopicPartition(topic, partitionId)
-    val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, metadata)
+
+    val recordDeserialization = kafkaProperties.getRecordType() match {
+      case "avro" => AvroDeserialization
+      case "json" => JsonDeserialization
+    }
+    val recordFields = kafkaProperties.getRecordFields()
+    val derserializer = if (kafkaProperties.getSingleColJson()) {
+      recordDeserialization.getSingleColumnJsonDeserializer(kafkaProperties, recordFields)
+    } else {
+      recordDeserialization.getColumnDeserializer(kafkaProperties, recordFields)
+    }
+    val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, derserializer, metadata)
     kafkaConsumer.assign(Arrays.asList(topicPartition))
     kafkaConsumer.seek(topicPartition, partitionNextOffset)
 
     val maxRecords = kafkaProperties.getMaxRecordsPerRun()
     val minRecords = kafkaProperties.getMinRecordsPerRun()
     val timeout = kafkaProperties.getPollTimeoutMs()
-    val singleColumnJson = kafkaProperties.getSingleColJson()
 
     try {
       var recordCount = 0
@@ -78,8 +80,8 @@ object KafkaTopicDataImporter extends LazyLogging {
             record.offset().asInstanceOf[AnyRef]
           )
 
-          val recordValue = record.value().asInstanceOf[GenericData.Record]
-          val exasolRow: Seq[Object] = getAvroRow(singleColumnJson, recordValue) ++ metadata
+          val recordValue = record.value()
+          val exasolRow: Seq[Any] = recordValue ++ metadata
           iterator.emit(exasolRow: _*)
 
         }
