@@ -43,7 +43,11 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
   final def getSingleColJson(): Boolean =
     isEnabled(AS_JSON_DOC)
 
-  final def getRecordType(): String = get(RECORD_FORMAT).getOrElse("avro")
+  /**
+   * Returns the type we expect on the kafka
+   * One of ['json', 'avro'] whereas 'avro is the default'
+   */
+  final def getRecordFormat(): String = get(RECORD_FORMAT).getOrElse("avro")
 
   final def getRecordFields(): Option[Seq[String]] =
     get(RECORD_FIELDS).map(_.split(",").map(_.trim)).map(_.toSeq)
@@ -188,7 +192,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     props.put(ENABLE_AUTO_COMMIT.kafkaPropertyName, ENABLE_AUTO_COMMIT.defaultValue)
     props.put(BOOTSTRAP_SERVERS.kafkaPropertyName, getBootstrapServers())
     props.put(GROUP_ID.kafkaPropertyName, getGroupId())
-    if ("avro".equals(getRecordType())) {
+    if ("avro".equals(getRecordFormat())) {
       props.put(SCHEMA_REGISTRY_URL.kafkaPropertyName, getSchemaRegistryUrl())
     }
     props.put(MAX_POLL_RECORDS.kafkaPropertyName, getMaxPollRecords())
@@ -373,6 +377,11 @@ object KafkaConsumerProperties extends CommonProperties {
    */
   private[kafka] final val RECORD_FIELDS: String = "RECORD_FIELDS"
 
+  /**
+   * The serialization format of the topic we are reading.
+   * Either avro serialized with the confluent schema registry or json as plain string
+   * Needed to construct the correct deserializer.
+   */
   private[kafka] final val RECORD_FORMAT: String = "RECORD_FORMAT"
 
   /**

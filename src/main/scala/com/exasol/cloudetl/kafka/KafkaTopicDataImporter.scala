@@ -43,7 +43,7 @@ object KafkaTopicDataImporter extends LazyLogging {
     val topic = kafkaProperties.getTopic()
     val topicPartition = new TopicPartition(topic, partitionId)
 
-    val recordDeserialization = kafkaProperties.getRecordType() match {
+    val recordDeserialization = kafkaProperties.getRecordFormat() match {
       case "avro" => AvroDeserialization
       case "json" => JsonDeserialization
     }
