@@ -1,9 +1,14 @@
 package com.exasol.cloudetl.kafka
 
 import java.lang.{Integer => JInt, Long => JLong}
+import java.util.Collections
+
+import scala.jdk.CollectionConverters.{CollectionHasAsScala, MapHasAsJava, MapHasAsScala}
 
 import com.exasol.{ExaDataTypeException, ExaMetadata}
 
+import org.apache.kafka.clients.admin.RecordsToDelete
+import org.apache.kafka.common.TopicPartition
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{times, verify, when}
 
@@ -38,6 +43,54 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
       JLong.valueOf(14),
       JInt.valueOf(0),
       JLong.valueOf(1)
+    )
+  }
+
+  test("run emits records when the starting offset of the topic is greater zero") {
+    createCustomTopic(topic)
+
+    val startingOffset = 12
+    0.until(startingOffset)
+      .foreach(recordNr => {
+        publishToKafka(
+          topic,
+          AvroRecord(
+            "Some record that we delete" +
+              "to ensure the offset does not start at zero",
+            recordNr,
+            13
+          )
+        )
+      })
+    deleteRecordsFromTopic(topic, startingOffset)
+
+    publishToKafka(topic, AvroRecord("abc", 3, 13))
+    publishToKafka(topic, AvroRecord("hello", 4, 14))
+
+    val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
+    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+
+    verify(iter, times(2)).emit(Seq(any[Object]): _*)
+    verify(iter, times(2)).emit(
+      anyString(),
+      anyInt().asInstanceOf[JInt],
+      anyLong().asInstanceOf[JLong],
+      anyInt().asInstanceOf[JInt],
+      anyLong().asInstanceOf[JLong]
+    )
+    verify(iter, times(1)).emit(
+      "abc",
+      JInt.valueOf(3),
+      JLong.valueOf(13),
+      JInt.valueOf(0),
+      JLong.valueOf(startingOffset + 0L)
+    )
+    verify(iter, times(1)).emit(
+      "hello",
+      JInt.valueOf(4),
+      JLong.valueOf(14),
+      JInt.valueOf(0),
+      JLong.valueOf(startingOffset + 1L)
     )
   }
 
@@ -116,5 +169,27 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     val msg = thrown.getMessage()
     assert(msg.contains(s"Error consuming Kafka topic '$topic' data."))
     assert(msg.contains("It occurs for partition '0' in node '0' and vm"))
+  }
+
+  private def deleteRecordsFromTopic(topic: String, beforeOffset: Int): Unit = {
+    withAdminClient { client =>
+      val allPartitions = client
+        .describeTopics(Collections.singletonList(topic))
+        .values
+        .asScala
+        .values
+        .head
+        .get()
+        .partitions()
+        .asScala
+        .map(tpi => new TopicPartition(topic, tpi.partition()))
+      client
+        .deleteRecords(
+          allPartitions.map((_, RecordsToDelete.beforeOffset(beforeOffset.toLong))).toMap.asJava
+        )
+        .all()
+        .get()
+    }
+    ()
   }
 }

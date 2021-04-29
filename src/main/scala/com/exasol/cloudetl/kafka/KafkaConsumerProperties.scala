@@ -36,6 +36,13 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     get(GROUP_ID.userPropertyName).fold(GROUP_ID.defaultValue)(identity)
 
   /**
+   * Return the strategy to use when the last committed offset is empty or out of range.
+   * Defaults to <code>earliest{code}.
+   */
+  final def getAutoOffsetReset(): String =
+    get(AUTO_OFFSET_RESET.userPropertyName).fold(AUTO_OFFSET_RESET.defaultValue)(identity)
+
+  /**
    * Returns user provided boolean,
    * if it is not provided by user
    * returns default value of false.
@@ -192,6 +199,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     props.put(ENABLE_AUTO_COMMIT.kafkaPropertyName, ENABLE_AUTO_COMMIT.defaultValue)
     props.put(BOOTSTRAP_SERVERS.kafkaPropertyName, getBootstrapServers())
     props.put(GROUP_ID.kafkaPropertyName, getGroupId())
+    props.put(AUTO_OFFSET_RESET.kafkaPropertyName, getAutoOffsetReset())
     if ("avro".equals(getRecordFormat())) {
       props.put(SCHEMA_REGISTRY_URL.kafkaPropertyName, getSchemaRegistryUrl())
     }
@@ -359,6 +367,19 @@ object KafkaConsumerProperties extends CommonProperties {
     "GROUP_ID",
     ConsumerConfig.GROUP_ID_CONFIG,
     "EXASOL_KAFKA_UDFS_CONSUMERS"
+  )
+
+  /**
+   * This is the {@code auto.offset.reset} configuration setting.
+   *
+   * This controls where the consumer starts when no previous offsets have been inserted in the
+   * table or the offset stored in the table is out of range in the partition.
+   * Defaults to {@code earliest}.
+   */
+  private[kafka] final val AUTO_OFFSET_RESET: Config[String] = Config[String](
+    "AUTO_OFFSET_RESET",
+    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
+    "earliest"
   )
 
   /**
