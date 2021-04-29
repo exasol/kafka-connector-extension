@@ -5,7 +5,7 @@ import com.exasol.cloudetl.kafka.{KafkaConnectorException, KafkaConsumerProperti
 import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
 
 /**
- * Create deserializers for Json records
+ * Creates deserializers for JSON records.
  */
 object JsonDeserialization extends RecordDeserialization {
 
@@ -13,7 +13,6 @@ object JsonDeserialization extends RecordDeserialization {
     properties: KafkaConsumerProperties,
     fields: Option[Seq[String]]
   ): Deserializer[Seq[Any]] = {
-
     if (fields.isDefined) {
       throw new KafkaConnectorException("""Specifying fields when dumping the Json into the DB
                                           |is currently not supported""".stripMargin)

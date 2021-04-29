@@ -8,7 +8,7 @@ import org.apache.kafka.common.serialization.Deserializer
 import scala.jdk.CollectionConverters.MapHasAsJava
 
 /**
- * Creates deserializers for avro records that are serialized with the confluent schema registry
+ * Creates deserializers for avro records that are serialized with the Confluent schema registry.
  */
 object AvroDeserialization extends RecordDeserialization {
 

@@ -44,8 +44,8 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     isEnabled(AS_JSON_DOC)
 
   /**
-   * Returns the type we expect on the kafka
-   * One of ['json', 'avro'] whereas 'avro is the default'
+   * Returns the type we expect on the Kafka.
+   * It is one of ['json', 'avro'] whereas 'avro' is the default.
    */
   final def getRecordFormat(): String = get(RECORD_FORMAT).getOrElse("avro")
 
@@ -379,8 +379,8 @@ object KafkaConsumerProperties extends CommonProperties {
 
   /**
    * The serialization format of the topic we are reading.
-   * Either avro serialized with the confluent schema registry or json as plain string
-   * Needed to construct the correct deserializer.
+   * Either avro serialized with the Confluent schema registry or json as plain string
+   * needed to construct the correct deserializer.
    */
   private[kafka] final val RECORD_FORMAT: String = "RECORD_FORMAT"
 

@@ -10,7 +10,6 @@ import org.apache.kafka.common.serialization.Deserializer
 /**
  * Extract a set of fields from an Avro GenericRecord. If no field list is defined,
  * all fields in the record are emitted.
- *
  */
 class GenericRecordDeserializer(
   fieldList: Option[Seq[String]],
@@ -26,7 +25,6 @@ class GenericRecordDeserializer(
       .map(_.map(filterField => Option(record.getSchema.getField(filterField))))
       .getOrElse(avroFields.map(Option(_)))
       .toSeq
-
     fieldsToRead.map(
       _.map(field => converter.convert(record.get(field.name()), field.schema())).orNull
     )

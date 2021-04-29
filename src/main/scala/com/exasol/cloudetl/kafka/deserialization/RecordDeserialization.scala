@@ -5,13 +5,13 @@ import com.exasol.cloudetl.kafka.KafkaConsumerProperties
 import org.apache.kafka.common.serialization.Deserializer
 
 /**
- * A factory dor kafka deserializers
+ * A factory for Kafka deserializers.
  */
 trait RecordDeserialization {
 
   /**
-   * Create a deserializer that transforms the kafka record into a columnar structure.
-   * If a field list is provided, only those fields must be included in the seq
+   * Creates a deserializer that transforms the Kafka record into a columnar structure.
+   * If a field list is provided, only those fields must be included in the sequence.
    */
   def getColumnDeserializer(
     properties: KafkaConsumerProperties,
@@ -19,7 +19,7 @@ trait RecordDeserialization {
   ): Deserializer[Seq[Any]]
 
   /**
-   * Create a deserializer that emits the kafka record as a plain Json object
+   * Creates a deserializer that emits the Kafka record as a plain JSON object.
    */
   def getSingleColumnJsonDeserializer(
     properties: KafkaConsumerProperties,

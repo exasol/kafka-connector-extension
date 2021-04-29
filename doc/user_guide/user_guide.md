@@ -449,7 +449,7 @@ These are optional parameters with their default values.
   Registry][schema-registry] which stores Avro schemas as metadata. Schema
   Registry will be used to parse the Kafka topic Avro data schemas.
 
-* ``RECORD_FORMAT`` - One of [avro, json]. Tje default value is **avro**
+* ``RECORD_FORMAT`` - One of [avro, json]. The default value is **avro**.
 
 * ``RECORD_FIELDS`` - A comma separated list of fields to import from the
   source record. This can help when the structure of the avro is not under your

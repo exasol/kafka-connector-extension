@@ -34,7 +34,7 @@ class GenericRecordDeserializerTest extends AnyFunSuite with Matchers with Mocki
     new GenericRecordDeserializer(fieldList, derse).deserialize("", Array.empty[Byte])
   }
 
-  test("Must give all fields from record if field list is not provided") {
+  test("must give all fields from record if field list is not provided") {
     val row = extractFrom(
       new GenericRecordBuilder(schema)
         .set("field1", "val1")
