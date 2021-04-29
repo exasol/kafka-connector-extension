@@ -269,7 +269,7 @@ set the number of characters in the VARCHAR type accordingly.
 
 When specifying ``RECORD_FORMAT=JSON`` the connector expects a valid UTF-8
 serialized JSON record per message. 
-When using ``ÀS_JSON_DOC=true``, the record is inserted as a whole and 
+When using ``AS_JSON_DOC=true``, the record is inserted as a whole and
 the table has to be [prepared for it](#json-preparation)
 
 If you choose to import certain fields from the json record, specify the 
