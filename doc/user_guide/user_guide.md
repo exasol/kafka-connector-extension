@@ -11,7 +11,8 @@ Using the connector you can import data from a Kafka topic into an Exasol table.
 - [Deployment](#deployment)
 - [Prepare Exasol Table](#prepare-exasol-table)
 - [Avro Data Mapping](#avro-data-mapping)
-- [Import From Kafka Cluster](#import-from-kafka-cluster)
+- [Importing Avro Records](#importing-avro-records)
+- [Importing Raw JSON](#importing-raw-json)
 - [Secure Connection to Kafka Cluster](#secure-connection-to-kafka-cluster)
 - [Kafka Consumer Properties](#kafka-consumer-properties)
 
@@ -265,48 +266,6 @@ Please notice that we convert Avro complex types to the JSON Strings. Use Exasol
 `VARCHAR(n)` column type to store them. Depending on the size of complex type,
 set the number of characters in the VARCHAR type accordingly.
 
-## Importing Raw JSON
-
-When specifying ``RECORD_FORMAT=JSON`` the connector expects a valid UTF-8
-serialized JSON record per message. 
-When using ``AS_JSON_DOC=true``, the record is inserted as a whole and
-the table has to be [prepared for it](#json-preparation)
-
-If you choose to import certain fields from the json record, specify the 
-``RECORD_FIELDS`` parameter with a comma separated list of fields to be imported
-
-``RECORD_FIELDS=age,lastName,address``
-
-and a json record like this
-
-```json
-  "firstName": "John",
-  "lastName": "Smith",
-  "isAlive": true,
-  "age": 27,
-  "address": {
-    "streetAddress": "21 2nd Street",
-    "city": "New York",
-    "state": "NY",
-    "postalCode": "10021-3100"
-  }
-```
-would allow you to import into a table with the following structure
-
-```sql
-CREATE OR REPLACE TABLE <schema_name>.<table_name> (
-    AGE         INTEGER,
-    LAST_NAME   VARCHAR(255),
-    ADDRESS     VARCHAR(10000),
-    -- Required for Kafka import UDF
-    KAFKA_PARTITION DECIMAL(18, 0),
-    KAFKA_OFFSET DECIMAL(36, 0),
-);
-```
-
-Note that the ``RECORD_FIELDS`` parameter is required when inserting JSON into
-columns as the order of fields in json records is not deterministic.
-
 ## Importing Avro Records
 
 Several property values are required to access the Kafka
@@ -361,6 +320,60 @@ FROM SCRIPT KAFKA_CONSUMER WITH
   TABLE_NAME          = 'RETAIL.SALES_POSITIONS'
   GROUP_ID            = 'exasol-kafka-udf-consumers';
 ```
+
+## Importing Raw JSON
+
+When specifying ``RECORD_FORMAT=JSON`` the connector expects a valid UTF-8
+serialized JSON record per message. 
+When using ``AS_JSON_DOC=true``, the record is inserted as a whole and
+the table has to be [prepared for it](#json-preparation)
+
+If you choose to import certain fields from the json record, specify the 
+``RECORD_FIELDS`` parameter with a comma separated list of fields to be imported
+
+``RECORD_FIELDS=age,lastName,address``
+
+and a json record like this
+
+```json
+  "firstName": "John",
+  "lastName": "Smith",
+  "isAlive": true,
+  "age": 27,
+  "address": {
+    "streetAddress": "21 2nd Street",
+    "city": "New York",
+    "state": "NY",
+    "postalCode": "10021-3100"
+  }
+```
+would allow you to import into a table with the following structure
+
+```sql
+CREATE OR REPLACE TABLE RETAIL.CUSTOMERS (
+    AGE         INTEGER,
+    LAST_NAME   VARCHAR(255),
+    ADDRESS     VARCHAR(10000),
+    -- Required for Kafka import UDF
+    KAFKA_PARTITION DECIMAL(18, 0),
+    KAFKA_OFFSET DECIMAL(36, 0),
+);
+```
+
+with the following command:
+
+```sql
+IMPORT INTO RETAIL.CUSTOMERS
+FROM SCRIPT KAFKA_CONSUMER WITH
+  BOOTSTRAP_SERVERS   = 'kafka01.internal:9092,kafka02.internal:9093,kafka03.internal:9094'
+  TOPIC_NAME          = 'CUSTOMERS'
+  TABLE_NAME          = 'RETAIL.CUSTOMERS'
+  RECORD_FIELDS       = 'age,lastName,address'
+  GROUP_ID            = 'exasol-kafka-udf-consumers';
+```
+
+Note that the ``RECORD_FIELDS`` parameter is required when inserting JSON into
+columns as the order of fields in json records is not deterministic.
 
 ## Secure Connection to Kafka Cluster
 
