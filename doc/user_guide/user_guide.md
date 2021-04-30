@@ -368,6 +368,7 @@ FROM SCRIPT KAFKA_CONSUMER WITH
   BOOTSTRAP_SERVERS   = 'kafka01.internal:9092,kafka02.internal:9093,kafka03.internal:9094'
   TOPIC_NAME          = 'CUSTOMERS'
   TABLE_NAME          = 'RETAIL.CUSTOMERS'
+  RECORD_FORMAT       = 'JSON'
   RECORD_FIELDS       = 'age,lastName,address'
   GROUP_ID            = 'exasol-kafka-udf-consumers';
 ```
