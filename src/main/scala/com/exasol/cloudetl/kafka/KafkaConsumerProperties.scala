@@ -43,6 +43,15 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
   final def getSingleColJson(): Boolean =
     isEnabled(AS_JSON_DOC)
 
+  /**
+   * Returns the type we expect on the Kafka.
+   * It is one of ['json', 'avro'] whereas 'avro' is the default.
+   */
+  final def getRecordFormat(): String = get(RECORD_FORMAT).getOrElse("avro")
+
+  final def getRecordFields(): Option[Seq[String]] =
+    get(RECORD_FIELDS).map(_.split(",").map(_.trim)).map(_.toSeq)
+
   /** Returns the user provided topic name. */
   final def getTopic(): String =
     getString(TOPIC_NAME)
@@ -183,7 +192,9 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     props.put(ENABLE_AUTO_COMMIT.kafkaPropertyName, ENABLE_AUTO_COMMIT.defaultValue)
     props.put(BOOTSTRAP_SERVERS.kafkaPropertyName, getBootstrapServers())
     props.put(GROUP_ID.kafkaPropertyName, getGroupId())
-    props.put(SCHEMA_REGISTRY_URL.kafkaPropertyName, getSchemaRegistryUrl())
+    if ("avro".equals(getRecordFormat())) {
+      props.put(SCHEMA_REGISTRY_URL.kafkaPropertyName, getSchemaRegistryUrl())
+    }
     props.put(MAX_POLL_RECORDS.kafkaPropertyName, getMaxPollRecords())
     props.put(FETCH_MIN_BYTES.kafkaPropertyName, getFetchMinBytes())
     props.put(FETCH_MAX_BYTES.kafkaPropertyName, getFetchMaxBytes())
@@ -357,6 +368,21 @@ object KafkaConsumerProperties extends CommonProperties {
    * or as avro message when [[AS_JSON_DOC]] is 'false' or not set
    */
   private[kafka] final val AS_JSON_DOC: String = "AS_JSON_DOC"
+
+  /**
+   * The fields and field order to include when inserting into the target table.
+   * Should be a comma separated list of fields present in the kafka record.
+   * When the source record is JSON this is required since the field order is not guaranteed
+   * in JSON record.
+   */
+  private[kafka] final val RECORD_FIELDS: String = "RECORD_FIELDS"
+
+  /**
+   * The serialization format of the topic we are reading.
+   * Either avro serialized with the Confluent schema registry or json as plain string
+   * needed to construct the correct deserializer.
+   */
+  private[kafka] final val RECORD_FORMAT: String = "RECORD_FORMAT"
 
   /**
    * This is the {@code max.poll.records} configuration setting.

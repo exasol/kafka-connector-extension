@@ -3,14 +3,9 @@ package com.exasol.cloudetl.kafka
 import java.nio.file.Files
 import java.nio.file.Paths
 
-import scala.jdk.CollectionConverters._
-
 import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties._
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
-import io.confluent.kafka.serializers.KafkaAvroDeserializer
-import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -29,14 +24,16 @@ object KafkaConsumerFactory {
    * the schema of [[org.apache.avro.generic.GenericRecord]] the {@code
    * SCHEMA_REGISTRY_URL} value should be provided.
    */
-  def apply(properties: KafkaConsumerProperties): KafkaConsumer[String, GenericRecord] = {
+  def apply[T](
+    properties: KafkaConsumerProperties,
+    deserializer: Deserializer[T]
+  ): KafkaConsumer[String, T] = {
     val topic = properties.getTopic()
     try {
-      new KafkaConsumer[String, GenericRecord](
+      new KafkaConsumer(
         properties.getProperties(),
         new StringDeserializer,
-        getAvroDeserializer(properties.getSchemaRegistryUrl())
-          .asInstanceOf[Deserializer[GenericRecord]]
+        deserializer
       )
     } catch {
       case exception: Throwable =>
@@ -55,17 +52,18 @@ object KafkaConsumerFactory {
    * The Exasol metadata is used to obtain additional secure key value
    * properties from connection object.
    */
-  def apply(
+  def apply[T](
     properties: KafkaConsumerProperties,
+    deserializer: Deserializer[T],
     exasolMetadata: ExaMetadata
-  ): KafkaConsumer[String, GenericRecord] = {
+  ): KafkaConsumer[String, T] = {
     validateNoSSLCredentials(properties)
     if (properties.hasNamedConnection()) {
       val newProperties = properties.mergeWithConnectionObject(exasolMetadata)
       validateSSLLocationFilesExist(newProperties)
-      apply(newProperties)
+      apply(newProperties, deserializer)
     } else {
-      apply(properties)
+      apply(properties, deserializer)
     }
   }
 
@@ -100,16 +98,4 @@ object KafkaConsumerFactory {
         )
       }
     }
-
-  private[this] def getAvroDeserializer(schemaRegistryUrl: String): KafkaAvroDeserializer = {
-    // The schema registry URL should be provided here since the one
-    // configured in consumer properties is not for the deserializer.
-    val deserializerConfig = Map(
-      AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG -> schemaRegistryUrl
-    )
-    val kafkaAvroDeserializer = new KafkaAvroDeserializer
-    kafkaAvroDeserializer.configure(deserializerConfig.asJava, false)
-    kafkaAvroDeserializer
-  }
-
 }

@@ -9,7 +9,7 @@ import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 
-class KafkaTopicDataImporterAsJsonIT extends KafkaIntegrationTest {
+class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
 
   test("run emits records from starting initial offset") {
     val newProperties = properties ++ Map(

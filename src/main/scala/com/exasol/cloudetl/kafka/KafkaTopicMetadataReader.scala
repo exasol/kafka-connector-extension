@@ -10,6 +10,7 @@ import com.exasol.ExaIterator
 import com.exasol.ExaMetadata
 
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.kafka.common.serialization.VoidDeserializer
 
 /**
  * The object class that is referenced in the UDF scripts.
@@ -32,7 +33,7 @@ object KafkaTopicMetadataReader extends LazyLogging {
       seenPartitionOffsets += (partitionId -> partitionOffset)
     } while (iterator.next())
 
-    val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, metadata)
+    val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, new VoidDeserializer, metadata)
     val topicPartitions = kafkaConsumer.partitionsFor(topic).asScala.toList.map(_.partition())
     logger.info(s"Reading metadata for '${topicPartitions.mkString(",")}' topic partitions")
     try {
