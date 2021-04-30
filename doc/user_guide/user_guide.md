@@ -307,7 +307,7 @@ CREATE OR REPLACE TABLE <schema_name>.<table_name> (
 Note that the ``RECORD_FIELDS`` parameter is required when inserting JSON into
 columns as the order of fields in json records is not deterministic.
 
-# Import From Kafka Cluster
+## Importing Avro Records
 
 Several property values are required to access the Kafka
 cluster when importing data from Kafka topics using the connector.
@@ -315,7 +315,7 @@ cluster when importing data from Kafka topics using the connector.
 You should provide these key-value parameters:
 
 - ``BOOTSTRAP_SERVERS``
-- ``SCHEMA_REGISTRY_URL`` (only when using avro)
+- ``SCHEMA_REGISTRY_URL``
 - ``TOPIC_NAME``
 - ``TABLE_NAME``
 
