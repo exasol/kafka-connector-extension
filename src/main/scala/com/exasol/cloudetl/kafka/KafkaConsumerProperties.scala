@@ -37,7 +37,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
 
   /**
    * Return the strategy to use when the last committed offset is empty or out of range.
-   * Defaults to <code>earliest{code}.
+   * Defaults to {@code earliest}.
    */
   final def getAutoOffsetReset(): String =
     get(AUTO_OFFSET_RESET.userPropertyName).fold(AUTO_OFFSET_RESET.defaultValue)(identity)
