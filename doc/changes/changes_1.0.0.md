@@ -4,9 +4,7 @@ Code name: v1.0.0 - Support for JSON Records import and offset reset strategy
 
 ## Summary
 
-The release `1.0.0` added support for importing JSON records and consumer offset
-reset strategy. By using offset strategy consumer imports new records after
-topic retention.
+The release `1.0.0` added support for importing JSON records and consumer offset reset strategy. By using offset strategy consumer imports new records after topic retention.
 
 ## Features
 
