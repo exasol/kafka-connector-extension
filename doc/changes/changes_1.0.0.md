@@ -1,4 +1,4 @@
-# Kafka Connector Extension 1.0.0, released 2021-05-DD
+# Kafka Connector Extension 1.0.0, released 2021-05-06
 
 Code name: v1.0.0 - Support for JSON Records import and offset reset strategy
 
