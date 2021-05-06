@@ -21,12 +21,6 @@ before_install:
 matrix:
   include:
     - jdk: oraclejdk11
-      scala: 2.12.13
-
-    - jdk: openjdk11
-      scala: 2.12.13
-
-    - jdk: oraclejdk11
       scala: 2.13.5
 
     - jdk: openjdk11
