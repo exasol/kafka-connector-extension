@@ -10,14 +10,15 @@ lazy val orgSettings = Seq(
 )
 
 lazy val buildSettings = Seq(
-  scalaVersion := "2.13.3",
-  crossScalaVersions := Seq("2.12.12", "2.13.3")
+  scalaVersion := "2.13.5",
+  crossScalaVersions := Seq("2.12.13", "2.13.5")
 )
 
 lazy val root =
   project
     .in(file("."))
     .settings(moduleName := "exasol-kafka-connector-extension")
+    .settings(version := "1.0.0")
     .settings(orgSettings)
     .settings(buildSettings)
     .settings(Settings.projectSettings(scalaVersion))
