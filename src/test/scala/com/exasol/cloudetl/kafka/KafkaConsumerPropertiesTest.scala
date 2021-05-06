@@ -180,6 +180,10 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(BaseProperties(properties).getMaxPartitionFetchBytes() === "1048576")
   }
 
+  test("getOffsetResetStrategy returns default value 'earliest' if property is not set") {
+    assert(BaseProperties(properties).getAutoOffsetReset() === "earliest")
+  }
+
   test("getSecurityProtocol returns user provided security protocol property value") {
     properties = Map("SECURITY_PROTOCOL" -> "SSL")
     assert(BaseProperties(properties).getSecurityProtocol() === "SSL")
