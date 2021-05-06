@@ -17,7 +17,7 @@ addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings" % "3.0.0")
 
 // Adds Scala Code Coverage (Scoverage) used during unit tests
 // http://github.com/scoverage/sbt-scoverage
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.7.3")
 
 // Adds SBT Coveralls plugin for uploading Scala code coverage to
 // https://coveralls.io
@@ -27,7 +27,7 @@ addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.2.7")
 // Adds a `dependencyUpdates` task to check Maven repositories for
 // dependency updates
 // http://github.com/rtimush/sbt-updates
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.1")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.3")
 
 // Adds a `scalafmt` task for automatic source code formatting
 // https://github.com/lucidsoftware/neo-sbt-scalafmt
@@ -48,6 +48,10 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
 // Adds a `sbt-explicit-dependencies` plugin
 // https://github.com/cb372/sbt-explicit-dependencies
 addSbtPlugin("com.github.cb372" % "sbt-explicit-dependencies" % "0.2.16")
+
+// Adds a `sbt-reproducible-builds` plugin
+// https://github.com/raboof/sbt-reproducible-builds
+addSbtPlugin("net.bzzt" % "sbt-reproducible-builds" % "0.25")
 
 // Setup this and project/project/plugins.sbt for formatting
 // project/*.scala files with scalafmt
