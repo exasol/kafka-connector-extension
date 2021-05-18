@@ -75,13 +75,18 @@ object KafkaTopicDataImporter extends LazyLogging {
               s"value '${record.value()}'"
           )
 
-          val metadata: Seq[Object] = Seq(
+          val kafkaMetadata: Seq[Object] = Seq(
             record.partition().asInstanceOf[AnyRef],
             record.offset().asInstanceOf[AnyRef]
           )
 
-          val recordValue = record.value()
-          val exasolRow: Seq[Any] = recordValue ++ metadata
+          val recordValue =
+            if (record.value() != null)
+              record.value()
+            else
+              Seq.fill[Any](metadata.getOutputColumnCount().toInt - kafkaMetadata.length) { null }
+
+          val exasolRow: Seq[Any] = recordValue ++ kafkaMetadata
           iterator.emit(exasolRow: _*)
 
         }
