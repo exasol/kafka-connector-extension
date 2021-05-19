@@ -81,10 +81,11 @@ object KafkaTopicDataImporter extends LazyLogging {
           )
 
           val recordValue =
-            if (record.value() != null)
+            if (record.value() != null) {
               record.value()
-            else
+            } else {
               Seq.fill[Any](metadata.getOutputColumnCount().toInt - kafkaMetadata.length) { null }
+            }
 
           val exasolRow: Seq[Any] = recordValue ++ kafkaMetadata
           iterator.emit(exasolRow: _*)
