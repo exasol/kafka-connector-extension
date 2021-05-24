@@ -57,13 +57,21 @@ object KafkaTopicDataImporter extends LazyLogging {
     kafkaConsumer.assign(Arrays.asList(topicPartition))
     kafkaConsumer.seek(topicPartition, partitionNextOffset)
 
+    val partitionEndOffsets = kafkaConsumer.endOffsets(Arrays.asList(topicPartition))
+    val lastRecordOffset = partitionEndOffsets.get(topicPartition) - 1
+    logger.info(
+      s"Last Record Offset for partition '$partitionId' is '$lastRecordOffset'."
+    )
+
     val maxRecords = kafkaProperties.getMaxRecordsPerRun()
     val minRecords = kafkaProperties.getMinRecordsPerRun()
     val timeout = kafkaProperties.getPollTimeoutMs()
 
     try {
+      var latestOffset: Long = 0
       var recordCount = 0
       var totalRecordCount = 0
+
       do {
         val records = kafkaConsumer.poll(Duration.ofMillis(timeout))
         recordCount = records.count()
@@ -74,6 +82,8 @@ object KafkaTopicDataImporter extends LazyLogging {
               s"'${record.offset()}' with key '${record.key()}' and " +
               s"value '${record.value()}'"
           )
+
+          latestOffset = record.offset()
 
           val metadata: Seq[Object] = Seq(
             record.partition().asInstanceOf[AnyRef],
@@ -89,7 +99,8 @@ object KafkaTopicDataImporter extends LazyLogging {
           s"Emitted total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
         )
-      } while (recordCount >= minRecords && totalRecordCount < maxRecords)
+
+      } while (latestOffset < lastRecordOffset) //(recordCount >= minRecords && totalRecordCount < maxRecords)
     } catch {
       case exception: Throwable =>
         throw new KafkaConnectorException(
