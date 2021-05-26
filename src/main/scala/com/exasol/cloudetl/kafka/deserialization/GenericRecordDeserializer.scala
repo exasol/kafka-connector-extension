@@ -12,21 +12,40 @@ import org.apache.kafka.common.serialization.Deserializer
  * all fields in the record are emitted.
  */
 class GenericRecordDeserializer(
-  fieldList: Option[Seq[String]],
+  fieldSpecs: Seq[FieldSpecification],
   deserializer: Deserializer[GenericRecord]
-) extends Deserializer[Seq[Any]] {
+) extends Deserializer[Map[FieldSpecification, Seq[Any]]] {
 
   private val converter = new AvroConverter()
 
-  final override def deserialize(topic: String, data: Array[Byte]): Seq[Any] = {
+  @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+  final override def deserialize(
+    topic: String,
+    data: Array[Byte]
+  ): Map[FieldSpecification, Seq[Any]] = {
     val record = deserializer.deserialize(topic, data)
-    val avroFields = record.getSchema.getFields.asScala
-    val fieldsToRead = fieldList
-      .map(_.map(filterField => Option(record.getSchema.getField(filterField))))
-      .getOrElse(avroFields.map(Option(_)))
-      .toSeq
-    fieldsToRead.map(
-      _.map(field => converter.convert(record.get(field.name()), field.schema())).orNull
-    )
+
+    fieldSpecs.map {
+      case fieldSpec: AllFieldsSpecification =>
+        (
+          fieldSpec,
+          record.getSchema.getFields.asScala
+            .map(
+              recordField =>
+                converter convert (record.get(recordField.name()), recordField.schema())
+            )
+            .toSeq
+        )
+      case fieldSpec: ConcreteField =>
+        (
+          fieldSpec,
+          Seq(
+            Option(record.getSchema.getField(fieldSpec.fieldName))
+              .map(field => converter.convert(record.get(field.name()), field.schema()))
+              .orNull
+          )
+        )
+      case fieldSpec: FullRecord => (fieldSpec, Seq(converter.convert(record, record.getSchema)))
+    }.toMap
   }
 }

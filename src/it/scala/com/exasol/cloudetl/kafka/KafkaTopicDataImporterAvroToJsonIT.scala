@@ -4,7 +4,7 @@ import java.lang.{Integer => JInt}
 import java.lang.{Long => JLong}
 
 import com.exasol.ExaMetadata
-
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -29,20 +29,21 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong]
     )
+
     verify(iter, times(1)).emit(
-      "{\"col_str\": \"{'Value':'abc'}\", \"col_int\": 3, \"col_long\": 13}",
-      JInt.valueOf(0),
-      JLong.valueOf(0)
+      jsonMatcher("{\"col_str\": \"{'Value':'abc'}\", \"col_int\": 3, \"col_long\": 13}"),
+      ArgumentMatchers.eq(JInt.valueOf(0)),
+      ArgumentMatchers.eq(JLong.valueOf(0))
     )
     verify(iter, times(1)).emit(
-      "{\"col_str\": \"{'Value':'hello'}\", \"col_int\": 4, \"col_long\": 14}",
-      JInt.valueOf(0),
-      JLong.valueOf(1)
+      jsonMatcher("{\"col_str\": \"{'Value':'hello'}\", \"col_int\": 4, \"col_long\": 14}"),
+      ArgumentMatchers.eq(JInt.valueOf(0)),
+      ArgumentMatchers.eq(JLong.valueOf(1))
     )
     verify(iter, times(1)).emit(
-      "{\"col_str\": \"{'Value':'xyz'}\", \"col_int\": 5, \"col_long\": 15}",
-      JInt.valueOf(0),
-      JLong.valueOf(2)
+      jsonMatcher("{\"col_str\": \"{'Value':'xyz'}\", \"col_int\": 5, \"col_long\": 15}"),
+      ArgumentMatchers.eq(JInt.valueOf(0)),
+      ArgumentMatchers.eq(JLong.valueOf(2))
     )
   }
 
@@ -67,14 +68,14 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
       anyLong().asInstanceOf[JLong]
     )
     verify(iter, times(1)).emit(
-      "{\"col_str\": \"{'Value':'def'}\", \"col_int\": 7, \"col_long\": 17}",
-      JInt.valueOf(0),
-      JLong.valueOf(2)
+      jsonMatcher("{\"col_str\": \"{'Value':'def'}\", \"col_int\": 7, \"col_long\": 17}"),
+      ArgumentMatchers.eq(JInt.valueOf(0)),
+      ArgumentMatchers.eq(JLong.valueOf(2))
     )
     verify(iter, times(1)).emit(
-      "{\"col_str\": \"{'Value':'xyz'}\", \"col_int\": 13, \"col_long\": 23}",
-      JInt.valueOf(0),
-      JLong.valueOf(3)
+      jsonMatcher("{\"col_str\": \"{'Value':'xyz'}\", \"col_int\": 13, \"col_long\": 23}"),
+      ArgumentMatchers.eq(JInt.valueOf(0)),
+      ArgumentMatchers.eq(JLong.valueOf(3))
     )
   }
 

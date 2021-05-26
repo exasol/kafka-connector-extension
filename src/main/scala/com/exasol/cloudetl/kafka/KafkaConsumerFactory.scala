@@ -8,7 +8,6 @@ import com.exasol.cloudetl.kafka.KafkaConsumerProperties._
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Deserializer
-import org.apache.kafka.common.serialization.StringDeserializer
 
 /**
  * A factory class that creates Kafka consumer clients.
@@ -24,16 +23,17 @@ object KafkaConsumerFactory {
    * the schema of [[org.apache.avro.generic.GenericRecord]] the {@code
    * SCHEMA_REGISTRY_URL} value should be provided.
    */
-  def apply[T](
+  def apply[K, V](
     properties: KafkaConsumerProperties,
-    deserializer: Deserializer[T]
-  ): KafkaConsumer[String, T] = {
+    keyDeserializer: Deserializer[K],
+    valueDeserializer: Deserializer[V]
+  ): KafkaConsumer[K, V] = {
     val topic = properties.getTopic()
     try {
       new KafkaConsumer(
         properties.getProperties(),
-        new StringDeserializer,
-        deserializer
+        keyDeserializer,
+        valueDeserializer
       )
     } catch {
       case exception: Throwable =>
@@ -52,18 +52,19 @@ object KafkaConsumerFactory {
    * The Exasol metadata is used to obtain additional secure key value
    * properties from connection object.
    */
-  def apply[T](
+  def apply[K, V](
     properties: KafkaConsumerProperties,
-    deserializer: Deserializer[T],
+    keyDeserializer: Deserializer[K],
+    valueDeserializer: Deserializer[V],
     exasolMetadata: ExaMetadata
-  ): KafkaConsumer[String, T] = {
+  ): KafkaConsumer[K, V] = {
     validateNoSSLCredentials(properties)
     if (properties.hasNamedConnection()) {
       val newProperties = properties.mergeWithConnectionObject(exasolMetadata)
       validateSSLLocationFilesExist(newProperties)
-      apply(newProperties, deserializer)
+      apply(newProperties, keyDeserializer, valueDeserializer)
     } else {
-      apply(properties, deserializer)
+      apply(properties, keyDeserializer, valueDeserializer)
     }
   }
 

@@ -52,9 +52,18 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
 
   /**
    * Returns the type we expect on the Kafka.
-   * It is one of ['json', 'avro'] whereas 'avro' is the default.
+   * It is one of ['json', 'avro', 'string'] whereas 'avro' is the default.
    */
-  final def getRecordFormat(): String = get(RECORD_FORMAT).getOrElse("avro")
+  final def getRecordValueFormat(): String =
+    get(RECORD_VALUE_FORMAT)
+      .orElse(get(RECORD_FORMAT))
+      .getOrElse("avro")
+
+  /**
+   * Returns the type we expect on the Kafka.
+   * It is one of ['json', 'avro', 'string'] whereas 'string' is the default.
+   */
+  final def getRecordKeyFormat(): String = get(RECORD_KEY_FORMAT).getOrElse("string")
 
   final def getRecordFields(): Option[Seq[String]] =
     get(RECORD_FIELDS).map(_.split(",").map(_.trim)).map(_.toSeq)
@@ -200,7 +209,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     props.put(BOOTSTRAP_SERVERS.kafkaPropertyName, getBootstrapServers())
     props.put(GROUP_ID.kafkaPropertyName, getGroupId())
     props.put(AUTO_OFFSET_RESET.kafkaPropertyName, getAutoOffsetReset())
-    if ("avro".equals(getRecordFormat())) {
+    if ("avro".equals(getRecordValueFormat())) {
       props.put(SCHEMA_REGISTRY_URL.kafkaPropertyName, getSchemaRegistryUrl())
     }
     props.put(MAX_POLL_RECORDS.kafkaPropertyName, getMaxPollRecords())
@@ -399,11 +408,26 @@ object KafkaConsumerProperties extends CommonProperties {
   private[kafka] final val RECORD_FIELDS: String = "RECORD_FIELDS"
 
   /**
+   * deprecated("Use RECORD_VALUE_FORMAT")
    * The serialization format of the topic we are reading.
    * Either avro serialized with the Confluent schema registry or json as plain string
    * needed to construct the correct deserializer.
    */
   private[kafka] final val RECORD_FORMAT: String = "RECORD_FORMAT"
+
+  /**
+   * The serialization format of the key of the topic we are reading.
+   * Either avro serialized with the Confluent schema registry or json as plain string
+   * needed to construct the correct deserializer.
+   */
+  private[kafka] final val RECORD_VALUE_FORMAT: String = "RECORD_VALUE_FORMAT"
+
+  /**
+   * The serialization format of the key of the topic we are reading.
+   * Either avro serialized with the Confluent schema registry or json as plain string
+   * needed to construct the correct deserializer.
+   */
+  private[kafka] final val RECORD_KEY_FORMAT: String = "RECORD_KEY_FORMAT"
 
   /**
    * This is the {@code max.poll.records} configuration setting.

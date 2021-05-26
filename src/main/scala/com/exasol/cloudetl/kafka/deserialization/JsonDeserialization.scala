@@ -9,28 +9,19 @@ import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
  */
 object JsonDeserialization extends RecordDeserialization {
 
-  override def getSingleColumnJsonDeserializer(
+  override def getDeserializer(
     properties: KafkaConsumerProperties,
-    fields: Option[Seq[String]]
-  ): Deserializer[Seq[Any]] = {
-    if (fields.isDefined) {
-      throw new KafkaConnectorException("""Specifying fields when dumping the Json into the DB
-                                          |is currently not supported""".stripMargin)
-    }
-    new ToStringDeserializer(new StringDeserializer)
-  }
-
-  override def getColumnDeserializer(
-    properties: KafkaConsumerProperties,
-    fields: Option[Seq[String]]
-  ): Deserializer[Seq[Any]] =
-    fields
-      .filter(_.nonEmpty)
-      .map(new JsonDeserializer(_, new StringDeserializer))
-      .getOrElse(
-        throw new KafkaConnectorException(
-          """Record format JSON requires RECORD_FIELDS to be set to a comma separated list
-           of fields to guarantee field order"""
-        )
+    fieldSpecs: Seq[FieldSpecification]
+  ): Deserializer[Map[FieldSpecification, Seq[Any]]] =
+    if (fieldSpecs.exists {
+          case _: AllFieldsSpecification => true
+          case _                         => false
+        }) {
+      throw new KafkaConnectorException(
+        "Referencing all fields is not supported for json " +
+          "as the order is not deterministic"
       )
+    } else {
+      new JsonDeserializer(fieldSpecs, new StringDeserializer)
+    }
 }

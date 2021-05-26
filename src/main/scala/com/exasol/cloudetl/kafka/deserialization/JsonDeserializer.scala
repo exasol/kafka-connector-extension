@@ -1,5 +1,6 @@
 package com.exasol.cloudetl.kafka.deserialization
 
+import com.exasol.cloudetl.kafka.KafkaConnectorException
 import com.exasol.cloudetl.kafka.deserialization.JsonDeserializer.{jsonNodeToObject, objectMapper}
 
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
@@ -7,21 +8,34 @@ import com.fasterxml.jackson.databind.node.JsonNodeType.{BOOLEAN, NUMBER, STRING
 import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
 
 class JsonDeserializer(
-  fields: Seq[String],
+  fieldSpecs: Seq[FieldSpecification],
   stringDeserializer: StringDeserializer
-) extends Deserializer[Seq[Any]] {
+) extends Deserializer[Map[FieldSpecification, Seq[Any]]] {
 
-  final override def deserialize(topic: String, data: Array[Byte]): Seq[Any] = {
+  final override def deserialize(
+    topic: String,
+    data: Array[Byte]
+  ): Map[FieldSpecification, Seq[Any]] = {
     val tree =
       objectMapper.readTree(stringDeserializer.deserialize(topic, data))
 
-    fields
-      .map(
-        field =>
-          Option(tree.get(field))
-            .map(jsonNodeToObject)
-            .orNull
-      )
+    fieldSpecs.map {
+      case fieldSpec: ConcreteField =>
+        (
+          fieldSpec,
+          Seq(
+            Option(tree.get(fieldSpec.fieldName))
+              .map(jsonNodeToObject)
+              .orNull
+          )
+        )
+      case fieldSpec: FullRecord =>
+        (fieldSpec, Seq(objectMapper.writeValueAsString(tree)))
+      case _ =>
+        throw new KafkaConnectorException(
+          "JSON records only be used for extracting explicit fields"
+        )
+    }.toMap
   }
 }
 
