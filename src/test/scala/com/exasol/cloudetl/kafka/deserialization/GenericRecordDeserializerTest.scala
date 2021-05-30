@@ -5,7 +5,7 @@ import java.util.Collections
 
 import com.exasol.common.json.JsonMapper
 
-import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
+import com.fasterxml.jackson.databind.JsonNode
 import org.apache.avro.SchemaBuilder
 import org.apache.avro.generic.{GenericRecord, GenericRecordBuilder}
 import org.apache.kafka.common.serialization.Deserializer

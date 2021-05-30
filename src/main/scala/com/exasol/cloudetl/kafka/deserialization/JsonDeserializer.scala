@@ -33,7 +33,7 @@ class JsonDeserializer(
         (fieldSpec, Seq(objectMapper.writeValueAsString(tree)))
       case _ =>
         throw new KafkaConnectorException(
-          "JSON records only be used for extracting explicit fields"
+          "JSON records can only be used for extracting explicit fields"
         )
     }.toMap
   }

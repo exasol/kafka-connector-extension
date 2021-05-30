@@ -33,7 +33,7 @@ object RecordKey extends KeySpecification with FullRecord
 object RecordValue extends ValueSpecification with FullRecord
 
 /**
- * Marker trait for a reference to alle fields of the key or value
+ * Marker trait for a reference to all fields of the key or value
  */
 trait AllFieldsSpecification
 

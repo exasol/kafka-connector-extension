@@ -65,8 +65,27 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    */
   final def getRecordKeyFormat(): String = get(RECORD_KEY_FORMAT).getOrElse("string")
 
-  final def getRecordFields(): Option[Seq[String]] =
-    get(RECORD_FIELDS).map(_.split(",").map(_.trim)).map(_.toSeq)
+  final def getRecordFields(): Seq[String] =
+    get(RECORD_FIELDS)
+      .map(_.split(",").map(_.trim))
+      .map(_.toSeq)
+      .getOrElse(
+        // if record fields is not specified we mimic the current behaviour
+        Seq(
+          if (this.getSingleColJson()) {
+            // The default when AS_JSON_DOC is true: Just the value as JSON
+            // for avro json and string
+            "value"
+          } else {
+            getRecordValueFormat() match {
+              // The default for avro when AS_JSON_DOC is false: All fields from the record
+              case "avro" => "value.*"
+              // for json the value is emitted as is (suitable for string
+              case _ => "value"
+            }
+          }
+        )
+      )
 
   /** Returns the user provided topic name. */
   final def getTopic(): String =

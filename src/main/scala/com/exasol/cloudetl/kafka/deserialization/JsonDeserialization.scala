@@ -18,8 +18,8 @@ object JsonDeserialization extends RecordDeserialization {
           case _                         => false
         }) {
       throw new KafkaConnectorException(
-        "Referencing all fields is not supported for json " +
-          "as the order is not deterministic"
+        "Referencing all fields with key.* or value.* is not supported for json " +
+          "as the order is not deterministic."
       )
     } else {
       new JsonDeserializer(fieldSpecs, new StringDeserializer)

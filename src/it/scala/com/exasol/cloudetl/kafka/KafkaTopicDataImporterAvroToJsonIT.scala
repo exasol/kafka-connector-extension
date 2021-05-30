@@ -4,6 +4,7 @@ import java.lang.{Integer => JInt}
 import java.lang.{Long => JLong}
 
 import com.exasol.ExaMetadata
+
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.times

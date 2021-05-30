@@ -12,7 +12,7 @@ trait RecordDeserialization {
   /**
    * Creates a serializer for the given field specifications. The specs can be either referencing
    * key or value records, but not both. This is mainly for checking correct settings for
-   * the format implemented and making sure no invalid fieldspecifications are not used.
+   * the format implemented and making sure no invalid fieldSpecifications are used.
    */
   def getDeserializer(
     properties: KafkaConsumerProperties,

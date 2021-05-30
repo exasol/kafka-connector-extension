@@ -6,12 +6,7 @@ import java.util.Arrays
 import scala.jdk.CollectionConverters._
 
 import com.exasol.{ExaIterator, ExaMetadata}
-import com.exasol.cloudetl.kafka.deserialization.{
-  DeserializationFactory,
-  KeySpecification,
-  TimestampField,
-  ValueSpecification
-}
+import com.exasol.cloudetl.kafka.deserialization.{DeserializationFactory, FieldParser, RowBuilder}
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -48,7 +43,7 @@ object KafkaTopicDataImporter extends LazyLogging {
     val topic = kafkaProperties.getTopic()
     val topicPartition = new TopicPartition(topic, partitionId)
 
-    val fieldSpecs = DeserializationFactory.getFieldSpecs(kafkaProperties)
+    val fieldSpecs = FieldParser.get(kafkaProperties.getRecordFields())
 
     val recordDerse = DeserializationFactory
       .getSerializers(fieldSpecs, kafkaProperties)
@@ -82,20 +77,18 @@ object KafkaTopicDataImporter extends LazyLogging {
               s"value '${record.value()}'"
           )
 
-          val metadata: Seq[Object] = Seq(
+          val kafkaMetadata: Seq[Object] = Seq(
             record.partition().asInstanceOf[AnyRef],
             record.offset().asInstanceOf[AnyRef]
           )
 
-          val rowValues = fieldSpecs.flatMap {
-            case keySpec: KeySpecification => record.key().getOrElse(keySpec, Seq.empty[Any])
-            case valueSpec: ValueSpecification =>
-              record.value().getOrElse(valueSpec, Seq.empty[Any])
-            case TimestampField => Seq(record.timestamp())
-            case _              => Seq.empty[Any] // must have been catched before
-          }
+          val rowValues = RowBuilder.buildRow(
+            fieldSpecs,
+            record,
+            metadata.getOutputColumnCount.toInt - kafkaMetadata.size
+          )
 
-          val exasolRow: Seq[Any] = rowValues ++ metadata
+          val exasolRow: Seq[Any] = rowValues ++ kafkaMetadata
           iterator.emit(exasolRow: _*)
         }
         logger.info(

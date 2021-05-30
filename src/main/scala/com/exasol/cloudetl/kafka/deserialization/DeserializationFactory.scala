@@ -6,19 +6,6 @@ import org.apache.kafka.common.serialization.Deserializer
 
 object DeserializationFactory {
 
-  def getFieldSpecs(kafkaProperties: KafkaConsumerProperties): Seq[GlobalFieldSpecification] = {
-    val fields = kafkaProperties
-      .getRecordFields()
-      .getOrElse(if (kafkaProperties.getSingleColJson()) {
-        // The default when AS_JSON_DOC is true: Just the value
-        Seq("value")
-      } else {
-        // The default when AS_JSON_DOC is true: All fields from the record
-        Seq("value.*")
-      })
-    FieldParser.get(fields)
-  }
-
   final case class RecordDeserializers(
     keyDeserializer: Deserializer[Map[FieldSpecification, Seq[Any]]],
     valueDeserializer: Deserializer[Map[FieldSpecification, Seq[Any]]]
@@ -40,7 +27,7 @@ object DeserializationFactory {
     }
 
     val keyDeserializer = Option(keyFieldSpecs)
-      .filter(_.isEmpty)
+      .filter(_.nonEmpty)
       .map(keyFields => {
         getDeserialization(kafkaProperties.getRecordKeyFormat())
           .getDeserializer(kafkaProperties, keyFields)
