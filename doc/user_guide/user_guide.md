@@ -215,7 +215,7 @@ and this key (also avro as json representation)
 This enables to configure the connector like this
 ```
 RECORD_KEY_FORMAT=avro
-RECORD_KEY_FORMAT=avro
+RECORD_VALUE_FORMAT=avro
 RECORD_FIELDS=key.id,timestamp,value.lastName,value.age
 ```
 

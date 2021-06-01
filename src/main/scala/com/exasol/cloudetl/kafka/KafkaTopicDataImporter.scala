@@ -45,7 +45,7 @@ object KafkaTopicDataImporter extends LazyLogging {
 
     val fieldSpecs = FieldParser.get(kafkaProperties.getRecordFields())
 
-    val recordDerse = DeserializationFactory
+    val recordDeserializers = DeserializationFactory
       .getSerializers(fieldSpecs, kafkaProperties)
 
     val kafkaConsumer =
