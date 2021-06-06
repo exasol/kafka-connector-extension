@@ -11,8 +11,8 @@ Using the connector you can import data from a Kafka topic into an Exasol table.
 - [Deployment](#deployment)
 - [Prepare Exasol Table](#prepare-exasol-table)
 - [Avro Data Mapping](#avro-data-mapping)
-- [Importing Avro Records](#importing-avro-records)
-- [Importing Raw JSON](#importing-raw-json)
+- [JSON Data Mapping](#json-data-mapping)
+- [Importing Records](#importing-kafka-topic-data)
 - [Secure Connection to Kafka Cluster](#secure-connection-to-kafka-cluster)
 - [Kafka Consumer Properties](#kafka-consumer-properties)
 
@@ -224,46 +224,47 @@ and import values from the record key, the value and the record metadata
 
 ## Prepare Exasol Table
 
-### Avro preparation
-
 You should create a corresponding table in Exasol that stores the data from
 a Kafka topic.
 
-The table column names and types should match the Kafka topic Avro schema names
-and types.
+The table column names and types should match the fields
+specified in the `RECORD_FIELDS` option. Make sure the number of columns and their order
+is correct - otherwise the import will lead to an error as
+there is no by-name mapping possible.
 
 Additionally, add two extra columns to the end of the table. These columns
 store the Kafka metadata and help to keep track of the already imported records.
 
-For example, create an Exasol table:
 
-```sql
-CREATE OR REPLACE TABLE <schema_name>.<table_name> (
-    -- These columns match the Kafka topic schema
-    SALES_ID    INTEGER,
-    POSITION_ID SMALLINT,
-    ARTICLE_ID  SMALLINT,
-    AMOUNT      SMALLINT,
-    PRICE       DECIMAL(9,2),
-    VOUCHER_ID  SMALLINT,
-    CANCELED    BOOLEAN
-    -- Required for Kafka import UDF
-    KAFKA_PARTITION DECIMAL(18, 0),
-    KAFKA_OFFSET DECIMAL(36, 0),
-);
+For example, given the following Avro record schema,
+
+```json
+{
+  "type": "record",
+  "name": "KafkaExasolAvroRecord",
+  "fields": [
+    { "name": "product", "type": "string" },
+    { "name": "price", "type": { "type": "bytes", "precision": 4, "scale": 2, "logicalType": "decimal" }}
+    { "name": "sale_time", "type": { "type": "long", "logicalType": "timestamp-millis" }}
+  ]
+}
 ```
-### JSON preparation
 
-In case you want to add the key json document in one single column, (see **AS_JSON_DOC** on: [Optional
-consumer properties](#optional-properties)) then create table like this:
+and the setting 
+
+`RECORD_FIELDS=product,price,sale_time`
+
+you can define the following Exasol table with column types mapped respectively.
 
 ```sql
 CREATE OR REPLACE TABLE <schema_name>.<table_name> (
-    -- Single column as JSON string for Kafka topic record
-    JSON_DOC_COL    VARCHAR(2000000),
-    -- Required for Kafka import UDF
+    PRODUCT     VARCHAR(500),
+    PRICE       DECIMAL(4, 2),
+    SALE_TIME   TIMESTAMP,
+
     KAFKA_PARTITION DECIMAL(18, 0),
-    KAFKA_OFFSET DECIMAL(36, 0),
+    KAFKA_OFFSET DECIMAL(36, 0)
+);
 ```
 
 The last two columns are used to store the metadata about Kafka topic partition
@@ -301,38 +302,25 @@ table shows how they are mapped to the Exasol types.
 You can also enrich regular Avro types with logical type attributes, and use the
 suggested [Exasol column types][exasol-types] when preparing the table.
 
-For example, given the following Avro record schema,
-
-```json
-{
-  "type": "record",
-  "name": "KafkaExasolAvroRecord",
-  "fields": [
-    { "name": "product", "type": "string" },
-    { "name": "price", "type": { "type": "bytes", "precision": 4, "scale": 2, "logicalType": "decimal" }}
-    { "name": "sale_time", "type": { "type": "long", "logicalType": "timestamp-millis" }}
-  ]
-}
-```
-
-you can define the following Exasol table with column types mapped respectively.
-
-```sql
-CREATE OR REPLACE TABLE <schema_name>.<table_name> (
-    PRODUCT     VARCHAR(500),
-    PRICE       DECIMAL(4, 2),
-    SALE_TIME   TIMESTAMP,
-
-    KAFKA_PARTITION DECIMAL(18, 0),
-    KAFKA_OFFSET DECIMAL(36, 0)
-);
-```
-
 Please notice that we convert Avro complex types to the JSON Strings. Use Exasol
 `VARCHAR(n)` column type to store them. Depending on the size of complex type,
 set the number of characters in the VARCHAR type accordingly.
 
-## Importing Avro Records
+## JSON Data Mapping
+
+[JSON][json-spec] supports a limited set of primitive and complex type.
+The following table shows how they are mapped to the Exasol types.
+
+| JSON Data Type | Recommended Exasol Column Types | 
+|:---------------|:-------------------------------|
+| boolean        | BOOLEAN                        |
+| number         | INT, INTEGER, DECIMAL(p,s)     |
+| string         | VARCHAR(n), CHAR(n)            |
+| object         | VARCHAR(n)                     |
+ 
+ Similar to avro, any complex types will be emitted as valid json strings.
+
+## Importing Records
 
 Several property values are required to access the Kafka
 cluster when importing data from Kafka topics using the connector.
@@ -340,7 +328,7 @@ cluster when importing data from Kafka topics using the connector.
 You should provide these key-value parameters:
 
 - ``BOOTSTRAP_SERVERS``
-- ``SCHEMA_REGISTRY_URL``
+- ``SCHEMA_REGISTRY_URL`` (only needed when handling avro)
 - ``TOPIC_NAME``
 - ``TABLE_NAME``
 
@@ -362,7 +350,7 @@ going to import Kafka topic data.
 For more information on Kafka import parameters, please refer to the [Kafka
 consumer properties](#kafka-consumer-properties).
 
-### Import Kafka Topic Data
+The import command has the following form:
 
 ```sql
 IMPORT INTO <schema_name>.<table_name>
@@ -374,7 +362,8 @@ FROM SCRIPT KAFKA_CONSUMER WITH
   GROUP_ID            = 'exasol-kafka-udf-consumers';
 ```
 
-For example, given the Kafka topic named `SALES-POSITIONS`, we can import its
+For example, given the Kafka topic named `SALES-POSITIONS` containing avro
+encoded values, we can import its
 data into `RETAIL.SALES_POSITIONS` table in Exasol:
 
 ```sql
@@ -386,61 +375,6 @@ FROM SCRIPT KAFKA_CONSUMER WITH
   TABLE_NAME          = 'RETAIL.SALES_POSITIONS'
   GROUP_ID            = 'exasol-kafka-udf-consumers';
 ```
-
-## Importing Raw JSON
-
-When specifying ``RECORD_FORMAT=JSON`` the connector expects a valid UTF-8
-serialized JSON record per message. 
-When using ``AS_JSON_DOC=true``, the record is inserted as a whole and
-the table has to be [prepared for it](#json-preparation)
-
-If you choose to import certain fields from the json record, specify the 
-``RECORD_FIELDS`` parameter with a comma separated list of fields to be imported
-
-``RECORD_FIELDS=age,lastName,address``
-
-and a json record like this
-
-```json
-  "firstName": "John",
-  "lastName": "Smith",
-  "isAlive": true,
-  "age": 27,
-  "address": {
-    "streetAddress": "21 2nd Street",
-    "city": "New York",
-    "state": "NY",
-    "postalCode": "10021-3100"
-  }
-```
-would allow you to import into a table with the following structure
-
-```sql
-CREATE OR REPLACE TABLE RETAIL.CUSTOMERS (
-    AGE         INTEGER,
-    LAST_NAME   VARCHAR(255),
-    ADDRESS     VARCHAR(10000),
-    -- Required for Kafka import UDF
-    KAFKA_PARTITION DECIMAL(18, 0),
-    KAFKA_OFFSET DECIMAL(36, 0),
-);
-```
-
-with the following command:
-
-```sql
-IMPORT INTO RETAIL.CUSTOMERS
-FROM SCRIPT KAFKA_CONSUMER WITH
-  BOOTSTRAP_SERVERS   = 'kafka01.internal:9092,kafka02.internal:9093,kafka03.internal:9094'
-  TOPIC_NAME          = 'CUSTOMERS'
-  TABLE_NAME          = 'RETAIL.CUSTOMERS'
-  RECORD_FORMAT       = 'JSON'
-  RECORD_FIELDS       = 'age,lastName,address'
-  GROUP_ID            = 'exasol-kafka-udf-consumers';
-```
-
-Note that the ``RECORD_FIELDS`` parameter is required when inserting JSON into
-columns as the order of fields in json records is not deterministic.
 
 ## Secure Connection to Kafka Cluster
 
@@ -577,9 +511,10 @@ These are optional parameters with their default values.
 * ``MAX_PARTITION_FETCH_BYTES`` - It is the maximum amount of data per
   partition the server will return. The default value is **1048576**.
 
-* ``AS_JSON_DOC`` - It defines the way the data will be imported into the database.
+* ``AS_JSON_DOC`` - (_deprecated_) It defines the way the data will be imported into the database.
   If set to **'true'** data will be imported as one JSON document in one column. 
-  Default value is **'false'**
+  Default value is **'false'**. When dealing with JSON it should be replaced by
+  specifying `RECORD_FORMAT=json` and `RECORD_FIELDS=value`.
 
 The following properties should be provided to enable a secure connection to the
 Kafka clusters.
@@ -616,4 +551,5 @@ Kafka clusters.
 [kafka-secure-clients]: https://kafka.apache.org/documentation/#security_configclients
 [kafka-consumer-configs]: https://kafka.apache.org/documentation/#consumerconfigs
 [avro-spec]: https://avro.apache.org/docs/current/spec.html
+[json-spec]: https://www.json.org/json-en.html
 [exasol-types]: https://docs.exasol.com/sql_references/data_types/datatypesoverview.htm
