@@ -1,5 +1,8 @@
 package com.exasol.cloudetl.kafka
 
+import java.nio.file.Path
+import java.nio.file.Paths
+
 import com.exasol.{ExaConnectionInformation, ExaMetadata}
 
 import org.mockito.Mockito.when
@@ -141,6 +144,14 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
       BaseProperties(properties).getSchemaRegistryUrl()
     }
     assert(thrown.getMessage === errorMessage("SCHEMA_REGISTRY_URL"))
+  }
+
+  test("getProperties throws if schema registry is not set and record format is avro") {
+    val properties = Map("BOOTSTRAP_SERVERS" -> "server", "RECORD_FORMAT" -> "avro")
+    val thrown = intercept[IllegalArgumentException] {
+      KafkaConsumerProperties(properties).getProperties()
+    }
+    assert(thrown.getMessage() === errorMessage("SCHEMA_REGISTRY_URL"))
   }
 
   test("getMaxPollRecords returns max poll records value") {
@@ -336,6 +347,86 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
           |TOPICS -> test-topic""".stripMargin
           .replace("\n", "")
     )
+  }
+
+  test("apply throws if secure SSL properties are provided without connection object") {
+    val properties = Map(
+      "SSL_ENABLED" -> "true",
+      "SECURITY_PROTOCOL" -> "SSL",
+      "SSL_KEY_PASSWORD" -> "PASSWORD"
+    )
+    val thrown = intercept[KafkaConnectorException] {
+      KafkaConsumerProperties(properties, mock[ExaMetadata])
+    }
+    val message = thrown.getMessage()
+    assert(message === "Please use a named connection object to provide secure SSL properties.")
+  }
+
+  test("apply obtains bootstrap servers and schema registry url from connection object") {
+    val params = Map("CONNECTION_NAME" -> "MY_CONNECTION")
+    val metadata = mock[ExaMetadata]
+    val connectionInformation = mock[ExaConnectionInformation]
+    when(metadata.getConnection("MY_CONNECTION")).thenReturn(connectionInformation)
+    when(connectionInformation.getUser()).thenReturn("")
+    when(connectionInformation.getPassword())
+      .thenReturn("BOOTSTRAP_SERVERS=localhost:1000;SCHEMA_REGISTRY_URL=http://n11:1001")
+    val properties = KafkaConsumerProperties(params, metadata)
+    assert(properties.getBootstrapServers() === "localhost:1000")
+    assert(properties.getSchemaRegistryUrl() === "http://n11:1001")
+  }
+
+  private[this] val DUMMY_KEYSTORE_FILE =
+    Paths.get(getClass.getResource("/kafka.consumer.keystore.jks").toURI).toAbsolutePath
+
+  private[this] val DUMMY_TRUSTSTORE_FILE =
+    Paths.get(getClass.getResource("/kafka.consumer.truststore.jks").toURI).toAbsolutePath
+
+  test("apply returns a SSL enabled consumer properties") {
+    val properties = getSSLEnabledConsumerProperties(DUMMY_KEYSTORE_FILE, DUMMY_TRUSTSTORE_FILE)
+    assert(properties.getSSLKeystoreLocation() === s"$DUMMY_KEYSTORE_FILE")
+    assert(properties.getSSLTruststoreLocation() === s"$DUMMY_TRUSTSTORE_FILE")
+  }
+
+  test("apply throws if SSL Keystore JKS file is not available") {
+    val thrown = intercept[KafkaConnectorException] {
+      getSSLEnabledConsumerProperties(Paths.get("ssl_keystore_file"), DUMMY_TRUSTSTORE_FILE)
+    }
+    val message = thrown.getMessage()
+    assert(message.contains("Unable to find the SSL keystore file"))
+    assert(message.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
+  }
+
+  test("apply throws if SSL Truststore JKS file is not available") {
+    val thrown = intercept[KafkaConnectorException] {
+      getSSLEnabledConsumerProperties(DUMMY_KEYSTORE_FILE, Paths.get("ssl_truststore_file"))
+    }
+    val message = thrown.getMessage()
+    assert(message.contains("Unable to find the SSL truststore file"))
+    assert(message.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
+  }
+
+  private[this] def getSSLEnabledConsumerProperties(
+    keystoreFile: Path,
+    truststoreFile: Path
+  ): KafkaConsumerProperties = {
+    val properties = Map(
+      "SSL_ENABLED" -> "true",
+      "SECURITY_PROTOCOL" -> "SSL",
+      "CONNECTION_NAME" -> "SSL_CONNECTION"
+    )
+    val exaMetadata = mock[ExaMetadata]
+    val exaConnectionInformation = mock[ExaConnectionInformation]
+    when(exaMetadata.getConnection("SSL_CONNECTION")).thenReturn(exaConnectionInformation)
+    when(exaConnectionInformation.getUser()).thenReturn("")
+    when(exaConnectionInformation.getPassword()).thenReturn(
+      s"""SSL_KEY_PASSWORD=pass123;
+         |SSL_KEYSTORE_LOCATION=$keystoreFile;
+         |SSL_KEYSTORE_PASSWORD=pass123;
+         |SSL_TRUSTSTORE_LOCATION=$truststoreFile;
+         |SSL_TRUSTSTORE_PASSWORD=pass123
+      """.stripMargin.replace("\n", "")
+    )
+    KafkaConsumerProperties(properties, exaMetadata)
   }
 
   private[this] case class BaseProperties(val params: Map[String, String])

@@ -30,12 +30,12 @@ object KafkaTopicDataImporter extends LazyLogging {
    * offset as metadata.
    */
   def run(metadata: ExaMetadata, iterator: ExaIterator): Unit = {
-    val kafkaProperties = KafkaConsumerProperties(iterator.getString(0))
+    val kafkaProperties = KafkaConsumerProperties(iterator.getString(0), metadata)
     val partitionId = iterator.getInteger(1)
     val partitionOffset = iterator.getLong(2)
     val partitionNextOffset = partitionOffset + 1L
-    val nodeId = metadata.getNodeId
-    val vmId = metadata.getVmId
+    val nodeId = metadata.getNodeId()
+    val vmId = metadata.getVmId()
     logger.info(
       s"Starting Kafka consumer for partition '$partitionId' at next offset " +
         s"'$partitionNextOffset' for node '$nodeId' and vm '$vmId'."
@@ -54,7 +54,7 @@ object KafkaTopicDataImporter extends LazyLogging {
     } else {
       recordDeserialization.getColumnDeserializer(kafkaProperties, recordFields)
     }
-    val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, derserializer, metadata)
+    val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, derserializer)
     kafkaConsumer.assign(Arrays.asList(topicPartition))
     kafkaConsumer.seek(topicPartition, partitionNextOffset)
 
