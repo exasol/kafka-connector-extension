@@ -35,12 +35,12 @@ class KafkaTopicDataImporterNullValueIT extends KafkaIntegrationTest {
 
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
     val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(3)
+    when(meta.getOutputColumnCount()).thenReturn(4)
     KafkaTopicDataImporter.run(meta, iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
-    verify(iter, times(1)).emit(null, JInt.valueOf(0), JLong.valueOf(0))
-    verify(iter, times(1)).emit(null, JInt.valueOf(0), JLong.valueOf(1))
+    verify(iter, times(1)).emit(null, null, JInt.valueOf(0), JLong.valueOf(0))
+    verify(iter, times(1)).emit(null, null, JInt.valueOf(0), JLong.valueOf(1))
   }
 
 }
