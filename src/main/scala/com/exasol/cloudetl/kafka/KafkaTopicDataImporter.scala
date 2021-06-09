@@ -51,8 +51,8 @@ object KafkaTopicDataImporter extends LazyLogging {
     val kafkaConsumer =
       KafkaConsumerFactory(
         kafkaProperties,
-        recordDerse.keyDeserializer,
-        recordDerse.valueDeserializer,
+        recordDeserializers.keyDeserializer,
+        recordDeserializers.valueDeserializer,
         metadata
       )
 
