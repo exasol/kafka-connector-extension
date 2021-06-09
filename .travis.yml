@@ -21,10 +21,10 @@ before_install:
 matrix:
   include:
     - jdk: oraclejdk11
-      scala: 2.13.5
+      scala: 2.13.6
 
     - jdk: openjdk11
-      scala: 2.13.5
+      scala: 2.13.6
 
 script:
   - ./scripts/ci.sh
