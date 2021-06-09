@@ -27,7 +27,7 @@ class KafkaTopicDataImporterNullValueIT extends KafkaIntegrationTest {
     serializer
   }
 
-  test("run emit fills columns with null if value is null") {
+  test("emit fills columns with null if record value is null") {
     createCustomTopic(topic)
     implicit val serializer = new StringSerializer
     publishToKafka(new ProducerRecord(topic, null: String))
