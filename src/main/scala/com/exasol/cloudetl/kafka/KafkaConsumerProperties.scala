@@ -257,9 +257,9 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    * Returns a new [[KafkaConsumerProperties]] that merges the key-value pairs
    * parsed from user provided Exasol named connection object.
    */
-  final def mergeWithConnectionObject(exaMetadata: ExaMetadata): KafkaConsumerProperties = {
+  final def mergeWithConnectionObject(metadata: ExaMetadata): KafkaConsumerProperties = {
     val connectionParsedMap =
-      parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName, Option(exaMetadata))
+      parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName, Option(metadata))
     val newProperties = properties ++ connectionParsedMap
     new KafkaConsumerProperties(newProperties)
   }

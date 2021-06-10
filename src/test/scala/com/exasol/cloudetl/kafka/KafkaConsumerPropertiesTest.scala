@@ -316,11 +316,11 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
       "CONNECTION_NAME" -> "MY_CONNECTION"
     )
     val kafkaConsumerProperties = new BaseProperties(propertiesMap)
-    val exaMetadata = mock[ExaMetadata]
-    val exaConnectionInformation = mock[ExaConnectionInformation]
-    when(exaMetadata.getConnection("MY_CONNECTION")).thenReturn(exaConnectionInformation)
-    when(exaConnectionInformation.getUser()).thenReturn("")
-    when(exaConnectionInformation.getPassword())
+    val metadata = mock[ExaMetadata]
+    val connectionInformation = mock[ExaConnectionInformation]
+    when(metadata.getConnection("MY_CONNECTION")).thenReturn(connectionInformation)
+    when(connectionInformation.getUser()).thenReturn("")
+    when(connectionInformation.getPassword())
       .thenReturn(
         """BOOTSTRAP_SERVERS=MY_BOOTSTRAP_SERVERS;
           |SCHEMA_REGISTRY_URL=MY_SCHEMA_REGISTRY;
@@ -332,7 +332,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
           |SSL_TRUSTSTORE_PASSWORD=MY_TRUSTSTORE_PASSWORD""".stripMargin.replace("\n", "")
       )
     val mergedKafkaConsumerProperties =
-      kafkaConsumerProperties.mergeWithConnectionObject(exaMetadata)
+      kafkaConsumerProperties.mergeWithConnectionObject(metadata)
     assert(
       mergedKafkaConsumerProperties.mkString() ===
         """BOOTSTRAP_SERVERS -> MY_BOOTSTRAP_SERVERS;
@@ -414,11 +414,11 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
       "SECURITY_PROTOCOL" -> "SSL",
       "CONNECTION_NAME" -> "SSL_CONNECTION"
     )
-    val exaMetadata = mock[ExaMetadata]
-    val exaConnectionInformation = mock[ExaConnectionInformation]
-    when(exaMetadata.getConnection("SSL_CONNECTION")).thenReturn(exaConnectionInformation)
-    when(exaConnectionInformation.getUser()).thenReturn("")
-    when(exaConnectionInformation.getPassword()).thenReturn(
+    val metadata = mock[ExaMetadata]
+    val connectionInformation = mock[ExaConnectionInformation]
+    when(metadata.getConnection("SSL_CONNECTION")).thenReturn(connectionInformation)
+    when(connectionInformation.getUser()).thenReturn("")
+    when(connectionInformation.getPassword()).thenReturn(
       s"""SSL_KEY_PASSWORD=pass123;
          |SSL_KEYSTORE_LOCATION=$keystoreFile;
          |SSL_KEYSTORE_PASSWORD=pass123;
@@ -426,7 +426,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
          |SSL_TRUSTSTORE_PASSWORD=pass123
       """.stripMargin.replace("\n", "")
     )
-    KafkaConsumerProperties(properties, exaMetadata)
+    KafkaConsumerProperties(properties, metadata)
   }
 
   private[this] case class BaseProperties(val params: Map[String, String])
