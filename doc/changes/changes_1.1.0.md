@@ -11,6 +11,7 @@ Code name:
 ## Bug
 
 * #29: Fixed issues with record null values in a topic
+* #30: Fixed bug with missing properties in connection object
 
 ### Runtime Dependency Updates
 

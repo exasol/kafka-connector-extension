@@ -1,5 +1,8 @@
 package com.exasol.cloudetl.kafka
 
+import java.nio.file.Files
+import java.nio.file.Paths
+
 import scala.collection.mutable.{Map => MMap}
 import scala.jdk.CollectionConverters._
 
@@ -81,7 +84,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     } else {
       getRecordValueFormat() match {
         case "avro" => "value.*"
-        case _ => "value"
+        case _      => "value"
       }
     }
     Seq(recordField)
@@ -254,9 +257,9 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    * Returns a new [[KafkaConsumerProperties]] that merges the key-value pairs
    * parsed from user provided Exasol named connection object.
    */
-  final def mergeWithConnectionObject(exaMetadata: ExaMetadata): KafkaConsumerProperties = {
+  final def mergeWithConnectionObject(metadata: ExaMetadata): KafkaConsumerProperties = {
     val connectionParsedMap =
-      parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName, Option(exaMetadata))
+      parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName, Option(metadata))
     val newProperties = properties ++ connectionParsedMap
     new KafkaConsumerProperties(newProperties)
   }
@@ -609,16 +612,90 @@ object KafkaConsumerProperties extends CommonProperties {
   )
 
   /**
-   * Returns [[KafkaConsumerProperties]] from user provided key value
-   * properties.
+   * Creates [[KafkaConsumerProperties]] instance.
+   *
+   * @param params key value map
+   * @return an instance of [[KafkaConsumerProperties]]
    */
   def apply(params: Map[String, String]): KafkaConsumerProperties =
-    new KafkaConsumerProperties(params)
+    createConsumerProperties(params, None)
 
   /**
-   * Returns [[KafkaConsumerProperties]] from properly separated string.
+   * Creates [[KafkaConsumerProperties]] instance.
+   *
+   * @param params key value map
+   * @param metadata an Exasol metadata object
+   * @return an instance of [[KafkaConsumerProperties]]
+   */
+  def apply(params: Map[String, String], metadata: ExaMetadata): KafkaConsumerProperties =
+    createConsumerProperties(params, Option(metadata))
+
+  /**
+   * Creates [[KafkaConsumerProperties]] instance.
+   *
+   * @param string key value separated string
+   * @return an instance of [[KafkaConsumerProperties]]
    */
   def apply(string: String): KafkaConsumerProperties =
-    apply(mapFromString(string))
+    createConsumerProperties(mapFromString(string), None)
+
+  /**
+   * Creates [[KafkaConsumerProperties]] instance.
+   *
+   * @param string key value separated string
+   * @param metadata an Exasol metadata object
+   * @return an instance of [[KafkaConsumerProperties]]
+   */
+  def apply(string: String, metadata: ExaMetadata): KafkaConsumerProperties =
+    createConsumerProperties(mapFromString(string), Option(metadata))
+
+  private[this] def createConsumerProperties(
+    params: Map[String, String],
+    metadataOpt: Option[ExaMetadata]
+  ): KafkaConsumerProperties = {
+    val properties = new KafkaConsumerProperties(params)
+    metadataOpt.fold(properties) { metadata =>
+      validateNoSSLCredentials(properties)
+      if (properties.hasNamedConnection()) {
+        val newProperties = properties.mergeWithConnectionObject(metadata)
+        validateSSLLocationFilesExist(newProperties)
+        newProperties
+      } else {
+        properties
+      }
+    }
+  }
+
+  private[this] def validateNoSSLCredentials(properties: KafkaConsumerProperties): Unit =
+    if (properties.isSSLEnabled()) {
+      val secureConnectionProperties = List(
+        SSL_KEYSTORE_LOCATION,
+        SSL_KEYSTORE_PASSWORD,
+        SSL_KEY_PASSWORD,
+        SSL_TRUSTSTORE_LOCATION,
+        SSL_TRUSTSTORE_PASSWORD
+      ).map(_.userPropertyName)
+      if (secureConnectionProperties.exists(p => properties.containsKey(p))) {
+        throw new KafkaConnectorException(
+          "Please use a named connection object to provide secure SSL properties."
+        )
+      }
+    }
+
+  private[this] def validateSSLLocationFilesExist(properties: KafkaConsumerProperties): Unit =
+    if (properties.isSSLEnabled()) {
+      if (!Files.isRegularFile(Paths.get(properties.getSSLKeystoreLocation()))) {
+        throw new KafkaConnectorException(
+          s"Unable to find the SSL keystore file '${properties.getSSLKeystoreLocation()}'. " +
+            s"Please make sure it is successfully uploaded to BucketFS bucket."
+        )
+      }
+      if (!Files.isRegularFile(Paths.get(properties.getSSLTruststoreLocation()))) {
+        throw new KafkaConnectorException(
+          s"Unable to find the SSL truststore file '${properties.getSSLTruststoreLocation()}'. " +
+            s"Please make sure it is successfully uploaded to BucketFS bucket."
+        )
+      }
+    }
 
 }
