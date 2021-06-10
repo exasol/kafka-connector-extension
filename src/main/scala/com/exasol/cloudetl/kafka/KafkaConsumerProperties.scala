@@ -15,7 +15,7 @@ import org.apache.kafka.common.config.SslConfigs
 /**
  * A specific implementation of [[com.exasol.common.AbstractProperties]]
  * that handles user provided key-value parameters for import
- * user-defined-functions (udfs) as Kafka consumer application.
+ * user-defined-functions (UDFs) as Kafka consumer application.
  *
  * This class also provides builder methods for Kafka consumers.
  */
@@ -36,30 +36,36 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     get(GROUP_ID.userPropertyName).fold(GROUP_ID.defaultValue)(identity)
 
   /**
-   * Return the strategy to use when the last committed offset is empty or out of range.
+   * Return the strategy to use when the last committed offset is empty
+   * or out of range.
+   *
    * Defaults to {@code earliest}.
    */
   final def getAutoOffsetReset(): String =
     get(AUTO_OFFSET_RESET.userPropertyName).fold(AUTO_OFFSET_RESET.defaultValue)(identity)
 
   /**
-   * Returns user provided boolean,
-   * if it is not provided by user
-   * returns default value of false.
+   * Checks if user wants to import single column JSON.
+   *
+   * If it is not provided by user returns default value of {@code false}.
    */
   final def getSingleColJson(): Boolean =
     isEnabled(AS_JSON_DOC)
 
   /**
-   * Returns the type we expect on the Kafka.
-   * It is one of ['json', 'avro', 'string'] whereas 'avro' is the default.
+   * Returns the type we expect on the Kafka record value.
+   *
+   * It is one of {@code json}, {@code avro}, {@code string} values.
+   * Defaults to {@code avro}.
    */
   final def getRecordValueFormat(): String =
     get(RECORD_VALUE_FORMAT).orElse(get(RECORD_FORMAT)).getOrElse("avro")
 
   /**
-   * Returns the type we expect on the Kafka.
-   * It is one of ['json', 'avro', 'string'] whereas 'string' is the default.
+   * Returns the type we expect on the Kafka record key.
+   *
+   * It is one of {@code json}, {@code avro}, {@code string} values.
+   * Defaults to {@code string}.
    */
   final def getRecordKeyFormat(): String = get(RECORD_KEY_FORMAT).getOrElse("string")
 
@@ -70,15 +76,11 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     get(RECORD_FIELDS).map(_.split(",").map(_.trim)).map(_.toSeq).getOrElse(defaultRecordFields())
 
   private[this] def defaultRecordFields(): Seq[String] = {
-    val recordField = if (this.getSingleColJson()) {
-      // The default when AS_JSON_DOC is true: Just the value as JSON
-      // for avro json and string
+    val recordField = if (getSingleColJson()) {
       "value"
     } else {
       getRecordValueFormat() match {
-        // The default for avro when AS_JSON_DOC is false: All fields from the record
         case "avro" => "value.*"
-        // for json the value is emitted as is (suitable for string
         case _ => "value"
       }
     }
@@ -307,6 +309,51 @@ object KafkaConsumerProperties extends CommonProperties {
   private[kafka] final val SSL_ENABLED: String = "SSL_ENABLED"
 
   /**
+   * An optional property that defines whether data should be imported
+   * as JSON into a single column.
+   */
+  private[kafka] final val AS_JSON_DOC: String = "AS_JSON_DOC"
+
+  /**
+   * An optional property that specify fields and field order when
+   * inserting data into the target table.
+   *
+   * It is a comma separated list of fields that are present in a Kafka
+   * record. This property is required when the source record is JSON
+   * since the field order is not guaranteed in JSON record.
+   */
+  private[kafka] final val RECORD_FIELDS: String = "RECORD_FIELDS"
+
+  /**
+   * An optional property that define the serialization format of the
+   * topic record.
+   *
+   * It is either Avro serialized with the Confluent Schema Registry,
+   * JSON or plain string.
+   *
+   * @deprecated("Use RECORD_VALUE_FORMAT", "1.1.0")
+   */
+  private[kafka] final val RECORD_FORMAT: String = "RECORD_FORMAT"
+
+  /**
+   * An optional property to define the serialization format of the
+   * record key of a Kafka topic.
+   *
+   * It is either Avro serialized with the Confluent Schema Registry,
+   * JSON or plain string.
+   */
+  private[kafka] final val RECORD_KEY_FORMAT: String = "RECORD_KEY_FORMAT"
+
+  /**
+   * An optional property specifying the serialization format of the
+   * record value in a Kafka topic.
+   *
+   * Similar to key format, it is either Avro serialized with the
+   * Confluent Schema Registry, JSON or plain string.
+   */
+  private[kafka] final val RECORD_VALUE_FORMAT: String = "RECORD_VALUE_FORMAT"
+
+  /**
    * A number of milliseconds to wait for Kafka consumer {@code poll} to
    * return any data.
    */
@@ -407,45 +454,6 @@ object KafkaConsumerProperties extends CommonProperties {
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
     "earliest"
   )
-
-  /**
-   *
-   * It is a boolean that defines whether data should be imported as
-   * JSON in single column when [[AS_JSON_DOC]] is set to 'true'
-   * or as avro message when [[AS_JSON_DOC]] is 'false' or not set
-   */
-  private[kafka] final val AS_JSON_DOC: String = "AS_JSON_DOC"
-
-  /**
-   * The fields and field order to include when inserting into the target table.
-   * Should be a comma separated list of fields present in the kafka record.
-   * When the source record is JSON this is required since the field order is not guaranteed
-   * in JSON record.
-   */
-  private[kafka] final val RECORD_FIELDS: String = "RECORD_FIELDS"
-
-  /**
-   * The serialization format of the topic we are reading.
-   * Either avro serialized with the Confluent schema registry or json as plain string
-   * needed to construct the correct deserializer.
-   *
-   * @deprecated("Use RECORD_VALUE_FORMAT", "1.1.0")
-   */
-  private[kafka] final val RECORD_FORMAT: String = "RECORD_FORMAT"
-
-  /**
-   * The serialization format of the key of the topic we are reading.
-   * Either avro serialized with the Confluent schema registry or json as plain string
-   * needed to construct the correct deserializer.
-   */
-  private[kafka] final val RECORD_VALUE_FORMAT: String = "RECORD_VALUE_FORMAT"
-
-  /**
-   * The serialization format of the key of the topic we are reading.
-   * Either avro serialized with the Confluent schema registry or json as plain string
-   * needed to construct the correct deserializer.
-   */
-  private[kafka] final val RECORD_KEY_FORMAT: String = "RECORD_KEY_FORMAT"
 
   /**
    * This is the {@code max.poll.records} configuration setting.
