@@ -7,14 +7,13 @@ import com.exasol.cloudetl.kafka.KafkaConnectorException
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.mockito.Mockito.when
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.must.Matchers.{contain, convertToAnyMustWrapper, have}
 import org.scalatestplus.mockito.MockitoSugar
 
 class RowBuilderTest extends AnyFunSuite with MockitoSugar {
 
-  private val Timestamp = Instant.now().toEpochMilli
+  private[this] val TIMESTAMP = Instant.now().toEpochMilli()
 
-  private def record(
+  private[this] def record(
     key: Map[FieldSpecification, Seq[Any]],
     value: Map[FieldSpecification, Seq[Any]]
   ): ConsumerRecord[Map[FieldSpecification, Seq[Any]], Map[FieldSpecification, Seq[Any]]] = {
@@ -23,114 +22,101 @@ class RowBuilderTest extends AnyFunSuite with MockitoSugar {
 
     when(record.key()).thenReturn(key)
     when(record.value()).thenReturn(value)
-    when(record.timestamp()).thenReturn(Timestamp)
+    when(record.timestamp()).thenReturn(TIMESTAMP)
     record
   }
 
-  test("Must emit record key and value") {
+  test("must emit record key and value") {
     val row = RowBuilder.buildRow(
       Seq(RecordKey, RecordValue),
       record(Map(RecordKey -> Seq("key")), Map(RecordValue -> Seq("value"))),
       0
     )
-    row must have size 2
-    row must contain theSameElementsInOrderAs Seq("key", "value")
+    assert(row === Seq("key", "value"))
   }
 
-  test("Must emit record timestamp, key and value") {
+  test("must emit record timestamp, key and value") {
     val row = RowBuilder.buildRow(
       Seq(RecordKey, RecordValue, TimestampField),
       record(Map(RecordKey -> Seq("key")), Map(RecordValue -> Seq("value"))),
       0
     )
-    row must have size 3
-    row must contain theSameElementsInOrderAs Seq("key", "value", Timestamp)
+    assert(row === Seq("key", "value", TIMESTAMP))
   }
 
-  test("Must emit null for key when key is null") {
+  test("must emit null for key when key is null") {
     val row = RowBuilder.buildRow(
       Seq(RecordKey, RecordValue),
       record(null, Map(RecordValue -> Seq("value"))),
       0
     )
-    row must have size 2
-    row must contain theSameElementsInOrderAs Seq(null, "value")
+    assert(row === Seq(null, "value"))
   }
 
-  test("Must emit null for value when value is null") {
+  test("must emit null for value when value is null") {
     val row = RowBuilder.buildRow(
       Seq(RecordKey, RecordValue),
       record(Map(RecordKey -> Seq("key")), null),
       0
     )
-    row must have size 2
-    row must contain theSameElementsInOrderAs Seq("key", null)
+    assert(row === Seq("key", null))
   }
 
-  test("Must emit null for values for concrete fields") {
+  test("must emit null for values for concrete fields") {
     val row = RowBuilder.buildRow(
       Seq(RecordValueField("field1"), RecordValueField("field2")),
       record(null, Map(RecordValueField("field1") -> Seq("value1"))),
       0
     )
-    row must have size 2
-    row must contain theSameElementsInOrderAs Seq("value1", null)
+    assert(row === Seq("value1", null))
   }
 
-  test(
-    "Must emit null for values when all fields from record value are requested" +
-      "value is null"
-  ) {
+  test("must emit null columns when all fields from record value are null") {
     val row = RowBuilder.buildRow(
       Seq(RecordValueFields),
       record(null, null),
       2
     )
-    row must have size 2
-    row must contain theSameElementsInOrderAs Seq(null, null)
+    assert(row === Seq(null, null))
   }
 
-  test("Must be able to combine presents field with all field reference") {
+  test("must be able to combine presents field with all field reference") {
     val row = RowBuilder.buildRow(
       Seq(RecordValueFields, TimestampField),
       record(null, Map(RecordValueFields -> Seq(1, 2, 3))),
       2
     )
-    row must have size 4
-    row must contain theSameElementsInOrderAs Seq(1, 2, 3, Timestamp)
+    assert(row === Seq(1, 2, 3, TIMESTAMP))
   }
 
-  test("Must emit correct column count when record value is null") {
+  test("must emit correct column count when record value is null") {
     val row = RowBuilder.buildRow(
       Seq(RecordKey, RecordValueFields, TimestampField),
       record(Map(RecordKey -> Seq("ourKey")), null),
       4
     )
-    row must have size 4
-    row must contain theSameElementsInOrderAs Seq("ourKey", null, null, Timestamp)
+    assert(row === Seq("ourKey", null, null, TIMESTAMP))
   }
 
-  test("Must work with two all fields references") {
+  test("must work with two all fields references") {
     val row = RowBuilder.buildRow(
       Seq(RecordKeyFields, TimestampField, RecordValueFields),
       record(Map(RecordKeyFields -> Seq("key1")), Map(RecordValueFields -> Seq("val1", "val2"))),
       4
     )
-    row must have size 4
-    row must contain theSameElementsInOrderAs Seq("key1", Timestamp, "val1", "val2")
+    assert(row === Seq("key1", TIMESTAMP, "val1", "val2"))
   }
 
-  test("Must work with two all fields references when one is null") {
+  test("must work with two all fields references when one is null") {
     val row = RowBuilder.buildRow(
       Seq(RecordKeyFields, TimestampField, RecordValueFields),
       record(null, Map(RecordValueFields -> Seq("val1", "val2"))),
       5
     )
-    row must have size 5
-    row must contain theSameElementsInOrderAs Seq(null, null, Timestamp, "val1", "val2")
+    assert(row === Seq(null, null, TIMESTAMP, "val1", "val2"))
   }
 
-  test("Must fail when with two all fields references and null value") {
+  test("must fail when with two all fields references and null value") {
     intercept[KafkaConnectorException] {
       RowBuilder.buildRow(
         Seq(RecordKeyFields, TimestampField, RecordValueFields),

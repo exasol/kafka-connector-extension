@@ -8,12 +8,12 @@ import org.scalactic.TypeCheckedTripleEquals.convertToCheckingEqualizer
 import org.scalatest.Assertions.{===, unconstrainedEquality}
 
 /**
- * The order of json fields is not deterministic: we need a custom matchers that compares
- * the json object field by field
+ * The order of JSON fields is not deterministic, therefore, we need a custom
+ * matchers that compares the JSON object field by field.
  */
 class JsonArgumentMatcher(expectedJson: String) extends ArgumentMatcher[String] {
 
-  private val expectedJsonNode = JsonMapper.parseJson[JsonNode](expectedJson)
+  private[this] val expectedJsonNode = JsonMapper.parseJson[JsonNode](expectedJson)
 
   final override def matches(argument: String): Boolean =
     JsonMapper.parseJson[JsonNode](argument) === (expectedJsonNode)

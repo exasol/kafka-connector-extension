@@ -1,28 +1,17 @@
 package com.exasol.cloudetl.kafka.deserialization
 
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.must.Matchers.{contain, convertToAnyMustWrapper}
 
 class FieldParserTest extends AnyFunSuite {
 
-  test("Must map to correct fields 1") {
-    FieldParser.get(Seq("key", "value.*")) must contain theSameElementsInOrderAs
-      Seq(RecordKey, RecordValueFields)
+  test("must parse to correct fields") {
+    assert(FieldParser.get(Seq("key", "value.*")) === Seq(RecordKey, RecordValueFields))
   }
 
-  test("Must parse correct fields 2") {
-    FieldParser.get(
-      Seq(
-        "key.field1",
-        "timestamp",
-        "value.*",
-        "value.field2"
-      )
-    ) must contain theSameElementsInOrderAs Seq(
-      RecordKeyField("field1"),
-      TimestampField,
-      RecordValueFields,
-      RecordValueField("field2")
-    )
+  test("must parse to correct fields with timestamp and select") {
+    val fields = Seq("key.field1", "timestamp", "value.*", "value.field2")
+    val expectedFields =
+      Seq(RecordKeyField("field1"), TimestampField, RecordValueFields, RecordValueField("field2"))
+    assert(FieldParser.get(fields) === expectedFields)
   }
 }

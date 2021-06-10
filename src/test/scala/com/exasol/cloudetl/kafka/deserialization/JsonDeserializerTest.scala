@@ -8,10 +8,8 @@ import com.exasol.common.json.JsonMapper
 import com.fasterxml.jackson.databind.JsonNode
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.must.Matchers
 
-@SuppressWarnings(Array("org.wartremover.warts.Nothing"))
-class JsonDeserializerTest extends AnyFunSuite with Matchers {
+class JsonDeserializerTest extends AnyFunSuite {
 
   test("must deserialize json record with primitives") {
     val row = new JsonDeserializer(
@@ -27,11 +25,12 @@ class JsonDeserializerTest extends AnyFunSuite with Matchers {
         |}""".stripMargin.getBytes(StandardCharsets.UTF_8)
     )
 
-    row must have size 3
-    row must have size 3
-    row must contain(RecordValueField("number") -> Seq(1))
-    row must contain(RecordValueField("string") -> Seq("hello"))
-    row must contain(RecordValueField("bool") -> Seq(true))
+    val expected = Map(
+      RecordValueField("number") -> Seq(1),
+      RecordValueField("string") -> Seq("hello"),
+      RecordValueField("bool") -> Seq(true)
+    )
+    assert(row === expected)
   }
 
   test("must convert complex json type to its string representation") {
@@ -50,9 +49,11 @@ class JsonDeserializerTest extends AnyFunSuite with Matchers {
         |}""".stripMargin.getBytes(StandardCharsets.UTF_8)
     )
 
-    row must have size 2
-    row must contain(RecordValueField("number") -> Seq(1))
-    row must contain(RecordValueField("record") -> Seq("""{"field1":"value1","field2":23}"""))
+    val expected = Map(
+      RecordValueField("number") -> Seq(1),
+      RecordValueField("record") -> Seq("""{"field1":"value1","field2":23}""")
+    )
+    assert(row === expected)
   }
 
   test("must only use fields provided to deserializer in the right order") {
@@ -75,9 +76,11 @@ class JsonDeserializerTest extends AnyFunSuite with Matchers {
         |}""".stripMargin.getBytes(StandardCharsets.UTF_8)
     )
 
-    row must have size 2
-    row must contain(RecordValueField("number") -> Seq(1))
-    row must contain(RecordValueField("record") -> Seq("""{"field1":"value1","field2":23}"""))
+    val expected = Map(
+      RecordValueField("number") -> Seq(1),
+      RecordValueField("record") -> Seq("""{"field1":"value1","field2":23}""")
+    )
+    assert(row === expected)
   }
 
   test("must provide null values for fields not present") {
@@ -92,9 +95,11 @@ class JsonDeserializerTest extends AnyFunSuite with Matchers {
         |}""".stripMargin.getBytes(StandardCharsets.UTF_8)
     )
 
-    row must have size 2
-    row must contain(RecordValueField("number") -> Seq(1))
-    row must contain(RecordValueField("always_null_field") -> Seq(null))
+    val expected = Map(
+      RecordValueField("number") -> Seq(1),
+      RecordValueField("always_null_field") -> Seq(null)
+    )
+    assert(row === expected)
   }
 
   test("must fail when all fields are referenced") {
@@ -112,7 +117,7 @@ class JsonDeserializerTest extends AnyFunSuite with Matchers {
     }
   }
 
-  test("Must produce full json when the whole value is referenced") {
+  test("must produce full json when the whole value is referenced") {
     val sourceRecord =
       """
         |{
@@ -131,13 +136,11 @@ class JsonDeserializerTest extends AnyFunSuite with Matchers {
       sourceRecord.getBytes(StandardCharsets.UTF_8)
     )
 
-    row must have size 1
-    row must contain key RecordValue
+    assert(row.size === 1)
+    assert(row.contains(RecordValue))
     val values = row(RecordValue)
-    values must have size 1
+    assert(values.size === 1)
     val json = values.headOption.map(_.asInstanceOf[String]).getOrElse("")
-    JsonMapper.parseJson[JsonNode](json) must be(
-      JsonMapper.parseJson[JsonNode](sourceRecord)
-    )
+    assert(JsonMapper.parseJson[JsonNode](json) === JsonMapper.parseJson[JsonNode](sourceRecord))
   }
 }
