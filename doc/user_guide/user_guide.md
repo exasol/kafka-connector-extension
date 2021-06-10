@@ -257,7 +257,7 @@ For example, given the following Avro record schema,
 
 and the setting 
 
-`RECORD_FIELDS=product,price,sale_time`
+`RECORD_FIELDS=value.product,value.price,value.sale_time`
 
 then, you should define the following Exasol table with column types mapped
 respectively.
