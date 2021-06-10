@@ -9,22 +9,16 @@ addons:
     packages:
       - shellcheck
 
-env:
-  matrix:
-    - RELEASE=false
+jdk:
+  - openjdk11
+
+scala:
+  - 2.13.6
 
 before_install:
   - git fetch --tags
   - docker pull exasol/docker-db:latest
   - docker pull exasol/docker-db:6.2.14-d1
-
-matrix:
-  include:
-    - jdk: oraclejdk11
-      scala: 2.13.6
-
-    - jdk: openjdk11
-      scala: 2.13.6
 
 script:
   - ./scripts/ci.sh
