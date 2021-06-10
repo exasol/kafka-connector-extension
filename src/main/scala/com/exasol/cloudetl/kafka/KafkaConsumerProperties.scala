@@ -55,9 +55,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    * It is one of ['json', 'avro', 'string'] whereas 'avro' is the default.
    */
   final def getRecordValueFormat(): String =
-    get(RECORD_VALUE_FORMAT)
-      .orElse(get(RECORD_FORMAT))
-      .getOrElse("avro")
+    get(RECORD_VALUE_FORMAT).orElse(get(RECORD_FORMAT)).getOrElse("avro")
 
   /**
    * Returns the type we expect on the Kafka.
@@ -65,27 +63,27 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    */
   final def getRecordKeyFormat(): String = get(RECORD_KEY_FORMAT).getOrElse("string")
 
+  /**
+   * Returns sequence of records fields from comma separated string.
+   */
   final def getRecordFields(): Seq[String] =
-    get(RECORD_FIELDS)
-      .map(_.split(",").map(_.trim))
-      .map(_.toSeq)
-      .getOrElse(
-        // if record fields is not specified we mimic the current behaviour
-        Seq(
-          if (this.getSingleColJson()) {
-            // The default when AS_JSON_DOC is true: Just the value as JSON
-            // for avro json and string
-            "value"
-          } else {
-            getRecordValueFormat() match {
-              // The default for avro when AS_JSON_DOC is false: All fields from the record
-              case "avro" => "value.*"
-              // for json the value is emitted as is (suitable for string
-              case _ => "value"
-            }
-          }
-        )
-      )
+    get(RECORD_FIELDS).map(_.split(",").map(_.trim)).map(_.toSeq).getOrElse(defaultRecordFields())
+
+  private[this] def defaultRecordFields(): Seq[String] = {
+    val recordField = if (this.getSingleColJson()) {
+      // The default when AS_JSON_DOC is true: Just the value as JSON
+      // for avro json and string
+      "value"
+    } else {
+      getRecordValueFormat() match {
+        // The default for avro when AS_JSON_DOC is false: All fields from the record
+        case "avro" => "value.*"
+        // for json the value is emitted as is (suitable for string
+        case _ => "value"
+      }
+    }
+    Seq(recordField)
+  }
 
   /** Returns the user provided topic name. */
   final def getTopic(): String =
@@ -427,10 +425,11 @@ object KafkaConsumerProperties extends CommonProperties {
   private[kafka] final val RECORD_FIELDS: String = "RECORD_FIELDS"
 
   /**
-   * deprecated("Use RECORD_VALUE_FORMAT")
    * The serialization format of the topic we are reading.
    * Either avro serialized with the Confluent schema registry or json as plain string
    * needed to construct the correct deserializer.
+   *
+   * @deprecated("Use RECORD_VALUE_FORMAT", "1.1.0")
    */
   private[kafka] final val RECORD_FORMAT: String = "RECORD_FORMAT"
 

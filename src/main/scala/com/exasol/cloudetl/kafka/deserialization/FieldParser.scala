@@ -3,7 +3,7 @@ package com.exasol.cloudetl.kafka.deserialization
 import com.exasol.cloudetl.kafka.KafkaConnectorException
 
 /**
- * Parse the fields specified to be extracted from a single kafka record
+ * Parse the fields specified to be extracted from a single Kafka record.
  */
 object FieldParser {
 

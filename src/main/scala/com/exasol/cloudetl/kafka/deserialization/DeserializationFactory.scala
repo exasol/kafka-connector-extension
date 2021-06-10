@@ -54,7 +54,7 @@ object DeserializationFactory {
 }
 
 /**
- * If we don't need the key we just return an empty map
+ * If we don't need the key we just return an empty map.
  */
 object IgnoreKeyDeserializer extends Deserializer[Map[FieldSpecification, Seq[Any]]] {
   override def deserialize(topic: String, data: Array[Byte]): Map[FieldSpecification, Seq[Any]] =

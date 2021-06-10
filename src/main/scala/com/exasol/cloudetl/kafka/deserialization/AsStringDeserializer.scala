@@ -8,7 +8,7 @@ import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
 class AsStringDeserializer(fieldSpecs: Seq[FieldSpecification])
     extends Deserializer[Map[FieldSpecification, Seq[Any]]] {
 
-  private val deserializer = new StringDeserializer
+  private[this] val deserializer = new StringDeserializer
 
   final override def deserialize(
     topic: String,

@@ -23,7 +23,7 @@ class DeserializationFactoryTest extends AnyFunSuite {
     assert(deserializers.valueDeserializer.isInstanceOf[JsonDeserializer])
   }
 
-  test("key must be ignored when ot requested") {
+  test("key must be ignored when not requested") {
     val params = Map("RECORD_KEY_FORMAT" -> "avro", "RECORD_VALUE_FORMAT" -> "string")
     val properties = new KafkaConsumerProperties(params)
     val deserializers = DeserializationFactory.getSerializers(Seq(RecordValue), properties)
@@ -32,7 +32,7 @@ class DeserializationFactoryTest extends AnyFunSuite {
     assert(deserializers.valueDeserializer.isInstanceOf[AsStringDeserializer])
   }
 
-  test("key must be taken into account when ot requested") {
+  test("key must be taken into account when not requested") {
     val params = Map("RECORD_KEY_FORMAT" -> "json", "RECORD_VALUE_FORMAT" -> "string")
     val properties = new KafkaConsumerProperties(params)
     val deserializers = DeserializationFactory.getSerializers(

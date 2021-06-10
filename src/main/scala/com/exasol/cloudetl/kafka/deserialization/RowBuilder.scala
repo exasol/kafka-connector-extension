@@ -5,8 +5,8 @@ import com.exasol.cloudetl.kafka.KafkaConnectorException
 import org.apache.kafka.clients.consumer.ConsumerRecord
 
 /**
- * Build the final row from the field specifications and the record data points.
- *
+ * Build the final row from the field specifications and the record data
+ * points.
  */
 object RowBuilder {
 
@@ -36,25 +36,22 @@ object RowBuilder {
     val (absentValues, presentValues) = rowValues.partition(_.isEmpty)
 
     if (absentValues.nonEmpty) {
-      // we need to check if we can derrive the number of null values we need
+      // check if we can derive the number of null values needed
       if (absentValues.size > 1) {
         throw new KafkaConnectorException(
           "Can only replace a null record value with null " +
             "columns when exactly one expression like key.* and value.* is specified and not null"
         )
       } else {
-        // we can handle the case when one field spec is null, e.g. the value and there is only one
-        // reference like key.* or value.*: By using the output column count but we have to keep
-        // the right order.
+        // we can handle the case when one field spec is null, e.g. the value and there is only
+        // one reference like key.* or value.*: By using the output column count but we have to
+        // keep the right order.
         val presentColumnCount = presentValues.map(_.map(_.size).getOrElse(0)).sum
         val valuesMissing = outputColumnCount - presentColumnCount
 
         rowValues.flatMap {
           case Some(x) => x
-          case None =>
-            Seq.fill[Any](valuesMissing) {
-              null
-            }
+          case None    => Seq.fill[Any](valuesMissing) { null }
         }
       }
     } else {
@@ -64,9 +61,11 @@ object RowBuilder {
 
   /**
    * A default value of null can only be set for single value fieldSpecs.
-   * For expressions like key.* or value.* we cannot say how many null values must be returned
+   *
+   * For expressions like key.* or value.* we cannot say how many null
+   * values must be returned.
    */
-  private def defaultFor(fieldSpecification: FieldSpecification): Option[Seq[Any]] =
+  private[this] def defaultFor(fieldSpecification: FieldSpecification): Option[Seq[Any]] =
     fieldSpecification match {
       case _: AllFieldsSpecification => None
       case _                         => Option(Seq(null))

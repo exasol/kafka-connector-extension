@@ -14,8 +14,7 @@ object StringDeserialization extends RecordDeserialization {
           case _             => true
         }) {
       throw new KafkaConnectorException(
-        "format 'string' can only use the full" +
-          "'key' or 'value' as specification"
+        "Record format 'string' can only use the full 'key' or 'value' as specification"
       )
     } else {
       new AsStringDeserializer(fieldSpecs)

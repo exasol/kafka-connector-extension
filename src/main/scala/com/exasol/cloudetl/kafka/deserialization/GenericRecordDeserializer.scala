@@ -8,31 +8,32 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.common.serialization.Deserializer
 
 /**
- * Extract a set of fields from an Avro GenericRecord. If no field list is defined,
- * all fields in the record are emitted.
+ * Extract a set of fields from an Avro [[org.apache.avro.generic.GenericRecord]].
+ *
+ * If no field list is defined, all fields in the record are emitted.
  */
 class GenericRecordDeserializer(
   fieldSpecs: Seq[FieldSpecification],
   deserializer: Deserializer[GenericRecord]
 ) extends Deserializer[Map[FieldSpecification, Seq[Any]]] {
 
-  private val converter = new AvroConverter()
+  private[this] val converter = new AvroConverter()
 
-  @SuppressWarnings(Array("org.wartremover.warts.ToString"))
   final override def deserialize(
     topic: String,
     data: Array[Byte]
   ): Map[FieldSpecification, Seq[Any]] = {
     val record = deserializer.deserialize(topic, data)
+    val recordSchema = record.getSchema()
 
     fieldSpecs.map {
       case fieldSpec: AllFieldsSpecification =>
         (
           fieldSpec,
-          record.getSchema.getFields.asScala
+          recordSchema.getFields.asScala
             .map(
               recordField =>
-                converter convert (record.get(recordField.name()), recordField.schema())
+                converter.convert(record.get(recordField.name()), recordField.schema())
             )
             .toSeq
         )
@@ -40,7 +41,7 @@ class GenericRecordDeserializer(
         (
           fieldSpec,
           Seq(
-            Option(record.getSchema.getField(fieldSpec.fieldName))
+            Option(recordSchema.getField(fieldSpec.fieldName))
               .map(field => converter.convert(record.get(field.name()), field.schema()))
               .orNull
           )
