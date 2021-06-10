@@ -62,8 +62,8 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    */
   final def getRecordValueFormat(): String = {
     val obsoleteFormatValue = get(RECORD_FORMAT).fold("avro")(identity)
-    val value = get(RECORD_VALUE_FORMAT).fold(obsoleteFormatValue)(identity)
-    value.toLowerCase(Locale.ENGLISH)
+    val recordValueFormat = get(RECORD_VALUE_FORMAT).fold(obsoleteFormatValue)(identity)
+    recordValueFormat.toLowerCase(Locale.ENGLISH)
   }
 
   /**
