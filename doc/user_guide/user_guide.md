@@ -10,7 +10,7 @@ Using the connector you can import data from a Kafka topic into an Exasol table.
 - [Getting Started](#getting-started)
 - [Deployment](#deployment)
 - [Record Format Configuration](#record-format-configuration)
-- [Prepare Exasol Table](#prepare-exasol-table)
+- [Preparing Exasol Table](#preparing-exasol-table)
 - [Avro Data Mapping](#avro-data-mapping)
 - [JSON Data Mapping](#json-data-mapping)
 - [Importing Records](#importing-kafka-topic-data)
@@ -181,9 +181,9 @@ The configuration setting `RECORD_FIELDS` controls the list of values which are
 inserted into the table.
 
 Please note that when using Avro format, you are required to provide Confluent
-Schema Registry address.
+Schema Registry URL address.
 
-The following table illustrates the possible values and support from the
+The following table illustrates the possible values and support for the
 serialization formats.
 
 | Record Field Specification | Value                                  | Avro          | JSON                          | String |
@@ -228,7 +228,7 @@ RECORD_FIELDS=key.id,timestamp,value.lastName,value.age
 This imports field from the record key, the fields `lastName` and `age` from
 value and the record timestamp metadata.
 
-## Prepare Exasol Table
+## Preparing Exasol Table
 
 You should create a corresponding table in Exasol that stores the data from
 a Kafka topic.
@@ -259,7 +259,8 @@ and the setting
 
 `RECORD_FIELDS=product,price,sale_time`
 
-you can define the following Exasol table with column types mapped respectively.
+then, you should define the following Exasol table with column types mapped
+respectively.
 
 ```sql
 CREATE OR REPLACE TABLE <schema_name>.<table_name> (
