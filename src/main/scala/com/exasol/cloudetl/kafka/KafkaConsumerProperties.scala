@@ -1,5 +1,7 @@
 package com.exasol.cloudetl.kafka
 
+import java.util.Locale
+
 import scala.collection.mutable.{Map => MMap}
 import scala.jdk.CollectionConverters._
 
@@ -58,8 +60,11 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    * It is one of {@code json}, {@code avro}, {@code string} values.
    * Defaults to {@code avro}.
    */
-  final def getRecordValueFormat(): String =
-    get(RECORD_VALUE_FORMAT).orElse(get(RECORD_FORMAT)).getOrElse("avro")
+  final def getRecordValueFormat(): String = {
+    val obsoleteFormatValue = get(RECORD_FORMAT).fold("avro")(identity)
+    val value = get(RECORD_VALUE_FORMAT).fold(obsoleteFormatValue)(identity)
+    value.toLowerCase(Locale.ENGLISH)
+  }
 
   /**
    * Returns the type we expect on the Kafka record key.
@@ -67,13 +72,16 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    * It is one of {@code json}, {@code avro}, {@code string} values.
    * Defaults to {@code string}.
    */
-  final def getRecordKeyFormat(): String = get(RECORD_KEY_FORMAT).getOrElse("string")
+  final def getRecordKeyFormat(): String =
+    get(RECORD_KEY_FORMAT).fold("string")(identity).toLowerCase(Locale.ENGLISH)
 
   /**
    * Returns sequence of records fields from comma separated string.
    */
   final def getRecordFields(): Seq[String] =
-    get(RECORD_FIELDS).map(_.split(",").map(_.trim)).map(_.toSeq).getOrElse(defaultRecordFields())
+    get(RECORD_FIELDS).fold(defaultRecordFields()) { fields =>
+      fields.split(",").map(_.trim).toSeq
+    }
 
   private[this] def defaultRecordFields(): Seq[String] = {
     val recordField = if (getSingleColJson()) {
@@ -81,7 +89,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     } else {
       getRecordValueFormat() match {
         case "avro" => "value.*"
-        case _ => "value"
+        case _      => "value"
       }
     }
     Seq(recordField)

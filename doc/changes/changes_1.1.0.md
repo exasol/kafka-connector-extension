@@ -11,6 +11,7 @@ Code name:
 ## Bug
 
 * #29: Fixed issues with record null values in a topic
+* #35: Fixed bug with case sensitivity in record format parameters
 
 ### Runtime Dependency Updates
 
