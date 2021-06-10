@@ -1,10 +1,9 @@
 package com.exasol.cloudetl.kafka
 
 import scala.util.Random
-
 import com.exasol.ExaIterator
-
 import net.manub.embeddedkafka.schemaregistry.EmbeddedKafka
+import org.mockito.ArgumentMatchers.argThat
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.BeforeAndAfterEach
@@ -65,5 +64,8 @@ trait KafkaIntegrationTest
 
     mockedIterator
   }
+
+  final def jsonMatcher(json: String): String =
+    argThat(new JsonArgumentMatcher(json))
 
 }

@@ -10,19 +10,12 @@ import org.apache.kafka.common.serialization.Deserializer
 trait RecordDeserialization {
 
   /**
-   * Creates a deserializer that transforms the Kafka record into a columnar structure.
-   * If a field list is provided, only those fields must be included in the sequence.
+   * Creates a serializer for the given field specifications. The specs can be either referencing
+   * key or value records, but not both. This is mainly for checking correct settings for
+   * the format implemented and making sure no invalid fieldSpecifications are used.
    */
-  def getColumnDeserializer(
+  def getDeserializer(
     properties: KafkaConsumerProperties,
-    fields: Option[Seq[String]]
-  ): Deserializer[Seq[Any]]
-
-  /**
-   * Creates a deserializer that emits the Kafka record as a plain JSON object.
-   */
-  def getSingleColumnJsonDeserializer(
-    properties: KafkaConsumerProperties,
-    fields: Option[Seq[String]]
-  ): Deserializer[Seq[Any]]
+    fieldSpecs: Seq[FieldSpecification]
+  ): Deserializer[Map[FieldSpecification, Seq[Any]]]
 }

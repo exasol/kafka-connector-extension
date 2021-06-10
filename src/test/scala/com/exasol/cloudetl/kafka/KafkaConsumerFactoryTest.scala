@@ -28,15 +28,25 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
   test("apply returns a default kafka consumer type") {
     val consumerProperties = KafkaConsumerProperties(defaultProperties)
     val kafkaConsumer =
-      KafkaConsumerFactory(consumerProperties, new VoidDeserializer, mock[ExaMetadata])
-    assert(kafkaConsumer.isInstanceOf[KafkaConsumer[String, Void]])
+      KafkaConsumerFactory(
+        consumerProperties,
+        new VoidDeserializer,
+        new VoidDeserializer,
+        mock[ExaMetadata]
+      )
+    assert(kafkaConsumer.isInstanceOf[KafkaConsumer[Void, Void]])
   }
 
   test("apply throws if required SCHEMA_REGISTRY_URL is not set and RECORD_FORMAT is avro") {
     val properties = defaultProperties - ("SCHEMA_REGISTRY_URL")
     val consumerProperties = KafkaConsumerProperties(properties)
     val thrown = intercept[KafkaConnectorException] {
-      KafkaConsumerFactory(consumerProperties, new VoidDeserializer, mock[ExaMetadata])
+      KafkaConsumerFactory(
+        consumerProperties,
+        new VoidDeserializer,
+        new VoidDeserializer,
+        mock[ExaMetadata]
+      )
     }
     assert(thrown.getMessage.contains("Error creating a Kafka consumer for topic 'topic'."))
     assert(
@@ -50,7 +60,12 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
     val properties = defaultProperties - ("BOOTSTRAP_SERVERS")
     val consumerProperties = KafkaConsumerProperties(properties)
     val thrown = intercept[KafkaConnectorException] {
-      KafkaConsumerFactory(consumerProperties, new VoidDeserializer, mock[ExaMetadata])
+      KafkaConsumerFactory(
+        consumerProperties,
+        new VoidDeserializer,
+        new VoidDeserializer,
+        mock[ExaMetadata]
+      )
     }
     assert(
       thrown.getMessage.contains(
@@ -67,7 +82,12 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
     )
     val consumerProperties = KafkaConsumerProperties(properties)
     val thrown = intercept[KafkaConnectorException] {
-      KafkaConsumerFactory(consumerProperties, new VoidDeserializer, mock[ExaMetadata])
+      KafkaConsumerFactory(
+        consumerProperties,
+        new VoidDeserializer,
+        new VoidDeserializer,
+        mock[ExaMetadata]
+      )
     }
     assert(
       thrown.getMessage ===
@@ -77,7 +97,7 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
 
   test("apply returns a SSL enabled kafka consumer") {
     val kafkaConsumer = createSSLEnabledKafkaConsumer(DUMMY_KEYSTORE_FILE, DUMMY_TRUSTSTORE_FILE)
-    assert(kafkaConsumer.isInstanceOf[KafkaConsumer[String, _]])
+    assert(kafkaConsumer.isInstanceOf[KafkaConsumer[_, _]])
   }
 
   test("apply throws if SSL Keystore JKS file is not available") {
@@ -101,7 +121,7 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
   final def createSSLEnabledKafkaConsumer(
     keystoreFile: Path,
     truststoreFile: Path
-  ): KafkaConsumer[String, _] = {
+  ): KafkaConsumer[_, _] = {
     val properties = defaultProperties ++ Map(
       "SSL_ENABLED" -> "true",
       "SECURITY_PROTOCOL" -> "SSL",
@@ -120,7 +140,12 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
          |SSL_TRUSTSTORE_PASSWORD=pass123
       """.stripMargin.replace("\n", "")
     )
-    KafkaConsumerFactory(consumerProperties, new VoidDeserializer, exaMetadata)
+    KafkaConsumerFactory(
+      consumerProperties,
+      new VoidDeserializer,
+      new VoidDeserializer,
+      exaMetadata
+    )
   }
 
 }
