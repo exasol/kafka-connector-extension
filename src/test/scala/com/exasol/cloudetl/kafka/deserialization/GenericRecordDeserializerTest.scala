@@ -3,18 +3,20 @@ package com.exasol.cloudetl.kafka.deserialization
 import java.lang.{Integer => JInt}
 import java.util.Collections
 
+import com.exasol.common.json.JsonMapper
+
+import com.fasterxml.jackson.databind.JsonNode
 import org.apache.avro.SchemaBuilder
 import org.apache.avro.generic.{GenericRecord, GenericRecordBuilder}
 import org.apache.kafka.common.serialization.Deserializer
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 
-class GenericRecordDeserializerTest extends AnyFunSuite with Matchers with MockitoSugar {
+class GenericRecordDeserializerTest extends AnyFunSuite with MockitoSugar {
 
-  private val schema = SchemaBuilder
+  private[this] val schema = SchemaBuilder
     .record("test")
     .fields()
     .optionalString("field1")
@@ -24,10 +26,10 @@ class GenericRecordDeserializerTest extends AnyFunSuite with Matchers with Mocki
     .withDefault(Collections.emptyList[JInt])
     .endRecord()
 
-  private def extractFrom(
+  private[this] def extractFrom(
     record: GenericRecord,
-    fieldList: Option[Seq[String]]
-  ): Seq[Any] = {
+    fieldList: Seq[FieldSpecification]
+  ): Map[FieldSpecification, Seq[Any]] = {
     val derse = mock[Deserializer[GenericRecord]]
     when(derse.deserialize(ArgumentMatchers.anyString(), ArgumentMatchers.any[Array[Byte]]))
       .thenReturn(record)
@@ -41,10 +43,10 @@ class GenericRecordDeserializerTest extends AnyFunSuite with Matchers with Mocki
         .set("field2", 11L)
         .set("complex", Array(1, 2, 3))
         .build(),
-      None
+      Seq(RecordValueFields)
     )
 
-    row must contain theSameElementsInOrderAs Seq("val1", 11L, """[1,2,3]""")
+    assert(row === Map(RecordValueFields -> Seq[Any]("val1", 11L, "[1,2,3]")))
   }
 
   test("must only use fields provided to deserializer in the right order") {
@@ -54,10 +56,14 @@ class GenericRecordDeserializerTest extends AnyFunSuite with Matchers with Mocki
         .set("field2", 11L)
         .set("complex", Array(1, 2, 3))
         .build(),
-      Option(Seq("complex", "field1"))
+      Seq(RecordValueField("complex"), RecordValueField("field1"))
     )
 
-    row must contain theSameElementsInOrderAs Seq("""[1,2,3]""", "val1")
+    val expected = Map(
+      RecordValueField("complex") -> Seq("[1,2,3]"),
+      RecordValueField("field1") -> Seq("val1")
+    )
+    assert(row === expected)
   }
 
   test("must provide null values for fields not present and default values") {
@@ -65,10 +71,15 @@ class GenericRecordDeserializerTest extends AnyFunSuite with Matchers with Mocki
       new GenericRecordBuilder(schema)
         .set("field2", 11L)
         .build(),
-      Option(Seq("field1", "field2", "complex"))
+      Seq(RecordValueField("field1"), RecordValueField("field2"), RecordValueField("complex"))
     )
 
-    row must contain theSameElementsInOrderAs Seq(null, 11L, "[]")
+    val expected = Map(
+      RecordValueField("field1") -> Seq(null),
+      RecordValueField("field2") -> Seq(11L),
+      RecordValueField("complex") -> Seq("[]")
+    )
+    assert(row === expected)
   }
 
   test("must return null for non-existent field to keep table structure") {
@@ -76,9 +87,39 @@ class GenericRecordDeserializerTest extends AnyFunSuite with Matchers with Mocki
       new GenericRecordBuilder(schema)
         .set("field2", 11L)
         .build(),
-      Option(Seq("field2", "unknownField"))
+      Seq(RecordValueField("field2"), RecordValueField("unknownField"))
     )
 
-    row must contain theSameElementsInOrderAs Seq(11L, null)
+    val expected = Map(
+      RecordValueField("field2") -> Seq(11L),
+      RecordValueField("unknownField") -> Seq(null)
+    )
+    assert(row === expected)
   }
+
+  test("must serialize the record as full json when requested") {
+    val row = extractFrom(
+      new GenericRecordBuilder(schema)
+        .set("field1", "val1")
+        .set("field2", 11L)
+        .set("complex", Array(1, 2, 3))
+        .build(),
+      Seq(RecordValue)
+    )
+
+    assert(row.size === 1)
+    assert(row.contains(RecordValue))
+    assert(row(RecordValue).size === 1)
+    assert(row(RecordValue).headOption.getOrElse("").isInstanceOf[String])
+
+    val jsonValueInRow = row(RecordValue).headOption.map(_.asInstanceOf[String]).getOrElse("")
+    val expectedJson = JsonMapper.parseJson[JsonNode](
+      """|{"field1": "val1",
+         |"field2": 11,
+         |"complex": [1,2,3]}
+         |""".stripMargin
+    )
+    assert(JsonMapper.parseJson[JsonNode](jsonValueInRow) === expectedJson)
+  }
+
 }

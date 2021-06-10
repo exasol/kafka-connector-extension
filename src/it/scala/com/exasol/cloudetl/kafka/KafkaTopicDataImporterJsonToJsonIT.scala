@@ -3,8 +3,8 @@ package com.exasol.cloudetl.kafka
 import java.lang.{Integer => JInt, Long => JLong}
 
 import com.exasol.ExaMetadata
-
 import org.apache.kafka.common.serialization.{Serializer, StringSerializer}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{times, verify}
 
@@ -42,14 +42,14 @@ class KafkaTopicDataImporterJsonToJsonIT extends KafkaIntegrationTest {
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(1)).emit(
-      inputRecord1,
-      JInt.valueOf(0),
-      JLong.valueOf(0)
+      jsonMatcher(inputRecord1),
+      ArgumentMatchers.eq(JInt.valueOf(0)),
+      ArgumentMatchers.eq(JLong.valueOf(0))
     )
     verify(iter, times(1)).emit(
-      inputRecord2,
-      JInt.valueOf(0),
-      JLong.valueOf(1)
+      jsonMatcher(inputRecord2),
+      ArgumentMatchers.eq(JInt.valueOf(0)),
+      ArgumentMatchers.eq(JLong.valueOf(1))
     )
   }
 }

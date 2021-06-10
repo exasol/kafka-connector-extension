@@ -6,6 +6,8 @@ Code name:
 
 ## Features
 
+* #28: Added support to access all fields in Kafka record
+
 ## Bug
 
 * #29: Fixed issues with record null values in a topic

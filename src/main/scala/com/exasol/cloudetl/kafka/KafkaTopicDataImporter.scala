@@ -5,9 +5,8 @@ import java.util.Arrays
 
 import scala.jdk.CollectionConverters._
 
-import com.exasol.ExaIterator
-import com.exasol.ExaMetadata
-import com.exasol.cloudetl.kafka.deserialization.{AvroDeserialization, JsonDeserialization}
+import com.exasol.{ExaIterator, ExaMetadata}
+import com.exasol.cloudetl.kafka.deserialization.{DeserializationFactory, FieldParser, RowBuilder}
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -44,17 +43,13 @@ object KafkaTopicDataImporter extends LazyLogging {
     val topic = kafkaProperties.getTopic()
     val topicPartition = new TopicPartition(topic, partitionId)
 
-    val recordDeserialization = kafkaProperties.getRecordFormat() match {
-      case "avro" => AvroDeserialization
-      case "json" => JsonDeserialization
-    }
-    val recordFields = kafkaProperties.getRecordFields()
-    val derserializer = if (kafkaProperties.getSingleColJson()) {
-      recordDeserialization.getSingleColumnJsonDeserializer(kafkaProperties, recordFields)
-    } else {
-      recordDeserialization.getColumnDeserializer(kafkaProperties, recordFields)
-    }
-    val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, derserializer)
+    val fieldSpecs = FieldParser.get(kafkaProperties.getRecordFields())
+    val recordDeserializers = DeserializationFactory.getSerializers(fieldSpecs, kafkaProperties)
+    val kafkaConsumer = KafkaConsumerFactory(
+      kafkaProperties,
+      recordDeserializers.keyDeserializer,
+      recordDeserializers.valueDeserializer
+    )
     kafkaConsumer.assign(Arrays.asList(topicPartition))
     kafkaConsumer.seek(topicPartition, partitionNextOffset)
 
@@ -75,7 +70,20 @@ object KafkaTopicDataImporter extends LazyLogging {
               s"'${record.offset()}' with key '${record.key()}' and " +
               s"value '${record.value()}'"
           )
-          iterator.emit(getRecordRow(record, metadata.getOutputColumnCount().toInt): _*)
+
+          val kafkaMetadata: Seq[Object] = Seq(
+            record.partition().asInstanceOf[AnyRef],
+            record.offset().asInstanceOf[AnyRef]
+          )
+
+          val rowValues = RowBuilder.buildRow(
+            fieldSpecs,
+            record,
+            metadata.getOutputColumnCount.toInt - kafkaMetadata.size
+          )
+
+          val exasolRow: Seq[Any] = rowValues ++ kafkaMetadata
+          iterator.emit(exasolRow: _*)
         }
         logger.info(
           s"Emitted total '$totalRecordCount' records for partition " +
@@ -94,19 +102,4 @@ object KafkaTopicDataImporter extends LazyLogging {
       kafkaConsumer.close();
     }
   }
-
-  private[this] def getRecordRow(
-    record: ConsumerRecord[String, Seq[Any]],
-    outputColumnCount: Int
-  ): Seq[Any] = {
-    val metadataColumns =
-      Seq(record.partition().asInstanceOf[AnyRef], record.offset().asInstanceOf[AnyRef])
-    val valueColumns = if (record.value() != null) {
-      record.value()
-    } else {
-      Seq.fill[Any](outputColumnCount - metadataColumns.length) { null }
-    }
-    valueColumns ++ metadataColumns
-  }
-
 }

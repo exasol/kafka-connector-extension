@@ -19,8 +19,9 @@ class KafkaConsumerFactoryTest extends AnyFunSuite with MockitoSugar {
 
   test("apply returns a default kafka consumer type") {
     val consumerProperties = KafkaConsumerProperties(defaultProperties, mock[ExaMetadata])
-    val kafkaConsumer = KafkaConsumerFactory(consumerProperties, new VoidDeserializer)
-    assert(kafkaConsumer.isInstanceOf[KafkaConsumer[String, Void]])
+    val kafkaConsumer =
+      KafkaConsumerFactory(consumerProperties, new VoidDeserializer, new VoidDeserializer)
+    assert(kafkaConsumer.isInstanceOf[KafkaConsumer[Void, Void]])
   }
 
 }
