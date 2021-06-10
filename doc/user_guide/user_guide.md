@@ -1,7 +1,7 @@
 # User Guide
 
 Exasol Kafka Connector Extension allows you to connect to Apache Kafka and
-import Avro or Json formatted data from Kafka topics.  
+import Apache Avro, JSON or String formatted data from Kafka topics.
 
 Using the connector you can import data from a Kafka topic into an Exasol table.
 
@@ -9,6 +9,7 @@ Using the connector you can import data from a Kafka topic into an Exasol table.
 
 - [Getting Started](#getting-started)
 - [Deployment](#deployment)
+- [Record Format Configuration](#record-format-configuration)
 - [Prepare Exasol Table](#prepare-exasol-table)
 - [Avro Data Mapping](#avro-data-mapping)
 - [JSON Data Mapping](#json-data-mapping)
@@ -35,13 +36,13 @@ Kafka topics with several partitions.
 
 ### Schema Registry
 
-Kafka connector requires a Schema Registry when importing avro messages that are 
-serialized with a confluent schema registry on the producer side. 
+Kafka connector requires a Schema Registry when importing Avro messages that are
+serialized with a Confluent Schema Registry on the producer side.
 
 Schema Registry is used to store, serve and manage Avro schemas for each Kafka
 topic. Thus, it allows you to obtain the latest schema for a given Kafka topic.
-As a result, you should set it up together with a Kafka cluster when you use
- ``RECORD_FORMAT=AVRO``.
+As a result, you should set it up together with a Kafka cluster when you are
+importing Avro records.
 
 ## Deployment
 
@@ -53,8 +54,8 @@ This section describes how to deploy and prepare the user-defined functions
 Please download and save the latest assembled (with all dependencies included)
 jar file from the [Github Releases][gh-releases].
 
-Please ensure that the SHA256 sum of the downloaded jar is the same as the checksum
-provided together with the jar file.
+Please ensure that the SHA256 sum of the downloaded jar is the same as the
+checksum provided together with the jar file.
 
 To check the SHA256 sum of the downloaded jar, run the command:
 
@@ -156,44 +157,48 @@ Please do not change the UDF script names.
 Similarly, do not forget to change the bucket name or the latest jar version
 according to your deployment setup.
 
-# Concept and configuration
+## Record Format Configuration
 
-The extension can handle different kafka record formats, currently it is
+The connector extension can handle different Kafka record formats, currently
+they are:
 
-* avro (serialized with the Confluent Schema Registry)
-* json 
-* string
+* Avro
+* JSON
+* String
 
-The format of the records can be set for both key and value with the 
-configuration values
+The format of the records can be set for both key and value with the following
+configuration values:
 
 `RECORD_KEY_FORMAT=avro|json|string`
 
-`RECORD_VALUE_FORMAT==avro|json|string`
+`RECORD_VALUE_FORMAT=avro|json|string`
 
-It should match the format of the records on the topic you are importing.
-The connector can extract fields from the key and value of the records and
-insert them into the target table the import is running against. 
-The configuration setting `RECORD_FIELDS` controls the list of values which
-are  inserted into the table.
+It should match the format of the records on the topic you are importing.  The
+connector can extract fields from the key and value of the records and insert
+them into the target table the import is running against.
+
+The configuration setting `RECORD_FIELDS` controls the list of values which are
+inserted into the table.
+
+Please note that when using Avro format, you are required to provide Confluent
+Schema Registry address.
 
 The following table illustrates the possible values and support from the
-serialization formats
+serialization formats.
 
-| Record Field Specification | Value                                  | avro          | json                          | string |
+| Record Field Specification | Value                                  | Avro          | JSON                          | String |
 |----------------------------|----------------------------------------|---------------|-------------------------------|--------|
-| value._field1_             | The field _field1_ of the record value | yes           | yes                           | no     |
-| key._field2_               | The field _field2_ of the record key   | yes           | yes                           | no     |
-| value.*                    | All fields from the record value       | yes           | no (order not deterministic)  | no     |
-| key.*                      | All fields from the record key         | yes           | no (order not deterministic)  | no     |
-| value                      | The record value as string             | yes (as json) | yes (as json)                 | yes    |
-| key                        | The record key as string               | yes (as json) | yes (as json)                 | yes    |
-| timestamp                  | The record timestamp                   | yes           | yes                           | yes    |
-
+| `value._field1_`           | The field _field1_ of the record value | yes           | yes                           | no     |
+| `key._field2_`             | The field _field2_ of the record key   | yes           | yes                           | no     |
+| `value.*`                  | All fields from the record value       | yes           | no (order not deterministic)  | no     |
+| `key.*`                    | All fields from the record key         | yes           | no (order not deterministic)  | no     |
+| `value`                    | The record value as string             | yes (as JSON) | yes (as JSON)                 | yes    |
+| `key`                      | The record key as string               | yes (as JSON) | yes (as JSON)                 | yes    |
+| `timestamp`                | The record timestamp                   | yes           | yes                           | yes    |
 
 ### Example
 
-Given a record that has this avro value  (json representation)
+Given a record that has the following Avro value (JSON representation)
 
 ```json
 {
@@ -204,7 +209,7 @@ Given a record that has this avro value  (json representation)
 }
 ```
 
-and this key (also avro as json representation)
+and this key (also Avro, as JSON representation)
 
 ```json
 {
@@ -212,29 +217,29 @@ and this key (also avro as json representation)
 }
 ```
 
-This enables to configure the connector like this
+Then you can configure the connector with parameters as shown below:
+
 ```
 RECORD_KEY_FORMAT=avro
 RECORD_VALUE_FORMAT=avro
 RECORD_FIELDS=key.id,timestamp,value.lastName,value.age
 ```
 
-and import values from the record key, the value and the record metadata
-(timestamp)
+This imports field from the record key, the fields `lastName` and `age` from
+value and the record timestamp metadata.
 
 ## Prepare Exasol Table
 
 You should create a corresponding table in Exasol that stores the data from
 a Kafka topic.
 
-The table column names and types should match the fields
-specified in the `RECORD_FIELDS` option. Make sure the number of columns and their order
-is correct - otherwise the import will lead to an error as
-there is no by-name mapping possible.
+The table column names and types should match the fields specified in the
+`RECORD_FIELDS` parameter. Please make sure the number of columns and their
+order is correct &mdash; otherwise the import will lead to an error as there is
+no by-name mapping possible.
 
-Additionally, add two extra columns to the end of the table. These columns
-store the Kafka metadata and help to keep track of the already imported records.
-
+Additionally, add two extra columns to the end of the table. These columns store
+the Kafka metadata and help to keep track of the already imported records.
 
 For example, given the following Avro record schema,
 
@@ -308,27 +313,28 @@ set the number of characters in the VARCHAR type accordingly.
 
 ## JSON Data Mapping
 
-[JSON][json-spec] supports a limited set of primitive and complex type.
-The following table shows how they are mapped to the Exasol types.
+[JSON][json-spec] supports a limited set of primitive and complex type. The
+following table shows how they are mapped to the Exasol types.
 
 | JSON Data Type | Recommended Exasol Column Types | 
-|:---------------|:-------------------------------|
-| boolean        | BOOLEAN                        |
-| number         | INT, INTEGER, DECIMAL(p,s)     |
-| string         | VARCHAR(n), CHAR(n)            |
-| object         | VARCHAR(n)                     |
+|:---------------|:--------------------------------|
+| boolean        | BOOLEAN                         |
+| number         | INT, INTEGER, DECIMAL(p,s)      |
+| string         | VARCHAR(n), CHAR(n)             |
+| object         | VARCHAR(n)                      |
  
- Similar to avro, any complex types will be emitted as valid json strings.
+Similar to Avro, connector will emit any complex types as valid JSON strings, so
+you should define them as `VARCHAR(n)` column in Exasol table.
 
 ## Importing Records
 
-Several property values are required to access the Kafka
-cluster when importing data from Kafka topics using the connector.
+Several property values are required to access the Kafka cluster when importing
+data from Kafka topics using the connector.
 
 You should provide these key-value parameters:
 
 - ``BOOTSTRAP_SERVERS``
-- ``SCHEMA_REGISTRY_URL`` (only needed when handling avro)
+- ``SCHEMA_REGISTRY_URL``
 - ``TOPIC_NAME``
 - ``TABLE_NAME``
 
@@ -338,8 +344,9 @@ contact all servers in the Kafka cluster, irrespective of servers specified with
 this parameter. This list only defines initial hosts used to discover the full
 list of Kafka servers.
 
-The **SCHEMA_REGISTRY_URL** is an URL to the Schema Registry server. It is used
-to retrieve Avro schemas of Kafka topics.
+The **SCHEMA_REGISTRY_URL** is an URL to the Schema Registry server. **This is
+only required if you are importing Avro records.** It is used to retrieve Avro
+schemas of Kafka topics. Avro is set as default record value format.
 
 The **TOPIC_NAME** is the name of the Kafka topic we want to import Avro data
 from. Please note that we only support a single topic data imports.
@@ -362,9 +369,9 @@ FROM SCRIPT KAFKA_CONSUMER WITH
   GROUP_ID            = 'exasol-kafka-udf-consumers';
 ```
 
-For example, given the Kafka topic named `SALES-POSITIONS` containing avro
-encoded values, we can import its
-data into `RETAIL.SALES_POSITIONS` table in Exasol:
+For example, given the Kafka topic named `SALES-POSITIONS` containing Avro
+encoded values, we can import its data into `RETAIL.SALES_POSITIONS` table in
+Exasol:
 
 ```sql
 IMPORT INTO RETAIL.SALES_POSITIONS
@@ -463,18 +470,24 @@ These are optional parameters with their default values.
   Registry][schema-registry] which stores Avro schemas as metadata. Schema
   Registry will be used to parse the Kafka topic Avro data schemas.
 
-* ``RECORD_KEY_FORMAT`` - One of [avro, json, string]. The default value is **string**.
+* ``RECORD_KEY_FORMAT`` - It specifies the record key format. It should be one
+  of `avro`, `json` or `string` values. The default value is **string**.
 
-* ``RECORD_VALUE_FORMAT`` - One of [avro, json, string]. The default value is **avro**.
+* ``RECORD_VALUE_FORMAT`` - It defines the record value format. It should be one
+  of `avro`, `json` or `string` values. The default value is **avro**.
 
 * ``RECORD_FIELDS`` - A comma separated list of fields to import from the
-  source record. It is recommended to set this when the structure of the kafka
+  source record. It is recommended to set this when the structure of the Kafka
   records is not under your control and the order and/or the number of fields in
   the record can change at any time. The options are outlined
-  [above](#concept-and-configuration)
-  The default is dependent on the serialization format
-  * avro: **value.*** (All fields from the record will be imported)
-  * json & string: **value** (The record will be imported as single string column)
+  [Record Format Configuration](#record-format-configuration) section.
+
+  The default is dependent on the serialization format:
+  - avro: **`value.*`** &mdash; All fields from the record will be imported.
+  - json: **`value`** &mdash; The record will be imported as single JSON string
+    into a column.
+  - string: **`value`** &mdash; The record will be imported as single string
+    into a column.
 
 * ``GROUP_ID`` - It defines the id for this type of consumer. The default value
   is **EXASOL_KAFKA_UDFS_CONSUMERS**. It is a unique string that identifies the
@@ -511,10 +524,11 @@ These are optional parameters with their default values.
 * ``MAX_PARTITION_FETCH_BYTES`` - It is the maximum amount of data per
   partition the server will return. The default value is **1048576**.
 
-* ``AS_JSON_DOC`` - (_deprecated_) It defines the way the data will be imported into the database.
-  If set to **'true'** data will be imported as one JSON document in one column. 
-  Default value is **'false'**. When dealing with JSON it should be replaced by
-  specifying `RECORD_FORMAT=json` and `RECORD_FIELDS=value`.
+* ``AS_JSON_DOC`` - (_deprecated_) It defines the way the data will be imported
+  into the database.  If set to **'true'** data will be imported as one JSON
+  document in one column. Default value is **'false'**. When dealing with JSON
+  it should be replaced by specifying `RECORD_FORMAT=json` and
+  `RECORD_FIELDS=value`.
 
 The following properties should be provided to enable a secure connection to the
 Kafka clusters.
