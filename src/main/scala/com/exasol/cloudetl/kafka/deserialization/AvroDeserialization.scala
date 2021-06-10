@@ -1,29 +1,27 @@
 package com.exasol.cloudetl.kafka.deserialization
 
+import scala.jdk.CollectionConverters.MapHasAsJava
+
 import com.exasol.cloudetl.kafka.{KafkaConnectorException, KafkaConsumerProperties}
 
 import io.confluent.kafka.serializers.{AbstractKafkaAvroSerDeConfig, KafkaAvroDeserializer}
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.common.serialization.Deserializer
-import scala.jdk.CollectionConverters.MapHasAsJava
 
 /**
  * Creates deserializers for avro records that are serialized with the Confluent schema registry.
  */
 object AvroDeserialization extends RecordDeserialization {
 
-  override def getColumnDeserializer(
+  override def getDeserializer(
     properties: KafkaConsumerProperties,
-    fields: Option[Seq[String]]
-  ): Deserializer[Seq[Any]] =
-    new GenericRecordDeserializer(fields, getAvroDeserializer(properties.getSchemaRegistryUrl()))
-
-  override def getSingleColumnJsonDeserializer(
-    properties: KafkaConsumerProperties,
-    fields: Option[Seq[String]]
-  ): Deserializer[Seq[Any]] =
+    fieldSpecs: Seq[FieldSpecification]
+  ): Deserializer[Map[FieldSpecification, Seq[Any]]] =
     if (properties.hasSchemaRegistryUrl()) {
-      new ToStringDeserializer(getAvroDeserializer(properties.getSchemaRegistryUrl()))
+      new GenericRecordDeserializer(
+        fieldSpecs,
+        getAvroDeserializer(properties.getSchemaRegistryUrl())
+      )
     } else {
       throw new KafkaConnectorException(
         "SCHEMA_REGISTRY_URL must be provided for record type 'avro'"

@@ -12,8 +12,10 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
 
   implicit val serializer: Serializer[String] = new StringSerializer
 
-  override def additionalProperties: Map[String, String] =
-    Map("RECORD_FORMAT" -> "json", "RECORD_FIELDS" -> "col_str,col_int,col_object")
+  override def additionalProperties: Map[String, String] = Map(
+    "RECORD_FORMAT" -> "json",
+    "RECORD_FIELDS" -> "value.col_str,value.col_int,value.col_object"
+  )
 
   test("must deserialize json to exasol row") {
     createCustomTopic(topic)

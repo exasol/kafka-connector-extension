@@ -5,11 +5,11 @@ import java.util.Arrays
 
 import scala.jdk.CollectionConverters._
 
-import com.exasol.ExaIterator
-import com.exasol.ExaMetadata
-import com.exasol.cloudetl.kafka.deserialization.{AvroDeserialization, JsonDeserialization}
+import com.exasol.{ExaIterator, ExaMetadata}
+import com.exasol.cloudetl.kafka.deserialization.{DeserializationFactory, FieldParser, RowBuilder}
 
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition
 
 /**
@@ -29,12 +29,12 @@ object KafkaTopicDataImporter extends LazyLogging {
    * offset as metadata.
    */
   def run(metadata: ExaMetadata, iterator: ExaIterator): Unit = {
-    val kafkaProperties = KafkaConsumerProperties(iterator.getString(0))
+    val kafkaProperties = KafkaConsumerProperties(iterator.getString(0), metadata)
     val partitionId = iterator.getInteger(1)
     val partitionOffset = iterator.getLong(2)
     val partitionNextOffset = partitionOffset + 1L
-    val nodeId = metadata.getNodeId
-    val vmId = metadata.getVmId
+    val nodeId = metadata.getNodeId()
+    val vmId = metadata.getVmId()
     logger.info(
       s"Starting Kafka consumer for partition '$partitionId' at next offset " +
         s"'$partitionNextOffset' for node '$nodeId' and vm '$vmId'."
@@ -43,17 +43,13 @@ object KafkaTopicDataImporter extends LazyLogging {
     val topic = kafkaProperties.getTopic()
     val topicPartition = new TopicPartition(topic, partitionId)
 
-    val recordDeserialization = kafkaProperties.getRecordFormat() match {
-      case "avro" => AvroDeserialization
-      case "json" => JsonDeserialization
-    }
-    val recordFields = kafkaProperties.getRecordFields()
-    val derserializer = if (kafkaProperties.getSingleColJson()) {
-      recordDeserialization.getSingleColumnJsonDeserializer(kafkaProperties, recordFields)
-    } else {
-      recordDeserialization.getColumnDeserializer(kafkaProperties, recordFields)
-    }
-    val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, derserializer, metadata)
+    val fieldSpecs = FieldParser.get(kafkaProperties.getRecordFields())
+    val recordDeserializers = DeserializationFactory.getSerializers(fieldSpecs, kafkaProperties)
+    val kafkaConsumer = KafkaConsumerFactory(
+      kafkaProperties,
+      recordDeserializers.keyDeserializer,
+      recordDeserializers.valueDeserializer
+    )
     kafkaConsumer.assign(Arrays.asList(topicPartition))
     kafkaConsumer.seek(topicPartition, partitionNextOffset)
 
@@ -82,25 +78,28 @@ object KafkaTopicDataImporter extends LazyLogging {
               s"'${record.offset()}' with key '${record.key()}' and " +
               s"value '${record.value()}'"
           )
-
           latestOffset = record.offset()
 
-          val metadata: Seq[Object] = Seq(
+          val kafkaMetadata: Seq[Object] = Seq(
             record.partition().asInstanceOf[AnyRef],
             record.offset().asInstanceOf[AnyRef]
           )
 
-          val recordValue = record.value()
-          val exasolRow: Seq[Any] = recordValue ++ metadata
-          iterator.emit(exasolRow: _*)
+          val rowValues = RowBuilder.buildRow(
+            fieldSpecs,
+            record,
+            metadata.getOutputColumnCount.toInt - kafkaMetadata.size
+          )
 
+          val exasolRow: Seq[Any] = rowValues ++ kafkaMetadata
+          iterator.emit(exasolRow: _*)
         }
         logger.info(
           s"Emitted total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
         )
-
-      } while (latestOffset < lastRecordOffset) //(recordCount >= minRecords && totalRecordCount < maxRecords)
+        // (recordCount >= minRecords && totalRecordCount < maxRecords)
+      } while (latestOffset < lastRecordOffset)
     } catch {
       case exception: Throwable =>
         throw new KafkaConnectorException(
@@ -113,5 +112,4 @@ object KafkaTopicDataImporter extends LazyLogging {
       kafkaConsumer.close();
     }
   }
-
 }
