@@ -69,10 +69,10 @@ These plugins help with project development.
 | [SBT Explicit Dependencies][sbt-expdep-link]| Checks which direct libraries required to compile your code     | Apache License 2.0   |
 | [SBT Git][sbt-git-link]                     | A plugin for Git integration, used to version the release jars  | BSD 2-Clause License |
 
-[travis-badge]: https://img.shields.io/travis/com/exasol/kafka-connector-extension/master.svg?logo=travis
+[travis-badge]: https://img.shields.io/travis/com/exasol/kafka-connector-extension/main.svg?logo=travis
 [travis-link]: https://travis-ci.com/exasol/kafka-connector-extension
 [coveralls-badge]: https://img.shields.io/coveralls/github/exasol/kafka-connector-extension.svg?logo=coveralls
-[coveralls-link]: https://coveralls.io/github/exasol/kafka-connector-extension?branch=master
+[coveralls-link]: https://coveralls.io/github/exasol/kafka-connector-extension?branch=main
 [gh-release-badge]: https://img.shields.io/github/release/exasol/kafka-connector-extension.svg?logo=github
 [gh-release-link]: https://github.com/exasol/kafka-connector-extension/releases/latest
 [ieudf]: https://github.com/exasol/import-export-udf-common-scala
