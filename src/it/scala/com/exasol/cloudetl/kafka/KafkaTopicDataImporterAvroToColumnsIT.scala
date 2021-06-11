@@ -140,6 +140,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     publishToKafka(topic, AvroRecord("hello", 4, 14))
     publishToKafka(topic, AvroRecord("def", 7, 17))
     publishToKafka(topic, AvroRecord("xyz", 13, 23))
+    publishToKafka(topic, AvroRecord("last", 11, 22))
 
     // comsumer in two batches each with 2 records
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
@@ -147,6 +148,30 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
 
     verify(iter, times(4)).emit(Seq(any[Object]): _*)
     verify(iter, times(4)).emit(
+      anyString(),
+      anyInt().asInstanceOf[JInt],
+      anyLong().asInstanceOf[JLong],
+      anyInt().asInstanceOf[JInt],
+      anyLong().asInstanceOf[JLong]
+    )
+  }
+
+  test("run emits records until the end of partition offset") {
+    val newProperties = properties ++ Map(
+      "MAX_POLL_RECORDS" -> "2",
+      "MIN_RECORDS_PER_RUN" -> "2",
+      "MAX_RECORDS_PER_RUN" -> "4",
+      "CONSUME_ALL_OFFSETS" -> "true"
+    )
+    createCustomTopic(topic)
+    for (i <- 1 to 5) {
+      publishToKafka(topic, AvroRecord(s"$i", i, i.toLong))
+    }
+    val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
+    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+
+    verify(iter, times(5)).emit(Seq(any[Object]): _*)
+    verify(iter, times(5)).emit(
       anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong],
@@ -166,12 +191,12 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     val thrown = intercept[KafkaConnectorException] {
       KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
     }
-    val msg = thrown.getMessage()
-    assert(msg.contains(s"Error consuming Kafka topic '$topic' data."))
-    assert(msg.contains("It occurs for partition '0' in node '0' and vm"))
+    val message = thrown.getMessage()
+    assert(message.contains(s"Error consuming Kafka topic '$topic' data."))
+    assert(message.contains("It occurs for partition '0' in node '0' and vm"))
   }
 
-  private def deleteRecordsFromTopic(topic: String, beforeOffset: Int): Unit = {
+  private[this] def deleteRecordsFromTopic(topic: String, beforeOffset: Int): Unit = {
     withAdminClient { client =>
       val allPartitions = client
         .describeTopics(Collections.singletonList(topic))
