@@ -16,7 +16,7 @@ class DeserializationFactoryTest extends AnyFunSuite {
   }
 
   test("must not deserialize key when not specified in fieldSpecs") {
-    val properties = new KafkaConsumerProperties(Map("RECORD_FORMAT" -> "jsoN"))
+    val properties = new KafkaConsumerProperties(Map("RECORD_FORMAT" -> "json"))
     val deserializers = DeserializationFactory.getSerializers(Seq(RecordValue), properties)
 
     assert(deserializers.keyDeserializer === IgnoreKeyDeserializer)
@@ -24,7 +24,7 @@ class DeserializationFactoryTest extends AnyFunSuite {
   }
 
   test("key must be ignored when not requested") {
-    val params = Map("RECORD_KEY_FORMAT" -> "avro", "RECORD_VALUE_FORMAT" -> "STRING")
+    val params = Map("RECORD_KEY_FORMAT" -> "avro", "RECORD_VALUE_FORMAT" -> "string")
     val properties = new KafkaConsumerProperties(params)
     val deserializers = DeserializationFactory.getSerializers(Seq(RecordValue), properties)
 
@@ -33,7 +33,7 @@ class DeserializationFactoryTest extends AnyFunSuite {
   }
 
   test("key must be taken into account when not requested") {
-    val params = Map("RECORD_KEY_FORMAT" -> "JSON", "RECORD_VALUE_FORMAT" -> "string")
+    val params = Map("RECORD_KEY_FORMAT" -> "json", "RECORD_VALUE_FORMAT" -> "string")
     val properties = new KafkaConsumerProperties(params)
     val deserializers = DeserializationFactory.getSerializers(
       Seq(RecordKeyField("someField"), RecordValue),
