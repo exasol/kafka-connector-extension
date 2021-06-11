@@ -102,7 +102,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     getString(TABLE_NAME)
 
   /**
-   * Checks if user wants to consume all offsets of topic partitions.
+   * Checks if the user wants to consume all offsets of topic partitions.
    */
   final def isConsumeAllOffsetsEnabled(): Boolean =
     isEnabled(CONSUME_ALL_OFFSETS)
