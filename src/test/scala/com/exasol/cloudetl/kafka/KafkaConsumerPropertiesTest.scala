@@ -2,7 +2,6 @@ package com.exasol.cloudetl.kafka
 
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.Locale.ENGLISH
 
 import com.exasol.{ExaConnectionInformation, ExaMetadata}
 
