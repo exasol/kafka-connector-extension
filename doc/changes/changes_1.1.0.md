@@ -1,15 +1,17 @@
-# Kafka Connector Extension 1.1.0, released 2021-06-XX
+# Kafka Connector Extension 1.1.0, released 2021-06-11
 
-Code name: 
+Code name: Support for fields selection and consuming all offset records
 
 ## Summary
+
+The release `1.1.0` added support for accessing fields of Kafka record, added an option to consume records until the last offset of partition. In addition, we fixed bugs related to null record values, missing properties and case sensitive parameters.
 
 ## Features
 
 * #28: Added support to access all fields in Kafka record
 * #32: Added option to read until last offset of a partition
 
-## Bug
+## Bugfixes
 
 * #29: Fixed issues with record null values in a topic
 * #30: Fixed bug with missing properties in connection object
