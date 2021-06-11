@@ -7,7 +7,7 @@ Code name:
 ## Features
 
 * #28: Added support to access all fields in Kafka record
-* #32: Added support to consume all available partition offsets since the last import offset
+* #32: Added option to read until last offset of a partition
 
 ## Bug
 
