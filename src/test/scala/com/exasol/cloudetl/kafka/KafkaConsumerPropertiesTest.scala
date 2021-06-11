@@ -305,8 +305,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   }
 
   test("getRecordFields returns user provided property value") {
-    properties = Map("RECORD_FIELDS" -> "value.name,value.surname,timestamp,   metadata")
-    val expected = Seq("value.name", "value.surname", "timestamp", "metadata")
+    properties = Map("RECORD_FIELDS" -> "value.name,value.Sur_Name, value.address1, timestamp")
+    val expected = Seq("value.name", "value.Sur_Name", "value.address1", "timestamp")
     assert(BaseProperties(properties).getRecordFields() === expected)
   }
 
