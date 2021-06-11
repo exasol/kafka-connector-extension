@@ -26,7 +26,7 @@ object KafkaTopicDataImporter extends LazyLogging {
     val kafkaProperties = KafkaConsumerProperties(iterator.getString(0), metadata)
     val partitionId = iterator.getInteger(1)
     val partitionNextOffset = iterator.getLong(2) + 1L
-    val outputColumnsCount = metadata.getOutputColumnCount().toInt
+    val outputColumnCount = metadata.getOutputColumnCount().toInt
     val nodeId = metadata.getNodeId()
     val vmId = metadata.getVmId()
     logger.info(
