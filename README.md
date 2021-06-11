@@ -10,6 +10,8 @@ and importing data from a Kafka topic into an Exasol table.
 ## Features
 
 * Imports Apache Avro formatted data from Apache Kafka clusters
+* Imports JSON formatted data from Apache Kafka clusters
+* Allows selecting record fields when importing
 * Allows secure connection to Apache Kafka clusters
 
 ## Information for Users

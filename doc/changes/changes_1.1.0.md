@@ -13,6 +13,7 @@ Code name:
 
 * #29: Fixed issues with record null values in a topic
 * #30: Fixed bug with missing properties in connection object
+* #35: Fixed bug with case sensitivity in record format parameters
 
 ### Runtime Dependency Updates
 
