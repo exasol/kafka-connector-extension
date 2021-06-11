@@ -28,7 +28,7 @@ object FieldParser {
             throw new KafkaConnectorException(
               s"Field reference $anythingElse " +
                 s"does not have the correct format. It must be one of " +
-                s"[key, value, key.*, value.*, key.fieldName, value.fieldName ]"
+                s"[key, value, key.*, value.*, key.fieldName, value.fieldName, timestamp]"
             )
         }
     }
