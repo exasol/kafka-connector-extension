@@ -277,6 +277,52 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(BaseProperties(properties).getSSLEndpointIdentificationAlgorithm() === "https")
   }
 
+  test("getRecordKeyFormat returns user provided property value") {
+    properties = Map("RECORD_KEY_FORMAT" -> "keyFormat")
+    assert(BaseProperties(properties).getRecordKeyFormat() === "keyformat")
+  }
+
+  test("getRecordKeyFormat returns default value if not set") {
+    assert(BaseProperties(properties).getRecordKeyFormat() === "string")
+  }
+
+  test("getRecordValueFormat returns user provided property value") {
+    Map("avro" -> "avro", "JsOn" -> "json", "String" -> "string").foreach {
+      case (input, expected) =>
+        properties = Map("RECORD_VALUE_FORMAT" -> input)
+        assert(BaseProperties(properties).getRecordValueFormat() === expected)
+    }
+  }
+
+  test("getRecordValueFormat returns uses record format if it is set") {
+    properties = Map("RECORD_FORMAT" -> "new_FormaT")
+    assert(BaseProperties(properties).getRecordValueFormat() === "new_format")
+  }
+
+  test("getRecordValueFormat returns default value if not set") {
+    assert(BaseProperties(properties).getRecordValueFormat() === "avro")
+  }
+
+  test("getRecordFields returns user provided property value") {
+    properties = Map("RECORD_FIELDS" -> "value.name,value.Sur_Name, value.address1, timestamp")
+    val expected = Seq("value.name", "value.Sur_Name", "value.address1", "timestamp")
+    assert(BaseProperties(properties).getRecordFields() === expected)
+  }
+
+  test("getRecordFields returns default value if not set") {
+    assert(BaseProperties(properties).getRecordFields() === Seq("value.*"))
+  }
+
+  test("getRecordFields returns default value when record value is not avro") {
+    properties = Map("RECORD_VALUE_FORMAT" -> "json")
+    assert(BaseProperties(properties).getRecordFields() === Seq("value"))
+  }
+
+  test("getRecordFields returns default value when single JSON column is requested") {
+    properties = Map("AS_JSON_DOC" -> "true")
+    assert(BaseProperties(properties).getRecordFields() === Seq("value"))
+  }
+
   test("getProperties returns Java map properties") {
     import KafkaConsumerProperties._
     val requiredProperties = Map(

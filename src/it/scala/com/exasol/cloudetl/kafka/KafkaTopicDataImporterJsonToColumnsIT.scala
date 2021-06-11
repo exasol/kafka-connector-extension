@@ -13,7 +13,7 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
   implicit val serializer: Serializer[String] = new StringSerializer
 
   override def additionalProperties: Map[String, String] = Map(
-    "RECORD_FORMAT" -> "json",
+    "RECORD_FORMAT" -> "JSON",
     "RECORD_FIELDS" -> "value.col_str,value.col_int,value.col_object"
   )
 
