@@ -53,7 +53,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    *
    * If it is not provided by user returns default value of {@code false}.
    */
-  final def getSingleColJson(): Boolean =
+  final def isSingleColumnJsonEnabled(): Boolean =
     isEnabled(AS_JSON_DOC)
 
   /**
@@ -86,7 +86,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     }
 
   private[this] def defaultRecordFields(): Seq[String] = {
-    val recordField = if (getSingleColJson()) {
+    val recordField = if (isSingleColumnJsonEnabled()) {
       "value"
     } else {
       getRecordValueFormat() match {
@@ -107,6 +107,15 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    */
   final def getTableName(): String =
     getString(TABLE_NAME)
+
+  /**
+   * Checks if the user wants to consume all offsets of topic
+   * partitions.
+   *
+   * If it is not set by user returns {@code false} as default value.
+   */
+  final def isConsumeAllOffsetsEnabled(): Boolean =
+    isEnabled(CONSUME_ALL_OFFSETS)
 
   /**
    * Returns poll timeout millisecords if provided by user; otherwise
@@ -323,6 +332,12 @@ object KafkaConsumerProperties extends CommonProperties {
    * as JSON into a single column.
    */
   private[kafka] final val AS_JSON_DOC: String = "AS_JSON_DOC"
+
+  /**
+   * An optional property that specifies to consume all available
+   * offsets in a topic partition.
+   */
+  private[kafka] final val CONSUME_ALL_OFFSETS: String = "CONSUME_ALL_OFFSETS"
 
   /**
    * An optional property that specify fields and field order when

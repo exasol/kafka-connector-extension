@@ -277,6 +277,15 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(BaseProperties(properties).getSSLEndpointIdentificationAlgorithm() === "https")
   }
 
+  test("isConsumeAllOffsetsEnabled returns true if it is set to true") {
+    properties = Map("CONSUME_ALL_OFFSETS" -> "true")
+    assert(BaseProperties(properties).isConsumeAllOffsetsEnabled() === true)
+  }
+
+  test("isConsumeAllOffsetsEnabled returns false if it is not set") {
+    assert(BaseProperties(properties).isConsumeAllOffsetsEnabled() === false)
+  }
+
   test("getRecordKeyFormat returns user provided property value") {
     properties = Map("RECORD_KEY_FORMAT" -> "keyFormat")
     assert(BaseProperties(properties).getRecordKeyFormat() === "keyformat")

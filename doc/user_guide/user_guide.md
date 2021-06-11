@@ -525,6 +525,13 @@ These are optional parameters with their default values.
 * ``MAX_PARTITION_FETCH_BYTES`` - It is the maximum amount of data per
   partition the server will return. The default value is **1048576**.
 
+* ``CONSUME_ALL_OFFSETS`` - It defines whether to consume all available offsets
+  of topic partitions. If it is set to **'true'**, connector will continue
+  polling Kafka records up until the last offset in each partition that existed
+  when the import started. It overrides any count thresholds and fully catches
+  up on the topic from the last import offset (or initial start offset).
+  Default value is **'false'**.
+
 * ``AS_JSON_DOC`` - (_deprecated_) It defines the way the data will be imported
   into the database.  If set to **'true'** data will be imported as one JSON
   document in one column. Default value is **'false'**. When dealing with JSON
