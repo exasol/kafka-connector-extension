@@ -288,9 +288,10 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   }
 
   test("getRecordValueFormat returns user provided property value") {
-    Seq("avro", "JsOn", "String").foreach { value =>
-      properties = Map("RECORD_VALUE_FORMAT" -> value)
-      assert(BaseProperties(properties).getRecordValueFormat() === value.toLowerCase(ENGLISH))
+    Map("avro" -> "avro", "JsOn" -> "json", "String" -> "string").foreach {
+      case (input, expected) =>
+        properties = Map("RECORD_VALUE_FORMAT" -> input)
+        assert(BaseProperties(properties).getRecordValueFormat() === expected)
     }
   }
 
