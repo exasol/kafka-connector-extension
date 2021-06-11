@@ -52,7 +52,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
    *
    * If it is not provided by user returns default value of {@code false}.
    */
-  final def isSingleColumnJson(): Boolean =
+  final def isSingleColumnJsonEnabled(): Boolean =
     isEnabled(AS_JSON_DOC)
 
   /**
@@ -79,7 +79,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String])
     get(RECORD_FIELDS).map(_.split(",").map(_.trim)).map(_.toSeq).getOrElse(defaultRecordFields())
 
   private[this] def defaultRecordFields(): Seq[String] = {
-    val recordField = if (isSingleColumnJson()) {
+    val recordField = if (isSingleColumnJsonEnabled()) {
       "value"
     } else {
       getRecordValueFormat() match {
