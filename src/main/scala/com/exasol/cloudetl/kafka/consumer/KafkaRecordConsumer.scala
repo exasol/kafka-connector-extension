@@ -25,7 +25,7 @@ class KafkaRecordConsumer(
   partitionStartOffset: Long,
   tableColumnCount: Int,
   nodeId: Long,
-  vmId: String,
+  vmId: String
 ) extends RecordConsumer
     with LazyLogging {
 
@@ -64,7 +64,7 @@ class KafkaRecordConsumer(
           exception
         )
     } finally {
-      consumer.close();
+      consumer.close()
     }
   }
 
