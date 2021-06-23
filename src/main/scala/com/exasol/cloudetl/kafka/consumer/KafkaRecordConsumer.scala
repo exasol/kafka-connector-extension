@@ -25,11 +25,11 @@ final case class KafkaRecordConsumer(
   partitionStartOffset: Long,
   tableColumnCount: Int,
   nodeId: Long,
-  vmId: String
+  vmId: String,
+  consumer: KafkaConsumer[Map[FieldSpecification, Seq[Any]], Map[FieldSpecification, Seq[Any]]]
 ) extends LazyLogging {
 
   private[this] val topic = properties.getTopic()
-  private[this] val consumer = getRecordConsumer()
   private[this] val partitionEndOffset = getPartitionEndOffset()
   private[this] val maxRecordsPerRun = properties.getMaxRecordsPerRun()
   private[this] val minRecordsPerRun = properties.getMinRecordsPerRun()
@@ -38,8 +38,10 @@ final case class KafkaRecordConsumer(
 
   /**
    * Emits Kafka polled records as rows for Exasol table.
+   *
+   * @param iterator an Exasol iterator for emitting
    */
-  def emitRows(iterator: ExaIterator): Unit = {
+  def emit(iterator: ExaIterator): Unit = {
     var recordOffset = 0L
     var recordCount = 0
     var totalRecordCount = 0L
@@ -50,7 +52,7 @@ final case class KafkaRecordConsumer(
         totalRecordCount += recordCount
         recordOffset = emitRecords(iterator, records)
         logger.info(
-          s"Emitted total '$totalRecordCount' records for partition " +
+          s"Polled '$recordCount' records, total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
         )
       } while (shouldContinue(recordOffset, recordCount, totalRecordCount))
@@ -71,7 +73,7 @@ final case class KafkaRecordConsumer(
     iterator: ExaIterator,
     r: ConsumerRecords[Map[FieldSpecification, Seq[Any]], Map[FieldSpecification, Seq[Any]]]
   ): Long = {
-    var lastRecordOffset = 0L
+    var lastRecordOffset = -1L
     r.asScala.foreach { record =>
       lastRecordOffset = record.offset()
       val metadata: Seq[Object] = Seq(
@@ -91,23 +93,9 @@ final case class KafkaRecordConsumer(
     recordCount: Int,
     totalRecordCount: Long
   ): Boolean =
-    (properties.isConsumeAllOffsetsEnabled() && recordOffset < partitionEndOffset) ||
+    (properties
+      .isConsumeAllOffsetsEnabled() && recordOffset >= 0 && recordOffset < partitionEndOffset) ||
       (recordCount >= minRecordsPerRun && totalRecordCount < maxRecordsPerRun)
-
-  private[this] def getRecordConsumer()
-    : KafkaConsumer[Map[FieldSpecification, Seq[Any]], Map[FieldSpecification, Seq[Any]]] = {
-    val topicPartition = new TopicPartition(topic, partitionId)
-    val recordFields = FieldParser.get(properties.getRecordFields())
-    val recordDeserializers = DeserializationFactory.getSerializers(recordFields, properties)
-    val consumer = KafkaConsumerFactory(
-      properties,
-      recordDeserializers.keyDeserializer,
-      recordDeserializers.valueDeserializer
-    )
-    consumer.assign(Arrays.asList(topicPartition))
-    consumer.seek(topicPartition, partitionStartOffset)
-    consumer
-  }
 
   private[this] def getPartitionEndOffset(): Long = {
     val topicPartition = new TopicPartition(topic, partitionId)

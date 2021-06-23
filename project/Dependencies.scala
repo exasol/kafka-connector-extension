@@ -15,7 +15,7 @@ object Dependencies {
   // Test dependencies versions
   private val ScalaTestVersion = "3.2.9"
   private val ScalaTestPlusVersion = "1.0.0-M2"
-  private val MockitoCoreVersion = "3.11.0"
+  private val MockitoCoreVersion = "3.11.2"
   private val KafkaSchemaRegistryVersion = "6.1.1"
 
   val Resolvers: Seq[Resolver] = Seq(

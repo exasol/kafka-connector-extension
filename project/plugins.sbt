@@ -22,7 +22,7 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.8.2")
 // Adds SBT Coveralls plugin for uploading Scala code coverage to
 // https://coveralls.io
 // https://github.com/scoverage/sbt-coveralls
-addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.2.7")
+addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.3.1")
 
 // Adds a `dependencyUpdates` task to check Maven repositories for
 // dependency updates
