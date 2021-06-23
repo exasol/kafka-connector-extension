@@ -36,15 +36,13 @@ object KafkaTopicDataImporter extends LazyLogging {
       s"Starting Kafka consumer for partition '$partitionId' at next offset " +
         s"'$partitionNextOffset' for node '$nodeId' and vm '$vmId'."
     )
-    val recordConsumer = getRecordConsumer(kafkaProperties, partitionId, partitionNextOffset)
-    KafkaRecordConsumer(
+    new KafkaRecordConsumer(
       kafkaProperties,
       partitionId,
       partitionNextOffset,
       outputColumnCount,
       nodeId,
-      vmId,
-      recordConsumer
+      vmId
     ).emit(iterator)
   }
 

@@ -19,17 +19,18 @@ import org.apache.kafka.common.TopicPartition
  * A class that polls data from Kafka topic and emits records into an
  * Exasol table.
  */
-final case class KafkaRecordConsumer(
+class KafkaRecordConsumer(
   properties: KafkaConsumerProperties,
   partitionId: Int,
   partitionStartOffset: Long,
   tableColumnCount: Int,
   nodeId: Long,
   vmId: String,
-  consumer: KafkaConsumer[Map[FieldSpecification, Seq[Any]], Map[FieldSpecification, Seq[Any]]]
-) extends LazyLogging {
+) extends RecordConsumer
+    with LazyLogging {
 
   private[this] val topic = properties.getTopic()
+  private[this] val consumer = getRecordConsumer()
   private[this] val partitionEndOffset = getPartitionEndOffset()
   private[this] val maxRecordsPerRun = properties.getMaxRecordsPerRun()
   private[this] val minRecordsPerRun = properties.getMinRecordsPerRun()
@@ -37,11 +38,9 @@ final case class KafkaRecordConsumer(
   private[this] val recordFieldSpecifications = FieldParser.get(properties.getRecordFields())
 
   /**
-   * Emits Kafka polled records as rows for Exasol table.
-   *
-   * @param iterator an Exasol iterator for emitting
+   * @inheritdoc
    */
-  def emit(iterator: ExaIterator): Unit = {
+  override final def emit(iterator: ExaIterator): Unit = {
     var recordOffset = 0L
     var recordCount = 0
     var totalRecordCount = 0L
@@ -69,12 +68,30 @@ final case class KafkaRecordConsumer(
     }
   }
 
+  private[this] type FieldType = Map[FieldSpecification, Seq[Any]]
+
+  // This is okay, since it is only overridden in tests.
+  @SuppressWarnings(Array("org.wartremover.contrib.warts.UnsafeInheritance"))
+  protected def getRecordConsumer(): KafkaConsumer[FieldType, FieldType] = {
+    val topicPartition = new TopicPartition(topic, partitionId)
+    val recordFields = FieldParser.get(properties.getRecordFields())
+    val recordDeserializers = DeserializationFactory.getSerializers(recordFields, properties)
+    val consumer = KafkaConsumerFactory(
+      properties,
+      recordDeserializers.keyDeserializer,
+      recordDeserializers.valueDeserializer
+    )
+    consumer.assign(Arrays.asList(topicPartition))
+    consumer.seek(topicPartition, partitionStartOffset)
+    consumer
+  }
+
   private[this] def emitRecords(
     iterator: ExaIterator,
-    r: ConsumerRecords[Map[FieldSpecification, Seq[Any]], Map[FieldSpecification, Seq[Any]]]
+    records: ConsumerRecords[FieldType, FieldType]
   ): Long = {
     var lastRecordOffset = -1L
-    r.asScala.foreach { record =>
+    records.asScala.foreach { record =>
       lastRecordOffset = record.offset()
       val metadata: Seq[Object] = Seq(
         record.partition().asInstanceOf[AnyRef],

@@ -105,13 +105,14 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   ) {
     final def assertEmitCount(count: Int): Unit = {
       val properties = new KafkaConsumerProperties(defaultProperties ++ additionalProperties)
-      KafkaRecordConsumer(properties, 0, 0, 3, 1L, "vm1", consumer).emit(iterator)
+      TestKafkaRecordConsumer(properties).emit(iterator)
       verify(iterator, times(count)).emit(Seq(any[Object]): _*)
     }
   }
 
-  class StubConsumer(p: java.util.Properties) extends KafkaConsumer[FieldType, FieldType](p) {
-    //
+  case class TestKafkaRecordConsumer(properties: KafkaConsumerProperties)
+      extends KafkaRecordConsumer(properties, 0, 0, 3, 1L, "vm1") {
+    override final def getRecordConsumer(): KafkaConsumer[FieldType, FieldType] = consumer
   }
 
 }
