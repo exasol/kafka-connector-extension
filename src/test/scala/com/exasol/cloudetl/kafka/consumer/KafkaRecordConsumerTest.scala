@@ -115,4 +115,8 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
     override final def getRecordConsumer(): KafkaConsumer[FieldType, FieldType] = consumer
   }
 
+  class StubConsumer(p: java.util.Properties) extends KafkaConsumer[FieldType, FieldType](p) {
+    //
+  }
+
 }

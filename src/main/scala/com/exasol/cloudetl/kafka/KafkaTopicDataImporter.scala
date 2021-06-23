@@ -3,11 +3,8 @@ package com.exasol.cloudetl.kafka
 import com.exasol.ExaIterator
 import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka.consumer.KafkaRecordConsumer
-import com.exasol.cloudetl.kafka.deserialization._
 
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.common.TopicPartition
 
 /**
  * This object is referenced from the UDF script that imports data from
@@ -44,25 +41,6 @@ object KafkaTopicDataImporter extends LazyLogging {
       nodeId,
       vmId
     ).emit(iterator)
-  }
-
-  private[this] def getRecordConsumer(
-    properties: KafkaConsumerProperties,
-    partitionId: Int,
-    partitionStartOffset: Long
-  ): KafkaConsumer[Map[FieldSpecification, Seq[Any]], Map[FieldSpecification, Seq[Any]]] = {
-    val topic = properties.getTopic()
-    val topicPartition = new TopicPartition(topic, partitionId)
-    val recordFields = FieldParser.get(properties.getRecordFields())
-    val recordDeserializers = DeserializationFactory.getSerializers(recordFields, properties)
-    val consumer = KafkaConsumerFactory(
-      properties,
-      recordDeserializers.keyDeserializer,
-      recordDeserializers.valueDeserializer
-    )
-    consumer.assign(java.util.Arrays.asList(topicPartition))
-    consumer.seek(topicPartition, partitionStartOffset)
-    consumer
   }
 
 }
