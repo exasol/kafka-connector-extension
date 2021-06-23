@@ -17,6 +17,10 @@ object Dependencies {
   private val ScalaTestPlusVersion = "1.0.0-M2"
   private val MockitoCoreVersion = "3.11.2"
   private val KafkaSchemaRegistryVersion = "6.1.1"
+  private val ExasolTestDBBuilderVersion = "3.2.0"
+  private val ExasolTestContainersVersion = "3.5.3"
+  private val ExasolHamcrestMatcherVersion = "1.4.0"
+  private val TestContainersVersion = "1.15.3"
 
   val Resolvers: Seq[Resolver] = Seq(
     "jitpack.io" at "https://jitpack.io",
@@ -45,7 +49,11 @@ object Dependencies {
     "io.github.embeddedkafka" %% "embedded-kafka-schema-registry" % KafkaSchemaRegistryVersion
       exclude ("com.fasterxml.jackson.core", "jackson-annotations")
       exclude ("com.fasterxml.jackson.core", "jackson-core")
-      exclude ("com.fasterxml.jackson.core", "jackson-databind")
+      exclude ("com.fasterxml.jackson.core", "jackson-databind"),
+    "com.exasol" % "exasol-testcontainers" % ExasolTestContainersVersion,
+    "com.exasol" % "test-db-builder-java" % ExasolTestDBBuilderVersion,
+    "com.exasol" % "hamcrest-resultset-matcher" % ExasolHamcrestMatcherVersion,
+    "org.testcontainers" % "kafka" % TestContainersVersion
   ).map(_ % Test)
 
   lazy val AllDependencies: Seq[ModuleID] = RuntimeDependencies ++ TestDependencies
