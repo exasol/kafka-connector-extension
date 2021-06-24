@@ -6,7 +6,7 @@ Code name:
 
 ## Bugfixes
 
-* #39: Fixed bug related to consuming all offsets with empty records
+* #39: Fixed bug related to consuming all offsets when already at end of partition
 
 ### Test Dependency Updates
 
