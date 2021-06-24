@@ -72,13 +72,22 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   test("emits all records using consume_all_offsets with empty records in between") {
     when(consumer.poll(defaultTimeout))
       .thenReturn(recordBatch(Seq(0, 1)), emptyConsumerRecords, recordBatch(Seq(2, 3)))
-    KafkaImportChecker(Map("CONSUME_ALL_OFFSETS" -> "true")).assertEmitCount(2)
+    KafkaImportChecker(Map("CONSUME_ALL_OFFSETS" -> "true")).assertEmitCount(4)
   }
 
-  test("emits all records using consume_all_offsets with empty records at the end") {
+  test("returns without emitting records when topic is empty") {
+    when(consumer.endOffsets(Arrays.asList(topicPartition)))
+      .thenReturn(JMap.of(topicPartition, 0))
     when(consumer.poll(defaultTimeout))
-      .thenReturn(recordBatch(Seq(0, 1)), emptyConsumerRecords)
-    KafkaImportChecker(Map("CONSUME_ALL_OFFSETS" -> "true")).assertEmitCount(2)
+      .thenReturn(emptyConsumerRecords)
+    KafkaImportChecker(Map("CONSUME_ALL_OFFSETS" -> "true")).assertEmitCount(0)
+  }
+
+  test("returns without emitting records when we are already caught up") {
+    when(consumer.poll(defaultTimeout))
+      .thenReturn(emptyConsumerRecords)
+      .thenThrow(new RuntimeException("test should not poll twice"))
+    KafkaImportChecker(Map("CONSUME_ALL_OFFSETS" -> "true"), defaultEndOffset).assertEmitCount(0)
   }
 
   private[this] def recordBatch(offsets: Seq[Long]): ConsumerRecords[FieldType, FieldType] = {
@@ -101,17 +110,18 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   // It is alright to use default arguments in tests.
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
   case class KafkaImportChecker(
-    additionalProperties: Map[String, String] = Map.empty[String, String]
+    additionalProperties: Map[String, String] = Map.empty[String, String],
+    startOffset: Long = 0L
   ) {
     final def assertEmitCount(count: Int): Unit = {
       val properties = new KafkaConsumerProperties(defaultProperties ++ additionalProperties)
-      TestKafkaRecordConsumer(properties).emit(iterator)
+      TestKafkaRecordConsumer(properties, startOffset).emit(iterator)
       verify(iterator, times(count)).emit(Seq(any[Object]): _*)
     }
   }
 
-  case class TestKafkaRecordConsumer(properties: KafkaConsumerProperties)
-      extends KafkaRecordConsumer(properties, 0, 0, 3, 1L, "vm1") {
+  case class TestKafkaRecordConsumer(properties: KafkaConsumerProperties, startOffset: Long)
+      extends KafkaRecordConsumer(properties, 0, startOffset, 3, 1L, "vm1") {
     override final def getRecordConsumer(): KafkaConsumer[FieldType, FieldType] = consumer
   }
 

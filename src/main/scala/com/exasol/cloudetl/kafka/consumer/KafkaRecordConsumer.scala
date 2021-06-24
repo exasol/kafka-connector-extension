@@ -41,7 +41,7 @@ class KafkaRecordConsumer(
    * @inheritdoc
    */
   override final def emit(iterator: ExaIterator): Unit = {
-    var recordOffset = 0L
+    var recordOffset = partitionStartOffset
     var recordCount = 0
     var totalRecordCount = 0L
     try {
@@ -49,7 +49,7 @@ class KafkaRecordConsumer(
         val records = consumer.poll(timeout)
         recordCount = records.count()
         totalRecordCount += recordCount
-        recordOffset = emitRecords(iterator, records)
+        recordOffset = emitRecords(recordOffset, iterator, records)
         logger.info(
           s"Polled '$recordCount' records, total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
@@ -87,10 +87,11 @@ class KafkaRecordConsumer(
   }
 
   private[this] def emitRecords(
+    currentOffset: Long,
     iterator: ExaIterator,
     records: ConsumerRecords[FieldType, FieldType]
   ): Long = {
-    var lastRecordOffset = -1L
+    var lastRecordOffset = currentOffset
     records.asScala.foreach { record =>
       lastRecordOffset = record.offset()
       val metadata: Seq[Object] = Seq(
@@ -111,7 +112,7 @@ class KafkaRecordConsumer(
     totalRecordCount: Long
   ): Boolean =
     (properties
-      .isConsumeAllOffsetsEnabled() && recordOffset >= 0 && recordOffset < partitionEndOffset) ||
+      .isConsumeAllOffsetsEnabled() && recordOffset < partitionEndOffset) ||
       (recordCount >= minRecordsPerRun && totalRecordCount < maxRecordsPerRun)
 
   private[this] def getPartitionEndOffset(): Long = {
