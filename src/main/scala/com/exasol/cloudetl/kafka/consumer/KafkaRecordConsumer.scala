@@ -49,7 +49,7 @@ class KafkaRecordConsumer(
         val records = consumer.poll(timeout)
         recordCount = records.count()
         totalRecordCount += recordCount
-        recordOffset = emitRecords(recordOffset, iterator, records)
+        recordOffset = math.max(recordOffset, emitRecords(iterator, records))
         logger.info(
           s"Polled '$recordCount' records, total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
@@ -87,11 +87,10 @@ class KafkaRecordConsumer(
   }
 
   private[this] def emitRecords(
-    currentOffset: Long,
     iterator: ExaIterator,
     records: ConsumerRecords[FieldType, FieldType]
   ): Long = {
-    var lastRecordOffset = currentOffset
+    var lastRecordOffset = -1L
     records.asScala.foreach { record =>
       lastRecordOffset = record.offset()
       val metadata: Seq[Object] = Seq(
