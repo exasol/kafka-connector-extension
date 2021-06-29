@@ -2,7 +2,7 @@ package com.exasol.cloudetl.kafka
 
 import scala.util.Random
 import com.exasol.ExaIterator
-import net.manub.embeddedkafka.schemaregistry.EmbeddedKafka
+import io.github.embeddedkafka.schemaregistry.EmbeddedKafka
 import org.mockito.ArgumentMatchers.argThat
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll

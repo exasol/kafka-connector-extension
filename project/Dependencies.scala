@@ -9,14 +9,14 @@ object Dependencies {
   // Runtime dependencies versions
   private val ImportExportUDFVersion = "0.2.0"
   private val KafkaClientsVersion = "2.8.0"
-  private val KafkaAvroSerializerVersion = "6.1.1"
+  private val KafkaAvroSerializerVersion = "6.2.0"
   private val ScalaCollectionCompatVersion = "2.4.4"
 
   // Test dependencies versions
   private val ScalaTestVersion = "3.2.9"
   private val ScalaTestPlusVersion = "1.0.0-M2"
   private val MockitoCoreVersion = "3.11.2"
-  private val KafkaSchemaRegistryVersion = "6.1.1"
+  private val KafkaSchemaRegistryVersion = "6.2.0"
   private val ExasolTestDBBuilderVersion = "3.2.0"
   private val ExasolTestContainersVersion = "3.5.3"
   private val ExasolHamcrestMatcherVersion = "1.4.0"

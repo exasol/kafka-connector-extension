@@ -17,7 +17,7 @@ lazy val root =
   project
     .in(file("."))
     .settings(moduleName := "exasol-kafka-connector-extension")
-    .settings(version := "1.1.1")
+    .settings(version := "1.2.0")
     .settings(orgSettings)
     .settings(buildSettings)
     .settings(Settings.projectSettings(scalaVersion))
