@@ -15,10 +15,13 @@ jdk:
 scala:
   - 2.13.6
 
+env:
+  - EXASOL_DOCKER_VERSION="6.2.15-d1"
+  - EXASOL_DOCKER_VERSION="7.0.10"
+
 before_install:
   - git fetch --tags
-  - docker pull exasol/docker-db:latest
-  - docker pull exasol/docker-db:6.2.14-d1
+  - docker pull "exasol/docker-db:$EXASOL_DOCKER_VERSION"
 
 script:
   - ./scripts/ci.sh

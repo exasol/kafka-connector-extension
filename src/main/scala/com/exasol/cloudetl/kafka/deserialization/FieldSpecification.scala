@@ -3,7 +3,7 @@ package com.exasol.cloudetl.kafka.deserialization
 sealed trait GlobalFieldSpecification
 
 /**
- * A sealed trait for all possible ways to refernce a kafka record's key, value
+ * A sealed trait for all possible ways to reference a kafka record's key, value
  */
 sealed trait FieldSpecification extends GlobalFieldSpecification
 

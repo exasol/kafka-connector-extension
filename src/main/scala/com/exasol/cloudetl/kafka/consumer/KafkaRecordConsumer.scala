@@ -19,14 +19,15 @@ import org.apache.kafka.common.TopicPartition
  * A class that polls data from Kafka topic and emits records into an
  * Exasol table.
  */
-final case class KafkaRecordConsumer(
+class KafkaRecordConsumer(
   properties: KafkaConsumerProperties,
   partitionId: Int,
   partitionStartOffset: Long,
   tableColumnCount: Int,
   nodeId: Long,
   vmId: String
-) extends LazyLogging {
+) extends RecordConsumer
+    with LazyLogging {
 
   private[this] val topic = properties.getTopic()
   private[this] val consumer = getRecordConsumer()
@@ -37,10 +38,10 @@ final case class KafkaRecordConsumer(
   private[this] val recordFieldSpecifications = FieldParser.get(properties.getRecordFields())
 
   /**
-   * Emits Kafka polled records as rows for Exasol table.
+   * @inheritdoc
    */
-  def emitRows(iterator: ExaIterator): Unit = {
-    var recordOffset = 0L
+  override final def emit(iterator: ExaIterator): Unit = {
+    var recordOffset = partitionStartOffset
     var recordCount = 0
     var totalRecordCount = 0L
     try {
@@ -48,9 +49,9 @@ final case class KafkaRecordConsumer(
         val records = consumer.poll(timeout)
         recordCount = records.count()
         totalRecordCount += recordCount
-        recordOffset = emitRecords(iterator, records)
+        recordOffset = math.max(recordOffset, emitRecords(iterator, records))
         logger.info(
-          s"Emitted total '$totalRecordCount' records for partition " +
+          s"Polled '$recordCount' records, total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
         )
       } while (shouldContinue(recordOffset, recordCount, totalRecordCount))
@@ -63,16 +64,34 @@ final case class KafkaRecordConsumer(
           exception
         )
     } finally {
-      consumer.close();
+      consumer.close()
     }
+  }
+
+  private[this] type FieldType = Map[FieldSpecification, Seq[Any]]
+
+  // This is okay, since it is only overridden in tests.
+  @SuppressWarnings(Array("org.wartremover.contrib.warts.UnsafeInheritance"))
+  protected def getRecordConsumer(): KafkaConsumer[FieldType, FieldType] = {
+    val topicPartition = new TopicPartition(topic, partitionId)
+    val recordFields = FieldParser.get(properties.getRecordFields())
+    val recordDeserializers = DeserializationFactory.getSerializers(recordFields, properties)
+    val consumer = KafkaConsumerFactory(
+      properties,
+      recordDeserializers.keyDeserializer,
+      recordDeserializers.valueDeserializer
+    )
+    consumer.assign(Arrays.asList(topicPartition))
+    consumer.seek(topicPartition, partitionStartOffset)
+    consumer
   }
 
   private[this] def emitRecords(
     iterator: ExaIterator,
-    r: ConsumerRecords[Map[FieldSpecification, Seq[Any]], Map[FieldSpecification, Seq[Any]]]
+    records: ConsumerRecords[FieldType, FieldType]
   ): Long = {
-    var lastRecordOffset = 0L
-    r.asScala.foreach { record =>
+    var lastRecordOffset = -1L
+    records.asScala.foreach { record =>
       lastRecordOffset = record.offset()
       val metadata: Seq[Object] = Seq(
         record.partition().asInstanceOf[AnyRef],
@@ -91,23 +110,9 @@ final case class KafkaRecordConsumer(
     recordCount: Int,
     totalRecordCount: Long
   ): Boolean =
-    (properties.isConsumeAllOffsetsEnabled() && recordOffset < partitionEndOffset) ||
+    (properties
+      .isConsumeAllOffsetsEnabled() && recordOffset < partitionEndOffset) ||
       (recordCount >= minRecordsPerRun && totalRecordCount < maxRecordsPerRun)
-
-  private[this] def getRecordConsumer()
-    : KafkaConsumer[Map[FieldSpecification, Seq[Any]], Map[FieldSpecification, Seq[Any]]] = {
-    val topicPartition = new TopicPartition(topic, partitionId)
-    val recordFields = FieldParser.get(properties.getRecordFields())
-    val recordDeserializers = DeserializationFactory.getSerializers(recordFields, properties)
-    val consumer = KafkaConsumerFactory(
-      properties,
-      recordDeserializers.keyDeserializer,
-      recordDeserializers.valueDeserializer
-    )
-    consumer.assign(Arrays.asList(topicPartition))
-    consumer.seek(topicPartition, partitionStartOffset)
-    consumer
-  }
 
   private[this] def getPartitionEndOffset(): Long = {
     val topicPartition = new TopicPartition(topic, partitionId)
