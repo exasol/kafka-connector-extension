@@ -29,10 +29,15 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   private[this] val topicPartition = new TopicPartition(topicName, 0)
   private[this] val defaultProperties = Map(
     "TOPIC_NAME" -> topicName,
-    "MIN_RECORDS_PER_RUN" -> "2",
-    "MAX_RECORDS_PER_RUN" -> "4",
     "RECORD_KEY_FORMAT" -> "string",
     "RECORD_VALUE_FORMAT" -> "string"
+  )
+  private[this] val minMaxThresholdProperties = Map(
+    "MIN_RECORDS_PER_RUN" -> "2",
+    "MAX_RECORDS_PER_RUN" -> "4"
+  )
+  private[this] val consumeAllOffsetsProperties = Map(
+    "CONSUME_ALL_OFFSETS" -> "true"
   )
   private[this] val defaultTimeout = Duration.ofMillis(30000)
   private[this] val defaultEndOffset = 4L
@@ -54,25 +59,34 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   test("emits all records using min and max record counts") {
     when(consumer.poll(defaultTimeout))
       .thenReturn(recordBatch(Seq(0, 1)), recordBatch(Seq(2, 3)))
-    KafkaImportChecker().assertEmitCount(4)
+    KafkaImportChecker(minMaxThresholdProperties).assertEmitCount(4)
   }
 
   test("emits all records using min and max record counts with empty records") {
     when(consumer.poll(defaultTimeout))
       .thenReturn(recordBatch(Seq(0, 1)), emptyConsumerRecords, recordBatch(Seq(2, 3)))
-    KafkaImportChecker().assertEmitCount(2)
+    KafkaImportChecker(minMaxThresholdProperties).assertEmitCount(2)
   }
 
   test("emits all records using consume_all_offsets") {
     when(consumer.poll(defaultTimeout))
       .thenReturn(recordBatch(Seq(0, 1)), recordBatch(Seq(2, 3)))
-    KafkaImportChecker(Map("CONSUME_ALL_OFFSETS" -> "true")).assertEmitCount(4)
+    KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(4)
+  }
+
+  test("emits all records with consume_all_offsets priority over min and max thresholds") {
+    when(consumer.endOffsets(Arrays.asList(topicPartition)))
+      .thenReturn(JMap.of(topicPartition, 8L))
+    when(consumer.poll(defaultTimeout))
+      .thenReturn(recordBatch(Seq(0, 1)), recordBatch(Seq(2, 3)), recordBatch(Seq(4, 5, 6, 7)))
+    KafkaImportChecker(minMaxThresholdProperties ++ consumeAllOffsetsProperties)
+      .assertEmitCount(8)
   }
 
   test("emits all records using consume_all_offsets with empty records in between") {
     when(consumer.poll(defaultTimeout))
       .thenReturn(recordBatch(Seq(0, 1)), emptyConsumerRecords, recordBatch(Seq(2, 3)))
-    KafkaImportChecker(Map("CONSUME_ALL_OFFSETS" -> "true")).assertEmitCount(4)
+    KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(4)
   }
 
   test("returns without emitting records when topic is empty") {
@@ -80,14 +94,14 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
       .thenReturn(JMap.of(topicPartition, 0))
     when(consumer.poll(defaultTimeout))
       .thenReturn(emptyConsumerRecords)
-    KafkaImportChecker(Map("CONSUME_ALL_OFFSETS" -> "true")).assertEmitCount(0)
+    KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(0)
   }
 
   test("returns without emitting records when we are already caught up") {
     when(consumer.poll(defaultTimeout))
       .thenReturn(emptyConsumerRecords)
       .thenThrow(new RuntimeException("test should not poll twice"))
-    KafkaImportChecker(Map("CONSUME_ALL_OFFSETS" -> "true"), defaultEndOffset).assertEmitCount(0)
+    KafkaImportChecker(consumeAllOffsetsProperties, defaultEndOffset).assertEmitCount(0)
   }
 
   private[this] def recordBatch(offsets: Seq[Long]): ConsumerRecords[FieldType, FieldType] = {

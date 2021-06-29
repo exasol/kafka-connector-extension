@@ -21,7 +21,7 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest with BeforeAndAfterEa
 
   override final def beforeAll(): Unit = {
     super.beforeAll()
-    prepareExasolDatabase(schemaName)
+    installKafkaConnector(schemaName)
     updateExasolHostsFile()
   }
 

@@ -2,6 +2,7 @@ package com.exasol.cloudetl.kafka
 
 import java.io.File
 import java.nio.file.Paths
+import java.sql.Connection
 
 import com.exasol.containers.ExasolContainer
 import com.exasol.dbbuilder.dialects.Column
@@ -20,22 +21,26 @@ trait BaseDockerIntegrationTest extends AnyFunSuite with BeforeAndAfterAll {
   val network = DockerNamedNetwork("kafka-it-tests", true)
   val exasolContainer = {
     val c: ExasolContainer[_] = new ExasolContainer(getExasolDockerImageVersion())
-    c.withExposedPorts(8563, 2580)
     c.withNetwork(network)
     c.withReuse(true)
     c
   }
   var factory: ExasolObjectFactory = _
   var schema: ExasolSchema = _
+  var connection: Connection = _
   val assembledJarName = getAssembledJarName()
 
-  override def beforeAll(): Unit =
+  override def beforeAll(): Unit = {
     exasolContainer.start()
+    connection = getConnection()
+  }
 
-  override def afterAll(): Unit =
+  override def afterAll(): Unit = {
+    connection.close()
     exasolContainer.stop()
+  }
 
-  def prepareExasolDatabase(schemaName: String): Unit = {
+  def installKafkaConnector(schemaName: String): Unit = {
     executeStmt(s"DROP SCHEMA IF EXISTS $schemaName CASCADE;")
     factory = new ExasolObjectFactory(getConnection())
     schema = factory.createSchema(schemaName)
@@ -44,13 +49,12 @@ trait BaseDockerIntegrationTest extends AnyFunSuite with BeforeAndAfterAll {
   }
 
   def executeStmt(sql: String): Unit = {
-    println(s"Executing: $sql")
-    getConnection().createStatement().execute(sql)
+    connection.createStatement().execute(sql)
     ()
   }
 
   def executeQuery(sql: String): java.sql.ResultSet =
-    getConnection().createStatement().executeQuery(sql)
+    connection.createStatement().executeQuery(sql)
 
   private[this] def getConnection(): java.sql.Connection =
     exasolContainer.createConnection("")
