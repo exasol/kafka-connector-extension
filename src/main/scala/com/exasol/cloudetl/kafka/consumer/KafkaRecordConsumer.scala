@@ -49,7 +49,10 @@ class KafkaRecordConsumer(
         val records = consumer.poll(timeout)
         recordCount = records.count()
         totalRecordCount += recordCount
-        recordOffset = math.max(recordOffset, emitRecords(iterator, records))
+        recordOffset = emitRecords(iterator, records) match {
+          case -1     => getPartitionCurrentOffset()
+          case offset => offset
+        }
         logger.info(
           s"Polled '$recordCount' records, total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
@@ -113,6 +116,13 @@ class KafkaRecordConsumer(
     (properties
       .isConsumeAllOffsetsEnabled() && recordOffset < partitionEndOffset) ||
       (recordCount >= minRecordsPerRun && totalRecordCount < maxRecordsPerRun)
+
+  private[this] def getPartitionCurrentOffset(): Long = {
+    val topicPartition = new TopicPartition(topic, partitionId)
+    val currentOffset = consumer.position(topicPartition) - 1
+    logger.info(s"The current record offset for partition '$partitionId' is '$currentOffset'.")
+    currentOffset
+  }
 
   private[this] def getPartitionEndOffset(): Long = {
     val topicPartition = new TopicPartition(topic, partitionId)
