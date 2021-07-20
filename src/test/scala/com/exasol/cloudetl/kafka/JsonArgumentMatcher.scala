@@ -15,6 +15,6 @@ class JsonArgumentMatcher(expectedJson: String) extends ArgumentMatcher[String] 
 
   private[this] val expectedJsonNode = JsonMapper.parseJson[JsonNode](expectedJson)
 
-  final override def matches(argument: String): Boolean =
-    JsonMapper.parseJson[JsonNode](argument) === (expectedJsonNode)
+  override final def matches(argument: String): Boolean =
+    JsonMapper.parseJson[JsonNode](argument) === expectedJsonNode
 }

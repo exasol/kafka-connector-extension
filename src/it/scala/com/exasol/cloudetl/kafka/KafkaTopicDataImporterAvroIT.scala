@@ -22,8 +22,7 @@ class KafkaTopicDataImporterAvroIT extends KafkaIntegrationTest {
   }
 }
 
-case class AvroRecord(var col_str: String, var col_int: Int, var col_long: Long)
-    extends SpecificRecordBase {
+case class AvroRecord(var col_str: String, var col_int: Int, var col_long: Long) extends SpecificRecordBase {
 
   private[this] val avroRecordSchema =
     new Schema.Parser().parse(

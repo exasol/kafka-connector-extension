@@ -10,7 +10,7 @@ class AsStringDeserializer(fieldSpecs: Seq[FieldSpecification])
 
   private[this] val deserializer = new StringDeserializer
 
-  final override def deserialize(
+  override final def deserialize(
     topic: String,
     data: Array[Byte]
   ): Map[FieldSpecification, Seq[Any]] =

@@ -54,10 +54,9 @@ trait BaseKafkaDockerIntegrationTest extends BaseDockerIntegrationTest {
       .parse("confluentinc/cp-kafka")
       .withTag(DEFAULT_CONFLUENT_PLATFORM_VERSION)
     val c = new KafkaContainer(image)
-    c.withCreateContainerCmdModifier {
-      case cmd =>
-        cmd.withHostName("kafka01")
-        ()
+    c.withCreateContainerCmdModifier { case cmd =>
+      cmd.withHostName("kafka01")
+      ()
     }
     c.dependsOn(zookeeperContainer)
     c.withNetwork(network)
@@ -125,9 +124,8 @@ trait BaseKafkaDockerIntegrationTest extends BaseDockerIntegrationTest {
       new StringSerializer(),
       new StringSerializer()
     )
-    values.foreach {
-      case value =>
-        producer.send(new ProducerRecord(topicName, "key", value))
+    values.foreach { case value =>
+      producer.send(new ProducerRecord(topicName, "key", value))
     }
     producer.flush()
     producer.close()

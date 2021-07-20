@@ -12,7 +12,7 @@ class JsonDeserializer(
   stringDeserializer: StringDeserializer
 ) extends Deserializer[Map[FieldSpecification, Seq[Any]]] {
 
-  final override def deserialize(
+  override final def deserialize(
     topic: String,
     data: Array[Byte]
   ): Map[FieldSpecification, Seq[Any]] = {

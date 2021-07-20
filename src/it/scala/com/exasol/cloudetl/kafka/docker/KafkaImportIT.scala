@@ -81,12 +81,11 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest with BeforeAndAfterEa
       s"echo '$brokerIpAddress kafka01' >> /etc/hosts",
       s"echo '$schemaRegistryIpAddress schema-registry' >> /etc/hosts"
     )
-    commands.foreach {
-      case cmd =>
-        val exitCode = exasolContainer.execInContainer("/bin/sh", "-c", cmd)
-        if (exitCode.getExitCode() != 0) {
-          throw new RuntimeException(s"Could not run command '$cmd' in Exasol container.")
-        }
+    commands.foreach { case cmd =>
+      val exitCode = exasolContainer.execInContainer("/bin/sh", "-c", cmd)
+      if (exitCode.getExitCode() != 0) {
+        throw new RuntimeException(s"Could not run command '$cmd' in Exasol container.")
+      }
     }
   }
 
@@ -115,9 +114,8 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest with BeforeAndAfterEa
         "KAFKA_PARTITION" -> "DECIMAL(18, 0)",
         "KAFKA_OFFSET" -> "DECIMAL(36, 0)"
       )
-      (columns ++ metadataColumns).foreach {
-        case (columnName, columnType) =>
-          tableBuilder = tableBuilder.column(columnName, columnType)
+      (columns ++ metadataColumns).foreach { case (columnName, columnType) =>
+        tableBuilder = tableBuilder.column(columnName, columnType)
       }
       tableBuilder.build()
     }
@@ -131,9 +129,8 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest with BeforeAndAfterEa
         builder.append("\n").append("RECORD_VALUE_FORMAT = 'string'")
       }
       if (properties != null) {
-        properties.foreach {
-          case (key, value) =>
-            builder.append("\n").append(s"$key = '$value'")
+        properties.foreach { case (key, value) =>
+          builder.append("\n").append(s"$key = '$value'")
         }
       }
       builder.append(";")

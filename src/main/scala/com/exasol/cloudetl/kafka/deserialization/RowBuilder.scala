@@ -51,7 +51,7 @@ object RowBuilder {
 
         rowValues.flatMap {
           case Some(x) => x
-          case None    => Seq.fill[Any](valuesMissing) { null }
+          case None    => Seq.fill[Any](valuesMissing)(null)
         }
       }
     } else {

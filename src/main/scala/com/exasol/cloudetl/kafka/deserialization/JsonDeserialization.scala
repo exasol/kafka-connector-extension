@@ -13,10 +13,12 @@ object JsonDeserialization extends RecordDeserialization {
     properties: KafkaConsumerProperties,
     fieldSpecs: Seq[FieldSpecification]
   ): Deserializer[Map[FieldSpecification, Seq[Any]]] =
-    if (fieldSpecs.exists {
-          case _: AllFieldsSpecification => true
-          case _                         => false
-        }) {
+    if (
+      fieldSpecs.exists {
+        case _: AllFieldsSpecification => true
+        case _                         => false
+      }
+    ) {
       throw new KafkaConnectorException(
         "Referencing all fields with key.* or value.* is not supported for json " +
           "as the order is not deterministic."

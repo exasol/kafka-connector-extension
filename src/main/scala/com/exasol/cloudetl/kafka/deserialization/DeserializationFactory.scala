@@ -28,10 +28,10 @@ object DeserializationFactory {
 
     val keyDeserializer = Option(keyFieldSpecs)
       .filter(_.nonEmpty)
-      .map(keyFields => {
+      .map { keyFields =>
         getDeserialization(kafkaProperties.getRecordKeyFormat())
           .getDeserializer(kafkaProperties, keyFields)
-      })
+      }
       .getOrElse(IgnoreKeyDeserializer)
 
     val valueDeserializer = getDeserialization(kafkaProperties.getRecordValueFormat())
