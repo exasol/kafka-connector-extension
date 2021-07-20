@@ -1,6 +1,6 @@
 // Adds a `wartremover` a flexible Scala code linting tool
 // http://github.com/puffnfresh/wartremover
-addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.15")
+addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.16")
 
 // Adds Contrib Warts
 // http://github.com/wartremover/wartremover-contrib/
