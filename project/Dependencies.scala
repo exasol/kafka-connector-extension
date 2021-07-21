@@ -10,7 +10,7 @@ object Dependencies {
   private val ImportExportUDFVersion = "0.2.0"
   private val KafkaClientsVersion = "2.8.0"
   private val KafkaAvroSerializerVersion = "6.2.0"
-  private val ScalaCollectionCompatVersion = "2.4.4"
+  private val ScalaCollectionCompatVersion = "2.5.0"
 
   // Test dependencies versions
   private val ScalaTestVersion = "3.2.9"

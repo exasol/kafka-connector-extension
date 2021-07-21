@@ -49,7 +49,9 @@ class KafkaRecordConsumer(
         val records = consumer.poll(timeout)
         recordCount = records.count()
         totalRecordCount += recordCount
-        recordOffset = math.max(recordOffset, emitRecords(iterator, records))
+        val currentOffset = emitRecords(iterator, records)
+        recordOffset = updateRecordOffset(recordOffset, currentOffset)
+        logger.info(s"Record offset $recordOffset.")
         logger.info(
           s"Polled '$recordCount' records, total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
@@ -67,6 +69,13 @@ class KafkaRecordConsumer(
       consumer.close()
     }
   }
+
+  private[this] def updateRecordOffset(previousOffset: Long, currentOffset: Long): Long =
+    if (currentOffset == -1) {
+      getPartitionCurrentOffset()
+    } else {
+      currentOffset
+    }
 
   private[this] type FieldType = Map[FieldSpecification, Seq[Any]]
 
@@ -114,11 +123,19 @@ class KafkaRecordConsumer(
       .isConsumeAllOffsetsEnabled() && recordOffset < partitionEndOffset) ||
       (recordCount >= minRecordsPerRun && totalRecordCount < maxRecordsPerRun)
 
+  private[this] def getPartitionCurrentOffset(): Long = {
+    val topicPartition = new TopicPartition(topic, partitionId)
+    val currentOffset = consumer.position(topicPartition) - 1
+    logger.info(s"The current record offset for partition '$partitionId' is '$currentOffset'.")
+    currentOffset
+  }
+
   private[this] def getPartitionEndOffset(): Long = {
     val topicPartition = new TopicPartition(topic, partitionId)
     val partitionEndOffsets = consumer.endOffsets(Arrays.asList(topicPartition))
-    val lastOffset = partitionEndOffsets.get(topicPartition) - 1
-    logger.info(s"The last record offset for partition '$partitionId' is '$lastOffset'.")
-    lastOffset
+    val endOffset = partitionEndOffsets.get(topicPartition) - 1
+    logger.info(s"The last record offset for partition '$partitionId' is '$endOffset'.")
+    endOffset
   }
+
 }

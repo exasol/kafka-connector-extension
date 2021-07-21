@@ -65,6 +65,7 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   test("emits all records using min and max record counts with empty records") {
     when(consumer.poll(defaultTimeout))
       .thenReturn(recordBatch(Seq(0, 1)), emptyConsumerRecords, recordBatch(Seq(2, 3)))
+    when(consumer.position(topicPartition)).thenReturn(2L)
     KafkaImportChecker(minMaxThresholdProperties).assertEmitCount(2)
   }
 
@@ -86,14 +87,15 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   test("emits all records using consume_all_offsets with empty records in between") {
     when(consumer.poll(defaultTimeout))
       .thenReturn(recordBatch(Seq(0, 1)), emptyConsumerRecords, recordBatch(Seq(2, 3)))
+    when(consumer.position(topicPartition)).thenReturn(2L)
     KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(4)
   }
 
   test("returns without emitting records when topic is empty") {
     when(consumer.endOffsets(Arrays.asList(topicPartition)))
-      .thenReturn(JMap.of(topicPartition, 0))
-    when(consumer.poll(defaultTimeout))
-      .thenReturn(emptyConsumerRecords)
+      .thenReturn(JMap.of(topicPartition, 1))
+    when(consumer.poll(defaultTimeout)).thenReturn(emptyConsumerRecords)
+    when(consumer.position(topicPartition)).thenReturn(1L)
     KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(0)
   }
 
@@ -101,7 +103,35 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
     when(consumer.poll(defaultTimeout))
       .thenReturn(emptyConsumerRecords)
       .thenThrow(new RuntimeException("test should not poll twice"))
-    KafkaImportChecker(consumeAllOffsetsProperties, defaultEndOffset).assertEmitCount(0)
+    when(consumer.position(topicPartition)).thenReturn(4L)
+    KafkaImportChecker(consumeAllOffsetsProperties, startOffset = defaultEndOffset - 1)
+      .assertEmitCount(0)
+  }
+
+  test("returns with empty records and offset reset") {
+    when(consumer.poll(defaultTimeout))
+      .thenReturn(emptyConsumerRecords)
+      .thenReturn(emptyConsumerRecords)
+    when(consumer.position(topicPartition)).thenReturn(4L)
+    KafkaImportChecker(consumeAllOffsetsProperties, startOffset = 2L).assertEmitCount(0)
+  }
+
+  test("emits records using consume_all_offsets with empty records and offset reset") {
+    when(consumer.poll(defaultTimeout))
+      .thenReturn(emptyConsumerRecords)
+      .thenReturn(emptyConsumerRecords)
+      .thenReturn(recordBatch(Seq(2, 3)))
+    when(consumer.position(topicPartition)).thenReturn(2L)
+    KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(2)
+  }
+
+  test("emits records using consume_all_offsets with empty records and offset reset to first") {
+    when(consumer.poll(defaultTimeout))
+      .thenReturn(emptyConsumerRecords)
+      .thenReturn(emptyConsumerRecords)
+      .thenReturn(recordBatch(Seq(2, 3)))
+    when(consumer.position(topicPartition)).thenReturn(1L)
+    KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(2)
   }
 
   private[this] def recordBatch(offsets: Seq[Long]): ConsumerRecords[FieldType, FieldType] = {

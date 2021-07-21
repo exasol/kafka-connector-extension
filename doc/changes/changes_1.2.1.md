@@ -25,3 +25,4 @@ Code name:
 * Removed `com.lucidchart:sbt-scalafmt-coursier:1.16`
 * Removed `com.typesafe.sbt:sbt-git:1.0.1`
 * Removed `com.github.cb372:sbt-explicit-dependencies:0.2.16`
+* Updated `org.wartremover:sbt-wartremover:2.4.15` to `2.4.16`
