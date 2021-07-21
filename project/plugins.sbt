@@ -1,3 +1,7 @@
+// Adds a `scalafmt` sbt plugin
+// https://github.com/scalameta/sbt-scalafmt
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.3")
+
 // Adds a `wartremover` a flexible Scala code linting tool
 // http://github.com/puffnfresh/wartremover
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.16")
@@ -29,10 +33,6 @@ addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.3.1")
 // http://github.com/rtimush/sbt-updates
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.3")
 
-// Adds a `scalafmt` task for automatic source code formatting
-// https://github.com/lucidsoftware/neo-sbt-scalafmt
-addSbtPlugin("com.lucidchart" % "sbt-scalafmt-coursier" % "1.16")
-
 // Adds `scalastyle` a coding style checker and enforcer
 // https://github.com/scalastyle/scalastyle-sbt-plugin
 addSbtPlugin("org.scalastyle" % "scalastyle-sbt-plugin" % "1.0.0")
@@ -41,24 +41,6 @@ addSbtPlugin("org.scalastyle" % "scalastyle-sbt-plugin" % "1.0.0")
 // https://github.com/jrudolph/sbt-dependency-graph
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.10.0-RC1")
 
-// Adds a `git` plugin
-// https://github.com/sbt/sbt-git
-addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.1")
-
-// Adds a `sbt-explicit-dependencies` plugin
-// https://github.com/cb372/sbt-explicit-dependencies
-addSbtPlugin("com.github.cb372" % "sbt-explicit-dependencies" % "0.2.16")
-
 // Adds a `sbt-reproducible-builds` plugin
 // https://github.com/raboof/sbt-reproducible-builds
 addSbtPlugin("net.bzzt" % "sbt-reproducible-builds" % "0.28")
-
-// Setup this and project/project/plugins.sbt for formatting
-// project/*.scala files with scalafmt
-inThisBuild(
-  Seq(
-    scalafmtOnCompile := true,
-    // Use the scalafmt config in the root directory
-    scalafmtConfig := baseDirectory(_.getParentFile / ".scalafmt.conf").value
-  )
-)

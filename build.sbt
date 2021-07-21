@@ -17,7 +17,7 @@ lazy val root =
   project
     .in(file("."))
     .settings(moduleName := "exasol-kafka-connector-extension")
-    .settings(version := "1.2.0")
+    .settings(version := "1.2.1")
     .settings(orgSettings)
     .settings(buildSettings)
     .settings(Settings.projectSettings(scalaVersion))
@@ -26,6 +26,6 @@ lazy val root =
       libraryDependencies ++= Dependencies.AllDependencies,
       excludeDependencies ++= Dependencies.ExcludedDependencies
     )
-    .enablePlugins(IntegrationTestPlugin, GitVersioning, ReproducibleBuildsPlugin)
+    .enablePlugins(IntegrationTestPlugin, ReproducibleBuildsPlugin)
 
 addCommandAlias("pluginUpdates", ";reload plugins;dependencyUpdates;reload return")

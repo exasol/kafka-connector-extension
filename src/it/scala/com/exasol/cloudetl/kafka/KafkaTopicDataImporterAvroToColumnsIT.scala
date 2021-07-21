@@ -51,7 +51,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
 
     val startingOffset = 12
     0.until(startingOffset)
-      .foreach(recordNr => {
+      .foreach { recordNr =>
         publishToKafka(
           topic,
           AvroRecord(
@@ -61,7 +61,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
             13
           )
         )
-      })
+      }
     deleteRecordsFromTopic(topic, startingOffset)
 
     publishToKafka(topic, AvroRecord("abc", 3, 13))

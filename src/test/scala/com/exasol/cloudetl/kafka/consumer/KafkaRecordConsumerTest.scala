@@ -136,17 +136,16 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
 
   private[this] def recordBatch(offsets: Seq[Long]): ConsumerRecords[FieldType, FieldType] = {
     val records = new java.util.ArrayList[ConsumerRecord[FieldType, FieldType]]()
-    offsets.foreach {
-      case offset =>
-        records.add(
-          new ConsumerRecord[FieldType, FieldType](
-            topicName,
-            0,
-            offset,
-            Map(RecordKey -> Seq("key")),
-            Map(RecordValue -> Seq(s"$offset"))
-          )
+    offsets.foreach { case offset =>
+      records.add(
+        new ConsumerRecord[FieldType, FieldType](
+          topicName,
+          0,
+          offset,
+          Map(RecordKey -> Seq("key")),
+          Map(RecordValue -> Seq(s"$offset"))
         )
+      )
     }
     new ConsumerRecords[FieldType, FieldType](JMap.of(topicPartition, records))
   }

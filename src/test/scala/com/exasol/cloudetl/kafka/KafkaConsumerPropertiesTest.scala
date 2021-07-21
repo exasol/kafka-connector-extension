@@ -296,10 +296,9 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   }
 
   test("getRecordValueFormat returns user provided property value") {
-    Map("avro" -> "avro", "JsOn" -> "json", "String" -> "string").foreach {
-      case (input, expected) =>
-        properties = Map("RECORD_VALUE_FORMAT" -> input)
-        assert(BaseProperties(properties).getRecordValueFormat() === expected)
+    Map("avro" -> "avro", "JsOn" -> "json", "String" -> "string").foreach { case (input, expected) =>
+      properties = Map("RECORD_VALUE_FORMAT" -> input)
+      assert(BaseProperties(properties).getRecordValueFormat() === expected)
     }
   }
 
@@ -334,6 +333,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
 
   test("getProperties returns Java map properties") {
     import KafkaConsumerProperties._
+
+    @SuppressWarnings(Array("scala:S2068")) // Password keyword in tests
     val requiredProperties = Map(
       BOOTSTRAP_SERVERS -> "kafka.broker.com:9092",
       SCHEMA_REGISTRY_URL -> "http://schema-registry.com:8080",
@@ -353,15 +354,13 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
       MAX_PARTITION_FETCH_BYTES -> "1048576"
     )
 
-    properties = Map("SSL_ENABLED" -> "true") ++ requiredProperties.map {
-      case (key, value) =>
-        key.userPropertyName -> value
+    properties = Map("SSL_ENABLED" -> "true") ++ requiredProperties.map { case (key, value) =>
+      key.userPropertyName -> value
     }
     val javaProps = BaseProperties(properties).getProperties()
     assert(javaProps.isInstanceOf[java.util.Map[String, Object]])
-    (requiredProperties ++ optionalProperties).foreach {
-      case (key, value) =>
-        assert(javaProps.get(key.kafkaPropertyName) === value)
+    (requiredProperties ++ optionalProperties).foreach { case (key, value) =>
+      assert(javaProps.get(key.kafkaPropertyName) === value)
     }
   }
 
@@ -484,7 +483,6 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     KafkaConsumerProperties(properties, metadata)
   }
 
-  private[this] case class BaseProperties(val params: Map[String, String])
-      extends KafkaConsumerProperties(params)
+  private[this] case class BaseProperties(val params: Map[String, String]) extends KafkaConsumerProperties(params)
 
 }

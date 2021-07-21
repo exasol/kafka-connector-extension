@@ -1,8 +1,20 @@
 # Kafka Connector Extension
 
-[![Build Status][travis-badge]][travis-link]
-[![Coveralls][coveralls-badge]][coveralls-link]
-[![GitHub Release][gh-release-badge]][gh-release-link]
+[![Build Status](https://github.com/exasol/kafka-connector-extension/actions/workflows/ci-build.yml/badge.svg)](https://github.com/exasol/kafka-connector-extension/actions/workflows/ci-build.yml)
+[![Coveralls](https://img.shields.io/coveralls/exasol/kafka-connector-extension.svg)](https://coveralls.io/github/exasol/kafka-connector-extension)
+[![GitHub Release](https://img.shields.io/github/release/exasol/kafka-connector-extension.svg?logo=github)](https://github.com/exasol/kafka-connector-extension/releases/latest)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Akafka-connector-extension&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.exasol%3Akafka-connector-extension)
+
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Akafka-connector-extension&metric=security_rating)](https://sonarcloud.io/dashboard?id=com.exasol%3Akafka-connector-extension)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Akafka-connector-extension&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=com.exasol%3Akafka-connector-extension)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Akafka-connector-extension&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=com.exasol%3Akafka-connector-extension)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Akafka-connector-extension&metric=sqale_index)](https://sonarcloud.io/dashboard?id=com.exasol%3Akafka-connector-extension)
+
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Akafka-connector-extension&metric=code_smells)](https://sonarcloud.io/dashboard?id=com.exasol%3Akafka-connector-extension)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Akafka-connector-extension&metric=coverage)](https://sonarcloud.io/dashboard?id=com.exasol%3Akafka-connector-extension)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Akafka-connector-extension&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=com.exasol%3Akafka-connector-extension)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Akafka-connector-extension&metric=ncloc)](https://sonarcloud.io/dashboard?id=com.exasol%3Akafka-connector-extension)
 
 Exasol Kafka Extension provides UDF scripts that allow accessing Apache Kafka
 and importing data from a Kafka topic into an Exasol table.
@@ -55,7 +67,6 @@ These plugins help with project development.
 
 | Plugin Name                                 | Purpose                                                         | License              |
 |---------------------------------------------|-----------------------------------------------------------------|----------------------|
-| [SBT Coursier][sbt-coursier-link]           | Pure Scala artifact fetching                                    | Apache License 2.0   |
 | [SBT Wartremover][sbt-wartremover-link]     | Flexible Scala code linting tool                                | Apache License 2.0   |
 | [SBT Wartremover Contrib][sbt-wcontrib-link]| Community managed additional warts for wartremover              | Apache License 2.0   |
 | [SBT Assembly][sbt-assembly-link]           | Create fat jars with all project dependencies                   | MIT License          |
@@ -66,15 +77,7 @@ These plugins help with project development.
 | [SBT Scalafmt][sbt-scalafmt-link]           | A plugin for https://scalameta.org/scalafmt/ formatting         | Apache License 2.0   |
 | [SBT Scalastyle][sbt-style-link]            | A plugin for http://www.scalastyle.org/ Scala style checker     | Apache License 2.0   |
 | [SBT Dependency Graph][sbt-depgraph-link]   | A plugin for visualizing dependency graph of your project       | Apache License 2.0   |
-| [SBT Explicit Dependencies][sbt-expdep-link]| Checks which direct libraries required to compile your code     | Apache License 2.0   |
-| [SBT Git][sbt-git-link]                     | A plugin for Git integration, used to version the release jars  | BSD 2-Clause License |
 
-[travis-badge]: https://img.shields.io/travis/com/exasol/kafka-connector-extension/main.svg?logo=travis
-[travis-link]: https://travis-ci.com/exasol/kafka-connector-extension
-[coveralls-badge]: https://img.shields.io/coveralls/github/exasol/kafka-connector-extension.svg?logo=coveralls
-[coveralls-link]: https://coveralls.io/github/exasol/kafka-connector-extension?branch=main
-[gh-release-badge]: https://img.shields.io/github/release/exasol/kafka-connector-extension.svg?logo=github
-[gh-release-link]: https://github.com/exasol/kafka-connector-extension/releases/latest
 [ieudf]: https://github.com/exasol/import-export-udf-common-scala
 [kafka-clients-link]: https://github.com/apache/kafka/tree/trunk/clients
 [kafka-avro-link]: https://github.com/confluentinc/schema-registry/tree/master/avro-serializer
@@ -83,7 +86,6 @@ These plugins help with project development.
 [scalatestplus-link]: https://github.com/scalatest/scalatestplus-mockito
 [mockitocore-link]: https://site.mockito.org/
 [kafka-link]: https://github.com/embeddedkafka/embedded-kafka-schema-registry
-[sbt-coursier-link]: https://github.com/coursier/coursier
 [sbt-wartremover-link]: http://github.com/puffnfresh/wartremover
 [sbt-wcontrib-link]: http://github.com/wartremover/wartremover-contrib
 [sbt-assembly-link]: https://github.com/sbt/sbt-assembly
@@ -91,10 +93,9 @@ These plugins help with project development.
 [sbt-scoverage-link]: http://github.com/scoverage/sbt-scoverage
 [sbt-coveralls-link]: https://github.com/scoverage/sbt-coveralls
 [sbt-updates-link]: http://github.com/rtimush/sbt-updates
-[sbt-scalafmt-link]: https://github.com/lucidsoftware/neo-sbt-scalafmt
+[sbt-scalafmt-link]: https://github.com/scalameta/sbt-scalafmt
 [sbt-style-link]: https://github.com/scalastyle/scalastyle-sbt-plugin
 [sbt-depgraph-link]: https://github.com/jrudolph/sbt-dependency-graph
-[sbt-git-link]: https://github.com/sbt/sbt-git
 [sbt-expdep-link]: https://github.com/cb372/sbt-explicit-dependencies
 [tech-blog-part1]: https://community.exasol.com/t5/tech-blog/how-to-import-data-from-apache-kafka-with-exasol/ba-p/1409
 [tech-blog-part2]: https://community.exasol.com/t5/tech-blog/how-to-import-data-from-apache-kafka-using-our-user-defined/ba-p/1699

@@ -52,7 +52,7 @@ class KafkaConsumerQueryGeneratorTest extends PathTest {
   }
 
   test("generateSqlForImportSpec throws if table name property is not set") {
-    properties -= ("TABLE_NAME")
+    properties -= "TABLE_NAME"
     when(importSpec.getParameters()).thenReturn(properties.asJava)
     val thrown = intercept[IllegalArgumentException] {
       KafkaConsumerQueryGenerator.generateSqlForImportSpec(metadata, importSpec)

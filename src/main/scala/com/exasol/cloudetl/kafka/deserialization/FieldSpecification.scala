@@ -55,9 +55,7 @@ sealed class ConcreteField(val fieldName: String) extends FieldSpecification
 /**
  * The specification <pre>key.<i>fieldname</i>/pre>
  */
-final case class RecordKeyField(override val fieldName: String)
-    extends ConcreteField(fieldName)
-    with KeySpecification
+final case class RecordKeyField(override val fieldName: String) extends ConcreteField(fieldName) with KeySpecification
 
 /**
  * The specification <pre>value.<i>fieldname</i>/pre>

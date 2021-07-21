@@ -19,7 +19,7 @@ class GenericRecordDeserializer(
 
   private[this] val converter = new AvroConverter()
 
-  final override def deserialize(
+  override final def deserialize(
     topic: String,
     data: Array[Byte]
   ): Map[FieldSpecification, Seq[Any]] = {
@@ -31,10 +31,7 @@ class GenericRecordDeserializer(
         (
           fieldSpec,
           recordSchema.getFields.asScala
-            .map(
-              recordField =>
-                converter.convert(record.get(recordField.name()), recordField.schema())
-            )
+            .map(recordField => converter.convert(record.get(recordField.name()), recordField.schema()))
             .toSeq
         )
       case fieldSpec: ConcreteField =>

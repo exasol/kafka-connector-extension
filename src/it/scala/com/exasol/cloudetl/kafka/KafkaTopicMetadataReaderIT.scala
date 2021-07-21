@@ -46,9 +46,8 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
     KafkaTopicMetadataReader.run(mock[ExaMetadata], iter)
 
     verify(iter, times(3)).emit(anyInt().asInstanceOf[JInt], anyLong().asInstanceOf[JLong])
-    partitions.zip(offsets).foreach {
-      case (partitionId, maxOffset) =>
-        verify(iter, times(1)).emit(JInt.valueOf(partitionId), JLong.valueOf(maxOffset))
+    partitions.zip(offsets).foreach { case (partitionId, maxOffset) =>
+      verify(iter, times(1)).emit(JInt.valueOf(partitionId), JLong.valueOf(maxOffset))
     }
     verify(iter, times(1)).emit(JInt.valueOf(2), JLong.valueOf(-1))
   }

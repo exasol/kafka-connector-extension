@@ -9,10 +9,12 @@ object StringDeserialization extends RecordDeserialization {
     properties: KafkaConsumerProperties,
     fieldSpecs: Seq[FieldSpecification]
   ): Deserializer[Map[FieldSpecification, Seq[Any]]] =
-    if (fieldSpecs.exists {
-          case _: FullRecord => false
-          case _             => true
-        }) {
+    if (
+      fieldSpecs.exists {
+        case _: FullRecord => false
+        case _             => true
+      }
+    ) {
       throw new KafkaConnectorException(
         "Record format 'string' can only use the full 'key' or 'value' as specification"
       )

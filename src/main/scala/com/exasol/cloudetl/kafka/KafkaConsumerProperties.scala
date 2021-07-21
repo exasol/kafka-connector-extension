@@ -23,8 +23,7 @@ import org.apache.kafka.common.config.SslConfigs
  *
  * This class also provides builder methods for Kafka consumers.
  */
-class KafkaConsumerProperties(private val properties: Map[String, String])
-    extends AbstractProperties(properties) {
+class KafkaConsumerProperties(private val properties: Map[String, String]) extends AbstractProperties(properties) {
 
   import KafkaConsumerProperties._
 
