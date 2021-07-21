@@ -331,6 +331,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(BaseProperties(properties).getRecordFields() === Seq("value"))
   }
 
+  @SuppressWarning("scala:S2068") // Password keyword in tests
   test("getProperties returns Java map properties") {
     import KafkaConsumerProperties._
     val requiredProperties = Map(
