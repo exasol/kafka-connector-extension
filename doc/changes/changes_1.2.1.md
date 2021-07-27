@@ -1,8 +1,10 @@
-# Kafka Connector Extension 1.2.1, released 2021-XX-XX
+# Kafka Connector Extension 1.2.1, released 2021-07-21
 
-Code name: 
+Code name: Bug Fixes and Refactorings
 
 ## Summary
+
+In this release we fixed a bug that occurs when Kafka resets offsets while user consuming all records until the latest offset. We also migrated the continuous integration (CI) environment to Github actions.
 
 ## Bug Fixes
 
@@ -17,6 +19,8 @@ Code name:
 * Updated `org.scala-lang.modules:scala-collection-compat:2.4.4` to `2.5.0`
 
 ### Test Dependency Updates
+
+* Updated `org.testcontainers:kafka:test:1.15.3` to `1.16.0`
 
 ### Plugin Updates
 

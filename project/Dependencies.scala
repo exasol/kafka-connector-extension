@@ -20,7 +20,7 @@ object Dependencies {
   private val ExasolTestDBBuilderVersion = "3.2.0"
   private val ExasolTestContainersVersion = "3.5.3"
   private val ExasolHamcrestMatcherVersion = "1.4.0"
-  private val TestContainersVersion = "1.15.3"
+  private val TestContainersVersion = "1.16.0"
 
   val Resolvers: Seq[Resolver] = Seq(
     "jitpack.io" at "https://jitpack.io",

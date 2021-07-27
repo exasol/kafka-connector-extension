@@ -49,9 +49,7 @@ class KafkaRecordConsumer(
         val records = consumer.poll(timeout)
         recordCount = records.count()
         totalRecordCount += recordCount
-        val currentOffset = emitRecords(iterator, records)
-        recordOffset = updateRecordOffset(recordOffset, currentOffset)
-        logger.info(s"Record offset $recordOffset.")
+        recordOffset = updateRecordOffset(emitRecords(iterator, records))
         logger.info(
           s"Polled '$recordCount' records, total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
@@ -70,7 +68,7 @@ class KafkaRecordConsumer(
     }
   }
 
-  private[this] def updateRecordOffset(previousOffset: Long, currentOffset: Long): Long =
+  private[this] def updateRecordOffset(currentOffset: Long): Long =
     if (currentOffset == -1) {
       getPartitionCurrentOffset()
     } else {
