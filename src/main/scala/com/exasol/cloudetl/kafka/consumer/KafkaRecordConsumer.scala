@@ -50,7 +50,6 @@ class KafkaRecordConsumer(
         recordCount = records.count()
         totalRecordCount += recordCount
         recordOffset = updateRecordOffset(emitRecords(iterator, records))
-        logger.info(s"Record offset $recordOffset.")
         logger.info(
           s"Polled '$recordCount' records, total '$totalRecordCount' records for partition " +
             s"'$partitionId' in node '$nodeId' and vm '$vmId'."
