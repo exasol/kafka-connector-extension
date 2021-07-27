@@ -1,4 +1,4 @@
-# Kafka Connector Extension 1.2.1, released 2021-07-21
+# Kafka Connector Extension 1.2.1, released 2021-07-27
 
 Code name: Bug Fixes and Refactorings
 
