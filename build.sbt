@@ -1,6 +1,6 @@
 import com.exasol.cloudetl.sbt.Dependencies
-import com.exasol.cloudetl.sbt.Settings
 import com.exasol.cloudetl.sbt.IntegrationTestPlugin
+import com.exasol.cloudetl.sbt.Settings
 
 lazy val orgSettings = Seq(
   name := "kafka-connector-extension",
@@ -17,7 +17,7 @@ lazy val root =
   project
     .in(file("."))
     .settings(moduleName := "exasol-kafka-connector-extension")
-    .settings(version := "1.2.1")
+    .settings(version := "1.2.2")
     .settings(orgSettings)
     .settings(buildSettings)
     .settings(Settings.projectSettings(scalaVersion))

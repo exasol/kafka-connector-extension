@@ -116,13 +116,27 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     }
   }
 
-  test("isSSLEnabled returns true if it is set to true") {
-    properties = Map("SSL_ENABLED" -> "true")
-    assert(BaseProperties(properties).isSSLEnabled() === true)
+  test("isSSLEnabled & isSASLEnabled both returns false if SECURITY_PROTOCOL is not set (default PLAINTEXT)") {
+    assert(BaseProperties(properties).isSSLEnabled() === false)
+    assert(BaseProperties(properties).isSASLEnabled() === false)
   }
 
-  test("isSSLEnabled returns false if it is not set") {
+  test("isSSLEnabled returns true & isSASLEnabled returns false if SECURITY_PROTOCOL=SSL") {
+    properties = Map("SECURITY_PROTOCOL" -> "SSL")
+    assert(BaseProperties(properties).isSSLEnabled() === true)
+    assert(BaseProperties(properties).isSASLEnabled() === false)
+  }
+
+  test("isSSLEnabled returns false & isSASLEnabled returns true if SECURITY_PROTOCOL=SASL_PLAINTEXT") {
+    properties = Map("SECURITY_PROTOCOL" -> "SASL_PLAINTEXT")
     assert(BaseProperties(properties).isSSLEnabled() === false)
+    assert(BaseProperties(properties).isSASLEnabled() === true)
+  }
+
+  test("isSSLEnabled & isSASLEnabled both returns true if SECURITY_PROTOCOL=SASL_SSL") {
+    properties = Map("SECURITY_PROTOCOL" -> "SASL_SSL")
+    assert(BaseProperties(properties).isSSLEnabled() === true)
+    assert(BaseProperties(properties).isSASLEnabled() === true)
   }
 
   test("hasSchemaRegistryUrl returns true if schema registry url is provided") {
@@ -151,7 +165,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       KafkaConsumerProperties(properties).getProperties()
     }
-    assert(thrown.getMessage() === errorMessage("SCHEMA_REGISTRY_URL"))
+    assert(thrown.getMessage === errorMessage("SCHEMA_REGISTRY_URL"))
   }
 
   test("getMaxPollRecords returns max poll records value") {
@@ -203,7 +217,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   test("getSecurityProtocol returns default value if security protocol is not set") {
     // default value is intentionally hardcoded, should alert if things
     // change
-    assert(BaseProperties(properties).getSecurityProtocol() === "TLSv1.3")
+    assert(BaseProperties(properties).getSecurityProtocol() === "PLAINTEXT")
   }
 
   test("getSSLKeyPassword returns ssl key password property value") {
@@ -275,6 +289,17 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     // default value is intentionally hardcoded, should alert if things
     // change
     assert(BaseProperties(properties).getSSLEndpointIdentificationAlgorithm() === "https")
+  }
+
+  test("getSASLJaasConfig returns jaas file content with username & password") {
+    properties = Map(
+      "SASL_USERNAME" -> "kafka",
+      "SASL_PASSWORD" -> "kafkapw"
+    )
+    assert(BaseProperties(properties).getSASLJaasConfig() ===
+      "org.apache.kafka.common.security.plain.PlainLoginModule required " +
+      "username=\"kafka\" " +
+      "password=\"kafkapw\";")
   }
 
   test("isConsumeAllOffsetsEnabled returns true if it is set to true") {
@@ -373,8 +398,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val metadata = mock[ExaMetadata]
     val connectionInformation = mock[ExaConnectionInformation]
     when(metadata.getConnection("MY_CONNECTION")).thenReturn(connectionInformation)
-    when(connectionInformation.getUser()).thenReturn("")
-    when(connectionInformation.getPassword())
+    when(connectionInformation.getUser).thenReturn("")
+    when(connectionInformation.getPassword)
       .thenReturn(
         """BOOTSTRAP_SERVERS=MY_BOOTSTRAP_SERVERS;
           |SCHEMA_REGISTRY_URL=MY_SCHEMA_REGISTRY;
@@ -412,7 +437,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[KafkaConnectorException] {
       KafkaConsumerProperties(properties, mock[ExaMetadata])
     }
-    val message = thrown.getMessage()
+    val message = thrown.getMessage
     assert(message === "Please use a named connection object to provide secure SSL properties.")
   }
 
@@ -421,8 +446,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val metadata = mock[ExaMetadata]
     val connectionInformation = mock[ExaConnectionInformation]
     when(metadata.getConnection("MY_CONNECTION")).thenReturn(connectionInformation)
-    when(connectionInformation.getUser()).thenReturn("")
-    when(connectionInformation.getPassword())
+    when(connectionInformation.getUser).thenReturn("")
+    when(connectionInformation.getPassword)
       .thenReturn("BOOTSTRAP_SERVERS=localhost:1000;SCHEMA_REGISTRY_URL=http://n11:1001")
     val properties = KafkaConsumerProperties(params, metadata)
     assert(properties.getBootstrapServers() === "localhost:1000")
@@ -445,7 +470,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[KafkaConnectorException] {
       getSSLEnabledConsumerProperties(Paths.get("ssl_keystore_file"), DUMMY_TRUSTSTORE_FILE)
     }
-    val message = thrown.getMessage()
+    val message = thrown.getMessage
     assert(message.contains("Unable to find the SSL keystore file"))
     assert(message.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
   }
@@ -454,7 +479,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[KafkaConnectorException] {
       getSSLEnabledConsumerProperties(DUMMY_KEYSTORE_FILE, Paths.get("ssl_truststore_file"))
     }
-    val message = thrown.getMessage()
+    val message = thrown.getMessage
     assert(message.contains("Unable to find the SSL truststore file"))
     assert(message.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
   }
@@ -471,8 +496,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val metadata = mock[ExaMetadata]
     val connectionInformation = mock[ExaConnectionInformation]
     when(metadata.getConnection("SSL_CONNECTION")).thenReturn(connectionInformation)
-    when(connectionInformation.getUser()).thenReturn("")
-    when(connectionInformation.getPassword()).thenReturn(
+    when(connectionInformation.getUser).thenReturn("")
+    when(connectionInformation.getPassword).thenReturn(
       s"""SSL_KEY_PASSWORD=pass123;
          |SSL_KEYSTORE_LOCATION=$keystoreFile;
          |SSL_KEYSTORE_PASSWORD=pass123;

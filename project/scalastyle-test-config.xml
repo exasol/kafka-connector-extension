@@ -462,7 +462,7 @@
   <!-- Check a file lines does not exceed threshold (800 default) -->
   <check level="error" class="org.scalastyle.file.FileLengthChecker" enabled="true">
     <parameters>
-      <parameter name="maxFileLength"><![CDATA[800]]></parameter>
+      <parameter name="maxFileLength"><![CDATA[1000]]></parameter>
     </parameters>
   </check>
 
