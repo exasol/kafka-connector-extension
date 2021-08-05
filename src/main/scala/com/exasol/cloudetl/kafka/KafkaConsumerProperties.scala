@@ -148,12 +148,12 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
   final def getMaxRecordsPerRun(): Int =
     get(MAX_RECORDS_PER_RUN.userPropertyName).fold(MAX_RECORDS_PER_RUN.defaultValue)(_.toInt)
 
-  /** Checks if {@code SECURITY_PROTOCOL} is using {@code SSL channel}. */
+  /** Checks if {@code SECURITY_PROTOCOL} is using {@code SSL} channel. */
   final def isSSLEnabled(): Boolean =
     List(SecurityProtocol.SSL, SecurityProtocol.SASL_SSL)
       .contains(SecurityProtocol.valueOf(getSecurityProtocol()))
 
-  /** Checks if {@code SECURITY_PROTOCOL} is using {@code SASL authentication}. */
+  /** Checks if {@code SECURITY_PROTOCOL} is using {@code SASL} authentication. */
   final def isSASLEnabled(): Boolean =
     List(SecurityProtocol.SASL_PLAINTEXT, SecurityProtocol.SASL_SSL)
       .contains(SecurityProtocol.valueOf(getSecurityProtocol()))
@@ -593,7 +593,7 @@ object KafkaConsumerProperties extends CommonProperties {
    *
    * It represents the password of the private key in the key store
    * file. It is required property when [[SECURITY_PROTOCOL]] is set to {@code
-   * SSL}.
+   * SSL} or {@code SASL_SSL}.
    */
   private[kafka] final val SSL_KEY_PASSWORD: Config[String] = Config[String](
     "SSL_KEY_PASSWORD",
