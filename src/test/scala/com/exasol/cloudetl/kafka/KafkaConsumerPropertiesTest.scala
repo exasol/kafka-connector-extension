@@ -165,7 +165,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       KafkaConsumerProperties(properties).getProperties()
     }
-    assert(thrown.getMessage === errorMessage("SCHEMA_REGISTRY_URL"))
+    assert(thrown.getMessage() === errorMessage("SCHEMA_REGISTRY_URL"))
   }
 
   test("getMaxPollRecords returns max poll records value") {
@@ -398,8 +398,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val metadata = mock[ExaMetadata]
     val connectionInformation = mock[ExaConnectionInformation]
     when(metadata.getConnection("MY_CONNECTION")).thenReturn(connectionInformation)
-    when(connectionInformation.getUser).thenReturn("")
-    when(connectionInformation.getPassword)
+    when(connectionInformation.getUser()).thenReturn("")
+    when(connectionInformation.getPassword())
       .thenReturn(
         """BOOTSTRAP_SERVERS=MY_BOOTSTRAP_SERVERS;
           |SCHEMA_REGISTRY_URL=MY_SCHEMA_REGISTRY;
@@ -437,7 +437,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[KafkaConnectorException] {
       KafkaConsumerProperties(properties, mock[ExaMetadata])
     }
-    val message = thrown.getMessage
+    val message = thrown.getMessage()
     assert(message === "Please use a named connection object to provide secure SSL properties.")
   }
 
@@ -446,8 +446,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val metadata = mock[ExaMetadata]
     val connectionInformation = mock[ExaConnectionInformation]
     when(metadata.getConnection("MY_CONNECTION")).thenReturn(connectionInformation)
-    when(connectionInformation.getUser).thenReturn("")
-    when(connectionInformation.getPassword)
+    when(connectionInformation.getUser()).thenReturn("")
+    when(connectionInformation.getPassword())
       .thenReturn("BOOTSTRAP_SERVERS=localhost:1000;SCHEMA_REGISTRY_URL=http://n11:1001")
     val properties = KafkaConsumerProperties(params, metadata)
     assert(properties.getBootstrapServers() === "localhost:1000")
@@ -470,7 +470,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[KafkaConnectorException] {
       getSSLEnabledConsumerProperties(Paths.get("ssl_keystore_file"), DUMMY_TRUSTSTORE_FILE)
     }
-    val message = thrown.getMessage
+    val message = thrown.getMessage()
     assert(message.contains("Unable to find the SSL keystore file"))
     assert(message.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
   }
@@ -479,7 +479,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[KafkaConnectorException] {
       getSSLEnabledConsumerProperties(DUMMY_KEYSTORE_FILE, Paths.get("ssl_truststore_file"))
     }
-    val message = thrown.getMessage
+    val message = thrown.getMessage()
     assert(message.contains("Unable to find the SSL truststore file"))
     assert(message.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
   }
@@ -496,8 +496,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val metadata = mock[ExaMetadata]
     val connectionInformation = mock[ExaConnectionInformation]
     when(metadata.getConnection("SSL_CONNECTION")).thenReturn(connectionInformation)
-    when(connectionInformation.getUser).thenReturn("")
-    when(connectionInformation.getPassword).thenReturn(
+    when(connectionInformation.getUser()).thenReturn("")
+    when(connectionInformation.getPassword()).thenReturn(
       s"""SSL_KEY_PASSWORD=pass123;
          |SSL_KEYSTORE_LOCATION=$keystoreFile;
          |SSL_KEYSTORE_PASSWORD=pass123;
