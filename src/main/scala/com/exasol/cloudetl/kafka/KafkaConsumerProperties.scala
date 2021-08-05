@@ -260,7 +260,12 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
   final def getSASLJaasConfig(): String = {
     val username = getString(SASL_USERNAME.userPropertyName)
     val password = getString(SASL_PASSWORD.userPropertyName)
-    "org.apache.kafka.common.security.plain.PlainLoginModule required " +
+    val sasl_module_name = if ("PLAIN" == getSASLMechanism()) {
+      "org.apache.kafka.common.security.plain.PlainLoginModule"
+    } else if (SecurityProtocol.valueOf(getSecurityProtocol()).name.startsWith('')) {
+      "org.apache.kafka.common.security.scram.ScramLoginModule"
+    }
+    sasl_module_name + " required " +
       "username=\"" + username + "\" " +
       "password=\"" + password + "\";"
   }
@@ -680,7 +685,7 @@ object KafkaConsumerProperties extends CommonProperties {
   )
 
   /**
-   * SASL username. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN} or {@code SASL-SCRAM-*}.
+   * SASL username. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN} or {@code SCRAM-*}.
    */
   private[kafka] final val SASL_USERNAME: Config[String] = Config[String](
     "SASL_USERNAME",
@@ -689,7 +694,7 @@ object KafkaConsumerProperties extends CommonProperties {
   )
 
   /**
-   * SASL password. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN} or {@code SASL-SCRAM-*}.
+   * SASL password. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN} or {@code SCRAM-*}.
    */
   private[kafka] final val SASL_PASSWORD: Config[String] = Config[String](
     "SASL_PASSWORD",

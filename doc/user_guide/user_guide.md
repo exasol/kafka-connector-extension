@@ -438,7 +438,6 @@ FROM SCRIPT KAFKA_CONSUMER WITH
   TABLE_NAME              = '<schema_name>.<table_name>'
   GROUP_ID                = 'exasol-kafka-udf-consumers';
   -- Secure connection properties
-  SSL_ENABLED             = 'true'
   SECURITY_PROTOCOL       = 'SSL'
   CONNECTION_NAME         = 'KAFKA_SSL_CONNECTION';
 ```
@@ -535,15 +534,16 @@ These are optional parameters with their default values.
 * ``AS_JSON_DOC`` - (_deprecated_) It defines the way the data will be imported
   into the database.  If set to **'true'** data will be imported as one JSON
   document in one column. Default value is **'false'**. When dealing with JSON
-  it should be replaced by specifying `RECORD_FORMAT=json` and
+  it should be replaced by specifying `RECORD_VALUE_FORMAT=json` and
   `RECORD_FIELDS=value`.
 
 The following properties should be provided to enable a secure connection to the
-Kafka clusters.
+Kafka clusters. For the safety they must be specified in Exasol named connection
+not in import statement itself.
 
-* ``SSL_ENABLED`` - It is a boolean property that should be set to `true` in
-  order to use the secure connections to the Kafka cluster. Default value is
-  **'false'**.
+* ``SSL_ENABLED`` - (_deprecated_) It is a boolean property that should be set to `true` 
+  in order to use the secure connections to the Kafka cluster. Default value is
+  **'false'**. Use `SECURITY_PROTOCOL=SSL` or `SECURITY_PROTOCOL=SASL_SSL` instead.
 
 * ``SECURITY_PROTOCOL`` - It is the protocol used to communicate with Kafka
   servers. Default value is **PLAINTEXT**.
@@ -551,7 +551,7 @@ Kafka clusters.
 * ``SSL_KEY_PASSWORD`` - It represents the password of the private key inside
   the keystore file.
 
-* ``SSL_KEYSTORE_PASSWORD`` - It the store password for the keystore file.
+* ``SSL_KEYSTORE_PASSWORD`` - It is the store password for the keystore file.
 
 * ``SSL_KEYSTORE_LOCATION`` - It represents the location of the keystore file.
   This location value should point to the keystore file that is available via
@@ -566,6 +566,13 @@ Kafka clusters.
 * ``SSL_ENDPOINT_IDENTIFICATION_ALGORITHM`` - It is the endpoint identification
   algorithm to validate server hostname using a server certificate. Default
   value is **https**.
+
+* ``SASL_MECHANISM`` - It is SASL mechanism to use for authentication.
+  Default value is **GSSAPI**.
+
+* ``SASL_USERNAME`` - It is SASL username. It is used when `SASL_MECHANISM` is set to **PLAIN** or **SCRAM-***.
+
+* ``SASL_PASSWORD`` - It is SASL password. It is used when `SASL_MECHANISM` is set to **PLAIN** or **SCRAM-***.
 
 [gh-releases]: https://github.com/exasol/kafka-connector-extension/releases
 [schema-registry]: https://docs.confluent.io/current/schema-registry/index.html
