@@ -247,8 +247,8 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
       .fold(SSL_ENDPOINT_IDENTIFICATION_ALGORITHM.defaultValue)(identity)
 
   /**
-   * Returns {@code SASL_MECHANISM} property
-   * value if provided, otherwise returns the default value.
+   * Returns {@code SASL_MECHANISM} property value if provided,
+   * otherwise returns the default value.
    */
   final def getSASLMechanism(): String =
     get(SASL_MECHANISM.userPropertyName)
@@ -666,10 +666,9 @@ object KafkaConsumerProperties extends CommonProperties {
   )
 
   /**
-   * This is the {@code sasl.mechanism}
-   * configuration setting.
+   * This is the {@code sasl.mechanism} configuration setting.
    *
-   * It is the authentication mechanism used for client connections
+   * It is the authentication mechanism used for client connections.
    * It is used when [[SECURITY_PROTOCOL]] is set to {@code SASL_PLAINTEXT} or {@code SASL_SSL}.
    * Default value is [[SaslConfigs.DEFAULT_SASL_MECHANISM]].
    */
@@ -762,25 +761,27 @@ object KafkaConsumerProperties extends CommonProperties {
   }
 
   private[this] def validateNoSSLCredentials(properties: KafkaConsumerProperties): Unit = {
-      val secureConnectionProperties = List(
-        SSL_KEYSTORE_LOCATION,
-        SSL_KEYSTORE_PASSWORD,
-        SSL_KEY_PASSWORD,
-        SSL_TRUSTSTORE_LOCATION,
-        SSL_TRUSTSTORE_PASSWORD,
-        SASL_USERNAME,
-        SASL_PASSWORD
-      ).map(_.userPropertyName)
-      if (secureConnectionProperties.exists(p => properties.containsKey(p))) {
-        throw new KafkaConnectorException(
-          "Please use a named connection object to provide secure SSL properties."
-        )
-      }
+    val secureConnectionProperties = List(
+      SSL_KEYSTORE_LOCATION,
+      SSL_KEYSTORE_PASSWORD,
+      SSL_KEY_PASSWORD,
+      SSL_TRUSTSTORE_LOCATION,
+      SSL_TRUSTSTORE_PASSWORD,
+      SASL_USERNAME,
+      SASL_PASSWORD
+    ).map(_.userPropertyName)
+    if (secureConnectionProperties.exists(p => properties.containsKey(p))) {
+      throw new KafkaConnectorException(
+        "Please use a named connection object to provide secure SSL properties."
+      )
     }
+  }
 
   private[this] def validateSSLLocationFilesExist(properties: KafkaConsumerProperties): Unit =
-    if (List(SecurityProtocol.SSL, SecurityProtocol.SASL_SSL)
-      .contains(SecurityProtocol.valueOf(properties.getSecurityProtocol()))) {
+    if (
+      List(SecurityProtocol.SSL, SecurityProtocol.SASL_SSL)
+        .contains(SecurityProtocol.valueOf(properties.getSecurityProtocol()))
+    ) {
       if (!Files.isRegularFile(Paths.get(properties.getSSLKeystoreLocation()))) {
         throw new KafkaConnectorException(
           s"Unable to find the SSL keystore file '${properties.getSSLKeystoreLocation()}'. " +

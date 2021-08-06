@@ -17,9 +17,9 @@ object Dependencies {
   private val ScalaTestPlusVersion = "1.0.0-M2"
   private val MockitoCoreVersion = "3.11.2"
   private val KafkaSchemaRegistryVersion = "6.2.0"
-  private val ExasolTestDBBuilderVersion = "3.2.0"
-  private val ExasolTestContainersVersion = "3.5.3"
-  private val ExasolHamcrestMatcherVersion = "1.4.0"
+  private val ExasolTestDBBuilderVersion = "3.2.1"
+  private val ExasolTestContainersVersion = "4.0.0"
+  private val ExasolHamcrestMatcherVersion = "1.4.1"
   private val TestContainersVersion = "1.16.0"
 
   val Resolvers: Seq[Resolver] = Seq(
