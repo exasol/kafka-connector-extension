@@ -270,11 +270,14 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
     if (saslJaasLocation != "") {
       validateSaslJaasLocationFileExist(saslJaasLocation)
       val source = Source.fromFile(saslJaasLocation)(Codec.UTF8)
-      try source.mkString
-      finally source.close()
+      try {
+        source.mkString
+      } finally {
+        source.close()
+      }
     } else {
-      val username = getString(SASL_USERNAME.userPropertyName)
-      val password = getString(SASL_PASSWORD.userPropertyName)
+      val jaasUsername = getString(SASL_USERNAME.userPropertyName)
+      val jassPassword = getString(SASL_PASSWORD.userPropertyName)
       val saslModuleName: String = if ("PLAIN" == getSASLMechanism()) {
         "org.apache.kafka.common.security.plain.PlainLoginModule"
       } else if (SecurityProtocol.valueOf(getSecurityProtocol()).name.startsWith("DIGEST")) {
@@ -287,8 +290,8 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
         )
       }
       saslModuleName + " required " +
-        "username=\"" + username + "\" " +
-        "password=\"" + password + "\";"
+        "username=\"" + jaasUsername + "\" " +
+        "password=\"" + jaasPassword + "\";"
     }
   }
 
