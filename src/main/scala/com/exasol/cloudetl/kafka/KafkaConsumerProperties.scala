@@ -270,7 +270,8 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
     if (saslJaasLocation != "") {
       validateSaslJaasLocationFileExist(saslJaasLocation)
       val source = Source.fromFile(saslJaasLocation)(Codec.UTF8)
-      try source.mkString finally source.close()
+      try source.mkString
+      finally source.close()
     } else {
       val username = getString(SASL_USERNAME.userPropertyName)
       val password = getString(SASL_PASSWORD.userPropertyName)
@@ -347,7 +348,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
   private[this] def validateSaslJaasLocationFileExist(saslJaasLocation: String): Unit =
     if (!Files.isRegularFile(Paths.get(saslJaasLocation))) {
       throw new KafkaConnectorException(
-        s"Unable to find the SASL JAAS file '${saslJaasLocation}'. " +
+        s"Unable to find the SASL JAAS file '$saslJaasLocation'. " +
           s"Please make sure it is successfully uploaded to BucketFS bucket."
       )
     }
