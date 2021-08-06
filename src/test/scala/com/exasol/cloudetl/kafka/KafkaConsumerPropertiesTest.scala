@@ -32,7 +32,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       BaseProperties(properties).getBootstrapServers()
     }
-    assert(thrown.getMessage === errorMessage("BOOTSTRAP_SERVERS"))
+    assert(thrown.getMessage() === errorMessage("BOOTSTRAP_SERVERS"))
   }
 
   test("getGroupId returns user provided value") {
@@ -53,7 +53,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       BaseProperties(properties).getTopic()
     }
-    assert(thrown.getMessage === errorMessage("TOPIC_NAME"))
+    assert(thrown.getMessage() === errorMessage("TOPIC_NAME"))
   }
 
   test("getTableName returns Exasol table name property value") {
@@ -65,7 +65,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       BaseProperties(properties).getTableName()
     }
-    assert(thrown.getMessage === errorMessage("TABLE_NAME"))
+    assert(thrown.getMessage() === errorMessage("TABLE_NAME"))
   }
 
   test("getPollTimeoutMs returns provided poll timeout value") {
@@ -157,7 +157,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       BaseProperties(properties).getSchemaRegistryUrl()
     }
-    assert(thrown.getMessage === errorMessage("SCHEMA_REGISTRY_URL"))
+    assert(thrown.getMessage() === errorMessage("SCHEMA_REGISTRY_URL"))
   }
 
   test("getProperties throws if schema registry is not set and record format is avro") {
@@ -229,7 +229,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       BaseProperties(properties).getSSLKeyPassword()
     }
-    assert(thrown.getMessage === errorMessage("SSL_KEY_PASSWORD"))
+    assert(thrown.getMessage() === errorMessage("SSL_KEY_PASSWORD"))
   }
 
   test("getSSLKeystorePassword returns ssl keystore password property value") {
@@ -241,7 +241,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       BaseProperties(properties).getSSLKeystorePassword()
     }
-    assert(thrown.getMessage === errorMessage("SSL_KEYSTORE_PASSWORD"))
+    assert(thrown.getMessage() === errorMessage("SSL_KEYSTORE_PASSWORD"))
   }
 
   test("getSSLKeystoreLocation returns ssl keystore location property value") {
@@ -253,7 +253,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       BaseProperties(properties).getSSLKeystoreLocation()
     }
-    assert(thrown.getMessage === errorMessage("SSL_KEYSTORE_LOCATION"))
+    assert(thrown.getMessage() === errorMessage("SSL_KEYSTORE_LOCATION"))
   }
 
   test("getSSLTruststorePassword returns ssl truststore password property value") {
@@ -265,7 +265,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       BaseProperties(properties).getSSLTruststorePassword()
     }
-    assert(thrown.getMessage === errorMessage("SSL_TRUSTSTORE_PASSWORD"))
+    assert(thrown.getMessage() === errorMessage("SSL_TRUSTSTORE_PASSWORD"))
   }
 
   test("getSSLTruststoreLocation returns ssl truststore location property value") {
@@ -277,7 +277,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val thrown = intercept[IllegalArgumentException] {
       BaseProperties(properties).getSSLTruststoreLocation()
     }
-    assert(thrown.getMessage === errorMessage("SSL_TRUSTSTORE_LOCATION"))
+    assert(thrown.getMessage() === errorMessage("SSL_TRUSTSTORE_LOCATION"))
   }
 
   test("getSSLEndpointIdentificationAlgorithm returns user provided property value") {

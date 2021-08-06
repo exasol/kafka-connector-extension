@@ -57,7 +57,7 @@ class KafkaConsumerQueryGeneratorTest extends PathTest {
     val thrown = intercept[IllegalArgumentException] {
       KafkaConsumerQueryGenerator.generateSqlForImportSpec(metadata, importSpec)
     }
-    assert(thrown.getMessage === "Please provide a value for the TABLE_NAME property!")
+    assert(thrown.getMessage() === "Please provide a value for the TABLE_NAME property!")
   }
 
   test("generateSqlForImportSpec throws if topics property is not set") {
@@ -66,7 +66,7 @@ class KafkaConsumerQueryGeneratorTest extends PathTest {
     val thrown = intercept[IllegalArgumentException] {
       KafkaConsumerQueryGenerator.generateSqlForImportSpec(metadata, importSpec)
     }
-    assert(thrown.getMessage === "Please provide a value for the TOPIC_NAME property!")
+    assert(thrown.getMessage() === "Please provide a value for the TOPIC_NAME property!")
   }
 
   test("generateSqlForImportSpec throws if topics contains more than one topic") {
