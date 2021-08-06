@@ -5,16 +5,19 @@ import java.nio.file.Paths
 import java.util.Locale
 
 import scala.collection.mutable.{Map => MMap}
+import scala.io.{Codec, Source}
 import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaMetadata
 import com.exasol.common.AbstractProperties
 import com.exasol.common.CommonProperties
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
+import org.apache.kafka.common.security.auth.SecurityProtocol
 
 /**
  * A specific implementation of [[com.exasol.common.AbstractProperties]]
@@ -146,9 +149,15 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
   final def getMaxRecordsPerRun(): Int =
     get(MAX_RECORDS_PER_RUN.userPropertyName).fold(MAX_RECORDS_PER_RUN.defaultValue)(_.toInt)
 
-  /** Checks if the {@code SSL_ENABLED} property is set. */
+  /** Checks if {@code SECURITY_PROTOCOL} is using {@code SSL} channel. */
   final def isSSLEnabled(): Boolean =
-    isEnabled(SSL_ENABLED)
+    List(SecurityProtocol.SSL, SecurityProtocol.SASL_SSL)
+      .contains(SecurityProtocol.valueOf(getSecurityProtocol()))
+
+  /** Checks if {@code SECURITY_PROTOCOL} is using {@code SASL} authentication. */
+  final def isSASLEnabled(): Boolean =
+    List(SecurityProtocol.SASL_PLAINTEXT, SecurityProtocol.SASL_SSL)
+      .contains(SecurityProtocol.valueOf(getSecurityProtocol()))
 
   /** Checks if the Schema Registry URL property is set. */
   final def hasSchemaRegistryUrl(): Boolean =
@@ -194,7 +203,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
    * otherwise returns the default value.
    */
   final def getSecurityProtocol(): String =
-    get(SECURITY_PROTOCOL.userPropertyName).fold(SECURITY_PROTOCOL.defaultValue)(identity)
+    get(SECURITY_PROTOCOL.userPropertyName).fold(SECURITY_PROTOCOL.defaultValue)(identity).toUpperCase(Locale.ENGLISH)
 
   /**
    * Returns the user provided {@code SSL_KEY_PASSWORD} property value.
@@ -238,6 +247,51 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
     get(SSL_ENDPOINT_IDENTIFICATION_ALGORITHM.userPropertyName)
       .fold(SSL_ENDPOINT_IDENTIFICATION_ALGORITHM.defaultValue)(identity)
 
+  /**
+   * Returns {@code SASL_MECHANISM} property value if provided,
+   * otherwise returns the default value.
+   */
+  final def getSASLMechanism(): String =
+    get(SASL_MECHANISM.userPropertyName)
+      .fold(SASL_MECHANISM.defaultValue)(identity)
+
+  /**
+   * Returns the user provided {@code SASL_JAAS_LOCATION} property value.
+   */
+  final def getSASLJaasLocation(): String =
+    get(SASL_JAAS_LOCATION.userPropertyName)
+      .fold(SASL_JAAS_LOCATION.defaultValue)(identity)
+
+  /**
+   * Returns SASL JAAS config file content.
+   */
+  final def getSASLJaasConfig(): String = {
+    val saslJaasLocation = getSASLJaasLocation()
+    if (saslJaasLocation != "") {
+      validateSaslJaasLocationFileExist(saslJaasLocation)
+      val source = Source.fromFile(saslJaasLocation)(Codec.UTF8)
+      try source.mkString
+      finally source.close()
+    } else {
+      val username = getString(SASL_USERNAME.userPropertyName)
+      val password = getString(SASL_PASSWORD.userPropertyName)
+      val saslModuleName: String = if ("PLAIN" == getSASLMechanism()) {
+        "org.apache.kafka.common.security.plain.PlainLoginModule"
+      } else if (SecurityProtocol.valueOf(getSecurityProtocol()).name.startsWith("DIGEST")) {
+        "org.apache.zookeeper.server.auth.DigestLoginModule"
+      } else if (SecurityProtocol.valueOf(getSecurityProtocol()).name.startsWith("SCRAM")) {
+        "org.apache.kafka.common.security.scram.ScramLoginModule"
+      } else {
+        throw new KafkaConnectorException(
+          "Please use SASL_JAAS_LOCATION for complex configuration of SASL authentication."
+        )
+      }
+      saslModuleName + " required " +
+        "username=\"" + username + "\" " +
+        "password=\"" + password + "\";"
+    }
+  }
+
   /** Returns the Kafka consumer properties as Java map. */
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   final def getProperties(): java.util.Map[String, AnyRef] = {
@@ -253,8 +307,8 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
     props.put(FETCH_MIN_BYTES.kafkaPropertyName, getFetchMinBytes())
     props.put(FETCH_MAX_BYTES.kafkaPropertyName, getFetchMaxBytes())
     props.put(MAX_PARTITION_FETCH_BYTES.kafkaPropertyName, getMaxPartitionFetchBytes())
+    props.put(SECURITY_PROTOCOL.kafkaPropertyName, getSecurityProtocol())
     if (isSSLEnabled()) {
-      props.put(SECURITY_PROTOCOL.kafkaPropertyName, getSecurityProtocol())
       props.put(SSL_KEY_PASSWORD.kafkaPropertyName, getSSLKeyPassword())
       props.put(SSL_KEYSTORE_PASSWORD.kafkaPropertyName, getSSLKeystorePassword())
       props.put(SSL_KEYSTORE_LOCATION.kafkaPropertyName, getSSLKeystoreLocation())
@@ -264,6 +318,10 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
         SSL_ENDPOINT_IDENTIFICATION_ALGORITHM.kafkaPropertyName,
         getSSLEndpointIdentificationAlgorithm()
       )
+    }
+    if (isSASLEnabled()) {
+      props.put(SASL_MECHANISM.kafkaPropertyName, getSASLMechanism())
+      props.put(SASL_JAAS_CONFIG.kafkaPropertyName, getSASLJaasConfig())
     }
     props.toMap.asInstanceOf[Map[String, AnyRef]].asJava
   }
@@ -286,6 +344,14 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
    */
   final def mkString(): String =
     mkString(KEY_VALUE_SEPARATOR, PROPERTY_SEPARATOR)
+
+  private[this] def validateSaslJaasLocationFileExist(saslJaasLocation: String): Unit =
+    if (!Files.isRegularFile(Paths.get(saslJaasLocation))) {
+      throw new KafkaConnectorException(
+        s"Unable to find the SASL JAAS file '$saslJaasLocation'. " +
+          s"Please make sure it is successfully uploaded to BucketFS bucket."
+      )
+    }
 
 }
 
@@ -323,6 +389,8 @@ object KafkaConsumerProperties extends CommonProperties {
   /**
    * An optional property key name to set SSL secure connections to
    * Kafka cluster.
+   *
+   * @deprecated("Use SECURITY_PROTOCOL=\"SSL\" instead", "1.2.2")
    */
   private[kafka] final val SSL_ENABLED: String = "SSL_ENABLED"
 
@@ -538,7 +606,7 @@ object KafkaConsumerProperties extends CommonProperties {
    */
   private[kafka] final val SCHEMA_REGISTRY_URL: Config[String] = Config[String](
     "SCHEMA_REGISTRY_URL",
-    AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
+    AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG,
     ""
   )
 
@@ -546,21 +614,21 @@ object KafkaConsumerProperties extends CommonProperties {
    * This is the {@code security.protocol} configuration setting.
    *
    * It is the protocol used to communicate with brokers, when
-   * [[SSL_ENABLED]] is set to {@code true}. Default value is
-   * [[SslConfigs.DEFAULT_SSL_PROTOCOL]].
+   * [[SECURITY_PROTOCOL]] is set to {@code SSL} or {@code SASL_SSL}. Default value is
+   * [[CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL]].
    */
   private[kafka] final val SECURITY_PROTOCOL: Config[String] = Config[String](
     "SECURITY_PROTOCOL",
     CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-    SslConfigs.DEFAULT_SSL_PROTOCOL
+    CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL
   )
 
   /**
    * This is the {@code ssl.key.password} configuration setting.
    *
    * It represents the password of the private key in the key store
-   * file. It is required property when [[SSL_ENABLED]] is set to {@code
-   * true}.
+   * file. It is required property when [[SECURITY_PROTOCOL]] is set to {@code
+   * SSL} or {@code SASL_SSL}.
    */
   private[kafka] final val SSL_KEY_PASSWORD: Config[String] = Config[String](
     "SSL_KEY_PASSWORD",
@@ -572,7 +640,7 @@ object KafkaConsumerProperties extends CommonProperties {
    * This is the {@code ssl.keystore.password} confguration setting.
    *
    * It the store password for the keystore file. It is required
-   * property when [[SSL_ENABLED]] is set to {@code true}.
+   * property when [[SECURITY_PROTOCOL]] is set to {@code SSL} or {@code SASL_SSL}.
    */
   private[kafka] final val SSL_KEYSTORE_PASSWORD: Config[String] = Config[String](
     "SSL_KEYSTORE_PASSWORD",
@@ -584,7 +652,7 @@ object KafkaConsumerProperties extends CommonProperties {
    * This is the {@code ssl.keystore.location} configuration setting.
    *
    * It represents the location of the keystore file. It is required
-   * property when [[SSL_ENABLED]] is set to {@code true} and can be
+   * property when [[SECURITY_PROTOCOL]] is set to {@code SSL} or {@code SASL_SSL} and can be
    * used for two-way authentication for the clients.
    */
   private[kafka] final val SSL_KEYSTORE_LOCATION: Config[String] = Config[String](
@@ -597,7 +665,7 @@ object KafkaConsumerProperties extends CommonProperties {
    * This is the {@code ssl.truststore.password} configuration setting.
    *
    * It is the password for the truststore file, and required property
-   * when [[SSL_ENABLED]] is set to {@code true}.
+   * when [[SECURITY_PROTOCOL]] is set to {@code SSL} or {@code SASL_SSL}.
    */
   private[kafka] final val SSL_TRUSTSTORE_PASSWORD: Config[String] = Config[String](
     "SSL_TRUSTSTORE_PASSWORD",
@@ -609,7 +677,7 @@ object KafkaConsumerProperties extends CommonProperties {
    * This is the {@code ssl.truststore.location} configuration setting.
    *
    * It is the location of the truststore file, and required property
-   * when [[SSL_ENABLED]] is set to {@code true}.
+   * when [[SECURITY_PROTOCOL]] is set to {@code SSL} or {@code SASL_SSL}.
    */
   private[kafka] final val SSL_TRUSTSTORE_LOCATION: Config[String] = Config[String](
     "SSL_TRUSTSTORE_LOCATION",
@@ -622,14 +690,64 @@ object KafkaConsumerProperties extends CommonProperties {
    * configuration setting.
    *
    * It is the endpoint identification algorithm to validate server
-   * hostname using server certificate. It is used when [[SSL_ENABLED]]
-   * is set to {@code true}. Default value is
+   * hostname using server certificate. It is used when [[SECURITY_PROTOCOL]]
+   * is set to {@code SSL} or {@code SASL_SSL} or {@code SASL_SSL}. Default value is
    * [[SslConfigs.DEFAULT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM]].
    */
   private[kafka] final val SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: Config[String] = Config[String](
     "SSL_ENDPOINT_IDENTIFICATION_ALGORITHM",
     SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG,
     SslConfigs.DEFAULT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM
+  )
+
+  /**
+   * This is the {@code sasl.mechanism} configuration setting.
+   *
+   * It is the authentication mechanism used for client connections.
+   * It is used when [[SECURITY_PROTOCOL]] is set to {@code SASL_PLAINTEXT} or {@code SASL_SSL}.
+   * Default value is [[SaslConfigs.DEFAULT_SASL_MECHANISM]].
+   */
+  private[kafka] final val SASL_MECHANISM: Config[String] = Config[String](
+    "SASL_MECHANISM",
+    SaslConfigs.SASL_MECHANISM,
+    SaslConfigs.DEFAULT_SASL_MECHANISM
+  )
+
+  /**
+   * SASL username. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN}, {@code Digest-*} or {@code SCRAM-*}.
+   */
+  private[kafka] final val SASL_USERNAME: Config[String] = Config[String](
+    "SASL_USERNAME",
+    "",
+    ""
+  )
+
+  /**
+   * SASL JAAS file location. It is can be used when [[SECURITY_PROTOCOL]] is set to {@code SASL_PLAINTEXT}
+   * or {@code SASL_SSL}.
+   */
+  private[kafka] final val SASL_JAAS_LOCATION: Config[String] = Config[String](
+    "SASL_JAAS_LOCATION",
+    "",
+    ""
+  )
+
+  /**
+   * SASL password. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN}, {@code Digest-*} or {@code SCRAM-*}.
+   */
+  private[kafka] final val SASL_PASSWORD: Config[String] = Config[String](
+    "SASL_PASSWORD",
+    "",
+    ""
+  )
+
+  /**
+   * A SASL JAAS config file content
+   */
+  private[kafka] final val SASL_JAAS_CONFIG: Config[String] = Config[String](
+    "SASL_JAAS_CONFIG",
+    SaslConfigs.SASL_JAAS_CONFIG,
+    ""
   )
 
   /**
@@ -687,24 +805,28 @@ object KafkaConsumerProperties extends CommonProperties {
     }
   }
 
-  private[this] def validateNoSSLCredentials(properties: KafkaConsumerProperties): Unit =
-    if (properties.isSSLEnabled()) {
-      val secureConnectionProperties = List(
-        SSL_KEYSTORE_LOCATION,
-        SSL_KEYSTORE_PASSWORD,
-        SSL_KEY_PASSWORD,
-        SSL_TRUSTSTORE_LOCATION,
-        SSL_TRUSTSTORE_PASSWORD
-      ).map(_.userPropertyName)
-      if (secureConnectionProperties.exists(p => properties.containsKey(p))) {
-        throw new KafkaConnectorException(
-          "Please use a named connection object to provide secure SSL properties."
-        )
-      }
+  private[this] def validateNoSSLCredentials(properties: KafkaConsumerProperties): Unit = {
+    val secureConnectionProperties = List(
+      SSL_KEYSTORE_LOCATION,
+      SSL_KEYSTORE_PASSWORD,
+      SSL_KEY_PASSWORD,
+      SSL_TRUSTSTORE_LOCATION,
+      SSL_TRUSTSTORE_PASSWORD,
+      SASL_USERNAME,
+      SASL_PASSWORD
+    ).map(_.userPropertyName)
+    if (secureConnectionProperties.exists(p => properties.containsKey(p))) {
+      throw new KafkaConnectorException(
+        "Please use a named connection object to provide secure SSL properties."
+      )
     }
+  }
 
   private[this] def validateSSLLocationFilesExist(properties: KafkaConsumerProperties): Unit =
-    if (properties.isSSLEnabled()) {
+    if (
+      List(SecurityProtocol.SSL, SecurityProtocol.SASL_SSL)
+        .contains(SecurityProtocol.valueOf(properties.getSecurityProtocol()))
+    ) {
       if (!Files.isRegularFile(Paths.get(properties.getSSLKeystoreLocation()))) {
         throw new KafkaConnectorException(
           s"Unable to find the SSL keystore file '${properties.getSSLKeystoreLocation()}'. " +
