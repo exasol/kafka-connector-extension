@@ -265,6 +265,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
   /**
    * Returns SASL JAAS config file content.
    */
+  @SuppressWarnings(Array("scala:S2068")) // Password keyword in JAAS configuration
   final def getSASLJaasConfig(): String = {
     val saslJaasLocation = getSASLJaasLocation()
     if (saslJaasLocation != "") {
