@@ -8,7 +8,7 @@ This release adds support for SASL authentication. Importer client can choose SA
 
 ## Features
 
-* #47: Added support for SASL_PLAINTEXT and SASL_SSL security protocols
+* Added support for SASL_PLAINTEXT and SASL_SSL security protocols (PR #47)
 
 ### Runtime Dependency Updates
 
