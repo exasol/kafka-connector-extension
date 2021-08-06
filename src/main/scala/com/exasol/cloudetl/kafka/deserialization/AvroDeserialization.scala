@@ -4,7 +4,7 @@ import scala.jdk.CollectionConverters.MapHasAsJava
 
 import com.exasol.cloudetl.kafka.{KafkaConnectorException, KafkaConsumerProperties}
 
-import io.confluent.kafka.serializers.{AbstractKafkaAvroSerDeConfig, KafkaAvroDeserializer}
+import io.confluent.kafka.serializers.{AbstractKafkaSchemaSerDeConfig, KafkaAvroDeserializer}
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.common.serialization.Deserializer
 
@@ -34,7 +34,7 @@ object AvroDeserialization extends RecordDeserialization {
     // The schema registry URL should be provided here since the one
     // configured in consumer properties is not for the deserializer.
     val deserializerConfig = Map(
-      AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG -> schemaRegistryUrl
+      AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG -> schemaRegistryUrl
     )
     val kafkaAvroDeserializer = new KafkaAvroDeserializer
     kafkaAvroDeserializer.configure(deserializerConfig.asJava, false)
