@@ -1,9 +1,3 @@
-community-tags:
-  - Apache Kafka
-  - Exasol Streaming Connector
-  - Open Source
+release-platforms:
   - GitHub
-community-project-name: Kafka Connector Extension
-community-project-description: |
-  The [kafka-connector-extension](https://github.com/exasol/kafka-connector-extension)
-  supports accessing Apache Kafka and importing data from Kafka topic.
+  - Jira
