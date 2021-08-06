@@ -5,6 +5,7 @@ import java.nio.file.Paths
 import java.util.Locale
 
 import scala.collection.mutable.{Map => MMap}
+import scala.io.{Codec, Source}
 import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaMetadata
@@ -202,7 +203,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
    * otherwise returns the default value.
    */
   final def getSecurityProtocol(): String =
-    get(SECURITY_PROTOCOL.userPropertyName).fold(SECURITY_PROTOCOL.defaultValue)(identity)
+    get(SECURITY_PROTOCOL.userPropertyName).fold(SECURITY_PROTOCOL.defaultValue)(identity).toUpperCase(Locale.ENGLISH)
 
   /**
    * Returns the user provided {@code SSL_KEY_PASSWORD} property value.
@@ -255,19 +256,39 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
       .fold(SASL_MECHANISM.defaultValue)(identity)
 
   /**
+   * Returns the user provided {@code SASL_JAAS_LOCATION} property value.
+   */
+  final def getSASLJaasLocation(): String =
+    get(SASL_JAAS_LOCATION.userPropertyName)
+      .fold(SASL_JAAS_LOCATION.defaultValue)(identity)
+
+  /**
    * Returns SASL JAAS config file content.
    */
   final def getSASLJaasConfig(): String = {
-    val username = getString(SASL_USERNAME.userPropertyName)
-    val password = getString(SASL_PASSWORD.userPropertyName)
-    val sasl_module_name = if ("PLAIN" == getSASLMechanism()) {
-      "org.apache.kafka.common.security.plain.PlainLoginModule"
-    } else if (SecurityProtocol.valueOf(getSecurityProtocol()).name.startsWith('')) {
-      "org.apache.kafka.common.security.scram.ScramLoginModule"
+    val sasl_jaas_location = getSASLJaasLocation()
+    if (sasl_jaas_location != "") {
+      validateSASLJaasLocationFileExist(sasl_jaas_location)
+      val source = Source.fromFile(sasl_jaas_location)(Codec.UTF8)
+      try source.mkString finally source.close()
+    } else {
+      val username = getString(SASL_USERNAME.userPropertyName)
+      val password = getString(SASL_PASSWORD.userPropertyName)
+      val sasl_module_name: String = if ("PLAIN" == getSASLMechanism()) {
+        "org.apache.kafka.common.security.plain.PlainLoginModule"
+      } else if (SecurityProtocol.valueOf(getSecurityProtocol()).name.startsWith("DIGEST")) {
+        "org.apache.zookeeper.server.auth.DigestLoginModule"
+      } else if (SecurityProtocol.valueOf(getSecurityProtocol()).name.startsWith("SCRAM")) {
+        "org.apache.kafka.common.security.scram.ScramLoginModule"
+      } else {
+        throw new KafkaConnectorException(
+          "Please use SASL_JAAS_LOCATION for complex configuration of SASL authentication."
+        )
+      }
+      sasl_module_name + " required " +
+        "username=\"" + username + "\" " +
+        "password=\"" + password + "\";"
     }
-    sasl_module_name + " required " +
-      "username=\"" + username + "\" " +
-      "password=\"" + password + "\";"
   }
 
   /** Returns the Kafka consumer properties as Java map. */
@@ -322,6 +343,14 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
    */
   final def mkString(): String =
     mkString(KEY_VALUE_SEPARATOR, PROPERTY_SEPARATOR)
+
+  private[this] def validateSASLJaasLocationFileExist(sasl_jaas_location: String): Unit =
+    if (!Files.isRegularFile(Paths.get(sasl_jaas_location))) {
+      throw new KafkaConnectorException(
+        s"Unable to find the SASL JAAS file '${sasl_jaas_location}'. " +
+          s"Please make sure it is successfully uploaded to BucketFS bucket."
+      )
+    }
 
 }
 
@@ -684,7 +713,7 @@ object KafkaConsumerProperties extends CommonProperties {
   )
 
   /**
-   * SASL username. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN} or {@code SCRAM-*}.
+   * SASL username. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN}, {@code Digest-*} or {@code SCRAM-*}.
    */
   private[kafka] final val SASL_USERNAME: Config[String] = Config[String](
     "SASL_USERNAME",
@@ -693,7 +722,17 @@ object KafkaConsumerProperties extends CommonProperties {
   )
 
   /**
-   * SASL password. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN} or {@code SCRAM-*}.
+   * SASL JAAS file location. It is can be used when [[SECURITY_PROTOCOL]] is set to {@code SASL_PLAINTEXT}
+   * or {@code SASL_SSL}.
+   */
+  private[kafka] final val SASL_JAAS_LOCATION: Config[String] = Config[String](
+    "SASL_JAAS_LOCATION",
+    "",
+    ""
+  )
+
+  /**
+   * SASL password. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN}, {@code Digest-*} or {@code SCRAM-*}.
    */
   private[kafka] final val SASL_PASSWORD: Config[String] = Config[String](
     "SASL_PASSWORD",

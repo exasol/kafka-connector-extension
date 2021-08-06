@@ -291,8 +291,9 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(BaseProperties(properties).getSSLEndpointIdentificationAlgorithm() === "https")
   }
 
-  test("getSASLJaasConfig returns jaas file content with username & password") {
+  test("getSASLJaasConfig returns JAAS content with username & password") {
     properties = Map(
+      "SASL_MECHANISM" -> "PLAIN",
       "SASL_USERNAME" -> "kafka",
       "SASL_PASSWORD" -> "kafkapw"
     )
@@ -301,6 +302,17 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
         "org.apache.kafka.common.security.plain.PlainLoginModule required " +
         "username=\"kafka\" " +
         "password=\"kafkapw\";"
+    )
+  }
+
+  test("getSASLJaasConfig returns JAAS content from file") {
+    properties = Map(
+      "SASL_JAAS_LOCATION" -> s"$DUMMY_SASL_JAAS_FILE"
+    )
+    assert(
+      BaseProperties(properties).getSASLJaasConfig() ===
+        "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required " +
+        "unsecuredLoginStringClaim_sub=\"alice\";"
     )
   }
 
@@ -461,6 +473,9 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
 
   private[this] val DUMMY_TRUSTSTORE_FILE =
     Paths.get(getClass.getResource("/kafka.consumer.truststore.jks").toURI).toAbsolutePath
+
+  private[this] val DUMMY_SASL_JAAS_FILE =
+    Paths.get(getClass.getResource("/kafka_client_jaas.conf").toURI).toAbsolutePath
 
   test("apply returns a SSL enabled consumer properties") {
     val properties = getSSLEnabledConsumerProperties(DUMMY_KEYSTORE_FILE, DUMMY_TRUSTSTORE_FILE)
