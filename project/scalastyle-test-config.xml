@@ -425,13 +425,13 @@
   </check>
 
   <!-- Check that return is not used -->
-  <check level="error" class="org.scalastyle.scalariform.ReturnChecker" enabled="true"></check>
+  <check level="error" class="org.scalastyle.scalariform.ReturnChecker" enabled="true"/>
 
   <!-- Check that null is not used, prefer Option if possible -->
-  <check level="warn" class="org.scalastyle.scalariform.NullChecker" enabled="false"></check>
+  <check level="warn" class="org.scalastyle.scalariform.NullChecker" enabled="false"/>
 
   <!-- Check that classes and objects do not define the clone() method -->
-  <check level="error" class="org.scalastyle.scalariform.NoCloneChecker" enabled="true"></check>
+  <check level="error" class="org.scalastyle.scalariform.NoCloneChecker" enabled="true"/>
 
   <!-- A boolean expression which can be simplified can make code easier to read -->
   <check level="error"
@@ -474,6 +474,6 @@
   </check>
 
   <!-- We want the opposite of this: NewLineAtEofChecker -->
-  <check level="error" class="org.scalastyle.file.NoNewLineAtEofChecker" enabled="false"></check>
+  <check level="error" class="org.scalastyle.file.NoNewLineAtEofChecker" enabled="false"/>
 
 </scalastyle>
