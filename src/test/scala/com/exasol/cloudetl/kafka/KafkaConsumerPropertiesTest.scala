@@ -296,10 +296,12 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
       "SASL_USERNAME" -> "kafka",
       "SASL_PASSWORD" -> "kafkapw"
     )
-    assert(BaseProperties(properties).getSASLJaasConfig() ===
-      "org.apache.kafka.common.security.plain.PlainLoginModule required " +
-      "username=\"kafka\" " +
-      "password=\"kafkapw\";")
+    assert(
+      BaseProperties(properties).getSASLJaasConfig() ===
+        "org.apache.kafka.common.security.plain.PlainLoginModule required " +
+        "username=\"kafka\" " +
+        "password=\"kafkapw\";"
+    )
   }
 
   test("isConsumeAllOffsetsEnabled returns true if it is set to true") {
