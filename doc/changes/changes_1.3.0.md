@@ -1,8 +1,10 @@
-# Kafka Connector Extension 1.2.2, released 2021-??-??
+# Kafka Connector Extension 1.3.0, released 2021-08-06
 
-Code name:
+Code name: Support SASL Authentication
 
 ## Summary
+
+This release adds support for SASL authentication. Importer client can choose SASL mechanism (_PLAIN_, _DIGEST-*_, _SCRAM-*_) and provide JAAS configuration for authentication. Please check the user guide for more information.
 
 ## Features
 
