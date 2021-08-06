@@ -13,7 +13,7 @@ Using the connector you can import data from a Kafka topic into an Exasol table.
 - [Preparing Exasol Table](#preparing-exasol-table)
 - [Avro Data Mapping](#avro-data-mapping)
 - [JSON Data Mapping](#json-data-mapping)
-- [Importing Records](#importing-kafka-topic-data)
+- [Importing Records](#importing-records)
 - [Secure Connection to Kafka Cluster](#secure-connection-to-kafka-cluster)
 - [Kafka Consumer Properties](#kafka-consumer-properties)
 
@@ -93,7 +93,7 @@ System (BucketFS).
 > Please see the section "The synchronous cluster file system BucketFS"
 > in the EXASolution User Manual for more details about BucketFS.
 
-This allows us to references the jar file in the UDF scripts.
+This allows us to reference the jar file in the UDF scripts.
 
 ### Upload the JAR File to the Bucket
 
@@ -249,7 +249,7 @@ For example, given the following Avro record schema,
   "name": "KafkaExasolAvroRecord",
   "fields": [
     { "name": "product", "type": "string" },
-    { "name": "price", "type": { "type": "bytes", "precision": 4, "scale": 2, "logicalType": "decimal" }}
+    { "name": "price", "type": { "type": "bytes", "precision": 4, "scale": 2, "logicalType": "decimal" }},
     { "name": "sale_time", "type": { "type": "long", "logicalType": "timestamp-millis" }}
   ]
 }
@@ -386,11 +386,11 @@ FROM SCRIPT KAFKA_CONSUMER WITH
 
 ## Secure Connection to Kafka Cluster
 
-Since the recent releases, Apache Kafka supports authentication of connections
-to Kafka brokers from clients (producers and consumers) using either SSL or
-SASL. Currently, Exasol Kafka connector supports **SSL**.
+Since the recent releases, Apache Kafka supports secure connections
+to Kafka brokers from clients (producers and consumers) using encryption with SSL/TLS
+and authentication with various SASL mechanisms.
 
-In order to use the secure connections to the Kafka cluster from the UDF, you
+In order to use the encrypted connections to the Kafka cluster from the UDF, you
 need to upload the consumer Truststore and Keystore files to the Exasol BucketFS
 bucket so that we can access them when running the Kafka import UDF.
 
@@ -415,7 +415,7 @@ Additionally, we have to provide extra parameters to the UDF in order to enable
 a secure connection to the Kafka cluster. Please check out the [Kafka consumer
 properties](#kafka-consumer-properties) for secure property descriptions.
 
-### Import Kafka Topic Data With SSL Enabled
+### Import Kafka Topic Data Using Encrypted Connection
 
 First, create an Exasol named connection object and encode JKS files credentials
 and locations with key-value pairs separated by a semicolon (`;`).
@@ -441,6 +441,40 @@ FROM SCRIPT KAFKA_CONSUMER WITH
   SECURITY_PROTOCOL       = 'SSL'
   CONNECTION_NAME         = 'KAFKA_SSL_CONNECTION';
 ```
+
+### Import Kafka Topic Data With Authentication
+
+Create an Exasol named connection object and encode credentials with key-value
+pairs separated by a semicolon (`;`).
+
+Note: Authentication can be used conjunction with encryption.
+For this you need create connection with combined authentication & encryption settings
+and set ``SECURITY_PROTOCOL`` to **SASL_SSL**.
+
+```sql
+CREATE OR REPLACE CONNECTION KAFKA_SASL_CONNECTION
+TO ''
+USER ''
+IDENTIFIED BY 'SASL_MECHANISM=PLAIN;SASL_USERNAME=<SASL_USERNAME>;SASL_PASSWORD=<SASL_PASSWORD>'
+```
+
+Then use the connection object with a Kafka import statement:
+
+```sql
+IMPORT INTO <schema_name>.<table_name>
+FROM SCRIPT KAFKA_CONSUMER WITH
+  BOOTSTRAP_SERVERS       = '<kafka_bootstap_servers>'
+  SCHEMA_REGISTRY_URL     = '<schema_registry_url>'
+  TOPIC_NAME              = '<kafka_topic>'
+  TABLE_NAME              = '<schema_name>.<table_name>'
+  GROUP_ID                = 'exasol-kafka-udf-consumers';
+  -- Secure connection properties
+  SECURITY_PROTOCOL       = 'SASL_PLAINTEXT'
+  CONNECTION_NAME         = 'KAFKA_SASL_CONNECTION';
+```
+
+If you need more complex SASL configuration, you can create [SASL JAAS configuration][kafka-sasl-jaas]
+file, upload it to Exasol BucketFS and specify its path into ``SASL_JAAS_LOCATION``.
 
 ## Kafka Consumer Properties
 
@@ -570,15 +604,18 @@ not in import statement itself.
 * ``SASL_MECHANISM`` - It is SASL mechanism to use for authentication.
   Default value is **GSSAPI**.
 
-* ``SASL_USERNAME`` - It is SASL username. It is used when `SASL_MECHANISM` is set to **PLAIN** or **SCRAM-***.
+* ``SASL_USERNAME``/``SASL_PASSWORD`` - These are SASL credentials.
+  They can be simply used when `SASL_MECHANISM` is set to **PLAIN**, __DIGEST-*__ or __SCRAM-*__.
 
-* ``SASL_PASSWORD`` - It is SASL password. It is used when `SASL_MECHANISM` is set to **PLAIN** or **SCRAM-***.
+* ``SASL_JAAS_LOCATION`` - It is the location of the JAAS configuration file for more complex configuration 
+  of SASL authentication. It should refer to the file stored inside a bucket in Exasol BucketFS.
 
 [gh-releases]: https://github.com/exasol/kafka-connector-extension/releases
 [schema-registry]: https://docs.confluent.io/current/schema-registry/index.html
 [kafka-security]: https://kafka.apache.org/documentation/#security
 [kafka-secure-clients]: https://kafka.apache.org/documentation/#security_configclients
 [kafka-consumer-configs]: https://kafka.apache.org/documentation/#consumerconfigs
+[kafka-sasl-jaas]: https://docs.confluent.io/platform/current/kafka/authentication_sasl/index.html#client-jaas-configurations
 [avro-spec]: https://avro.apache.org/docs/current/spec.html
 [json-spec]: https://www.json.org/json-en.html
 [exasol-types]: https://docs.exasol.com/sql_references/data_types/datatypesoverview.htm
