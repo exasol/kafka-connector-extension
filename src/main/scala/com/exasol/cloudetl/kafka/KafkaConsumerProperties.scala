@@ -266,15 +266,15 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
    * Returns SASL JAAS config file content.
    */
   final def getSASLJaasConfig(): String = {
-    val sasl_jaas_location = getSASLJaasLocation()
-    if (sasl_jaas_location != "") {
-      validateSASLJaasLocationFileExist(sasl_jaas_location)
-      val source = Source.fromFile(sasl_jaas_location)(Codec.UTF8)
+    val saslJaasLocation = getSASLJaasLocation()
+    if (saslJaasLocation != "") {
+      validateSaslJaasLocationFileExist(saslJaasLocation)
+      val source = Source.fromFile(saslJaasLocation)(Codec.UTF8)
       try source.mkString finally source.close()
     } else {
       val username = getString(SASL_USERNAME.userPropertyName)
       val password = getString(SASL_PASSWORD.userPropertyName)
-      val sasl_module_name: String = if ("PLAIN" == getSASLMechanism()) {
+      val saslModuleName: String = if ("PLAIN" == getSASLMechanism()) {
         "org.apache.kafka.common.security.plain.PlainLoginModule"
       } else if (SecurityProtocol.valueOf(getSecurityProtocol()).name.startsWith("DIGEST")) {
         "org.apache.zookeeper.server.auth.DigestLoginModule"
@@ -285,7 +285,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
           "Please use SASL_JAAS_LOCATION for complex configuration of SASL authentication."
         )
       }
-      sasl_module_name + " required " +
+      saslModuleName + " required " +
         "username=\"" + username + "\" " +
         "password=\"" + password + "\";"
     }
@@ -344,10 +344,10 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
   final def mkString(): String =
     mkString(KEY_VALUE_SEPARATOR, PROPERTY_SEPARATOR)
 
-  private[this] def validateSASLJaasLocationFileExist(sasl_jaas_location: String): Unit =
-    if (!Files.isRegularFile(Paths.get(sasl_jaas_location))) {
+  private[this] def validateSaslJaasLocationFileExist(saslJaasLocation: String): Unit =
+    if (!Files.isRegularFile(Paths.get(saslJaasLocation))) {
       throw new KafkaConnectorException(
-        s"Unable to find the SASL JAAS file '${sasl_jaas_location}'. " +
+        s"Unable to find the SASL JAAS file '${saslJaasLocation}'. " +
           s"Please make sure it is successfully uploaded to BucketFS bucket."
       )
     }

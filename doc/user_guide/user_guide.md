@@ -447,7 +447,7 @@ FROM SCRIPT KAFKA_CONSUMER WITH
 Create an Exasol named connection object and encode credentials with key-value
 pairs separated by a semicolon (`;`).
 
-Note: Authentication can be used conjunction with encryption.
+Note: Authentication can be used in conjunction with encryption.
 For this you need create connection with combined authentication & encryption settings
 and set ``SECURITY_PROTOCOL`` to **SASL_SSL**.
 
@@ -585,7 +585,7 @@ not in import statement itself.
 * ``SSL_KEY_PASSWORD`` - It represents the password of the private key inside
   the keystore file.
 
-* ``SSL_KEYSTORE_PASSWORD`` - It is the store password for the keystore file.
+* ``SSL_KEYSTORE_PASSWORD`` - It is the password for the keystore file.
 
 * ``SSL_KEYSTORE_LOCATION`` - It represents the location of the keystore file.
   This location value should point to the keystore file that is available via
