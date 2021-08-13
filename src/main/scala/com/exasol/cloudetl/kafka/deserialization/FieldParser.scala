@@ -1,6 +1,7 @@
 package com.exasol.cloudetl.kafka.deserialization
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException
+import com.exasol.errorreporting.ExaError
 
 /**
  * Parse the fields specified to be extracted from a single Kafka record.
@@ -22,13 +23,24 @@ object FieldParser {
             keyOrValue match {
               case "key"   => RecordKeyField(fieldName)
               case "value" => RecordValueField(fieldName)
-              case _       => throw new KafkaConnectorException("Regex matched so this cannot be")
+              case _ =>
+                throw new KafkaConnectorException(
+                  ExaError
+                    .messageBuilder("E-KCE-13")
+                    .message("Field reference can only contain 'key' or 'value' fields.")
+                    .mitigation("Please check that the provided field reference is correct.")
+                    .toString()
+                )
             }
           case _ =>
             throw new KafkaConnectorException(
-              s"Field reference $anythingElse " +
-                s"does not have the correct format. It must be one of " +
-                s"[key, value, key.*, value.*, key.fieldName, value.fieldName, timestamp]"
+              ExaError
+                .messageBuilder("E-KCE-14")
+                .message(s"Field reference {{REFERENCE}} does not have the correct format.", anythingElse)
+                .mitigation(
+                  "It must be one of [key, value, key.*, value.*, key.fieldName, value.fieldName, timestamp] values."
+                )
+                .toString()
             )
         }
     }

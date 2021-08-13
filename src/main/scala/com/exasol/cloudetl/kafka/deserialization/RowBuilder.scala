@@ -1,6 +1,7 @@
 package com.exasol.cloudetl.kafka.deserialization
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException
+import com.exasol.errorreporting.ExaError
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
 
@@ -30,7 +31,13 @@ object RowBuilder {
           .orElse(defaultFor(valueSpec)) // replace with default value if possible
       case TimestampField => Option(Seq(record.timestamp()))
       case unknown: GlobalFieldSpecification =>
-        throw new KafkaConnectorException(s"Unsupported field specification $unknown")
+        throw new KafkaConnectorException(
+          ExaError
+            .messageBuilder("F-KCE-11")
+            .message("Unsupported field specification {{SPECIFICATION}} is provided.", unknown)
+            .ticketMitigation()
+            .toString()
+        )
     }
 
     val (absentValues, presentValues) = rowValues.partition(_.isEmpty)
@@ -39,8 +46,14 @@ object RowBuilder {
       // check if we can derive the number of null values needed
       if (absentValues.size > 1) {
         throw new KafkaConnectorException(
-          "Can only replace a null record value with null " +
-            "columns when exactly one expression like key.* and value.* is specified and not null"
+          ExaError
+            .messageBuilder("E-KCE-12")
+            .message("Found multiple expressions that can be null.")
+            .mitigation(
+              "Please check that there is only single specification, e.g, key.* or value.*, " +
+                "that can map to multiple null columns."
+            )
+            .toString()
         )
       } else {
         // we can handle the case when one field spec is null, e.g. the value and there is only

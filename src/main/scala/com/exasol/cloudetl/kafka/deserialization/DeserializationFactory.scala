@@ -1,6 +1,7 @@
 package com.exasol.cloudetl.kafka.deserialization
 
 import com.exasol.cloudetl.kafka.{KafkaConnectorException, KafkaConsumerProperties}
+import com.exasol.errorreporting.ExaError
 
 import org.apache.kafka.common.serialization.Deserializer
 
@@ -47,8 +48,11 @@ object DeserializationFactory {
       case "string" => StringDeserialization
       case _ =>
         throw new KafkaConnectorException(
-          s"Unsupported format '$format'. " +
-            s"Valid values are [avro, json, string]"
+          ExaError
+            .messageBuilder("E-KCE-19")
+            .message("The format {{FORMAT}} is not supported.", format)
+            .mitigation("Please use one of 'avro', 'json' or 'string' formats.")
+            .toString()
         )
     }
 }

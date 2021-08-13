@@ -6,8 +6,8 @@ import java.lang.{Long => JLong}
 import scala.collection.mutable.HashMap
 import scala.jdk.CollectionConverters._
 
-import com.exasol.ExaIterator
-import com.exasol.ExaMetadata
+import com.exasol._
+import com.exasol.errorreporting.ExaError
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.common.serialization.VoidDeserializer
@@ -33,8 +33,7 @@ object KafkaTopicMetadataReader extends LazyLogging {
       seenPartitionOffsets += (partitionId -> partitionOffset)
     } while (iterator.next())
 
-    val kafkaConsumer =
-      KafkaConsumerFactory(kafkaProperties, new VoidDeserializer, new VoidDeserializer)
+    val kafkaConsumer = KafkaConsumerFactory(kafkaProperties, new VoidDeserializer, new VoidDeserializer)
     val topicPartitions = kafkaConsumer.partitionsFor(topic).asScala.toList.map(_.partition())
     logger.info(s"Reading metadata for '${topicPartitions.mkString(",")}' topic partitions")
     try {
@@ -43,10 +42,22 @@ object KafkaTopicMetadataReader extends LazyLogging {
         iterator.emit(Integer.valueOf(partitionId), offset)
       }
     } catch {
-      case exception: Throwable =>
+      case exception: ExaIterationException =>
         throw new KafkaConnectorException(
-          s"Error emitting metadata information for topic '$topic'. Cause: " + exception
-            .getMessage(),
+          ExaError
+            .messageBuilder("F-KCE-2")
+            .message("Error iterating Exasol metadata iterator for topic {{TOPIC}}.", topic)
+            .mitigation("Please check that source Exasol table is available.")
+            .toString(),
+          exception
+        )
+      case exception: ExaDataTypeException =>
+        throw new KafkaConnectorException(
+          ExaError
+            .messageBuilder("F-KCE-3")
+            .message("Error iterating Exasol metadata iterator for topic {{TOPIC}}.", topic)
+            .mitigation("Please check that Exasol metadata script contains output columns.")
+            .toString(),
           exception
         )
     } finally {

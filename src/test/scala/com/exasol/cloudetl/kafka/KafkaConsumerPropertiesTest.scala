@@ -452,7 +452,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
       KafkaConsumerProperties(properties, mock[ExaMetadata])
     }
     val message = thrown.getMessage()
-    assert(message === "Please use a named connection object to provide secure SSL properties.")
+    assert(message.contains("Please use a named Exasol connection object to provide secure properties."))
   }
 
   test("apply obtains bootstrap servers and schema registry url from connection object") {
