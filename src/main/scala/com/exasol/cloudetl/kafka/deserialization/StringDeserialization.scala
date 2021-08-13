@@ -1,10 +1,12 @@
 package com.exasol.cloudetl.kafka.deserialization
 
 import com.exasol.cloudetl.kafka.{KafkaConnectorException, KafkaConsumerProperties}
+import com.exasol.errorreporting.ExaError
 
 import org.apache.kafka.common.serialization.Deserializer
 
 object StringDeserialization extends RecordDeserialization {
+
   override def getDeserializer(
     properties: KafkaConsumerProperties,
     fieldSpecs: Seq[FieldSpecification]
@@ -16,7 +18,11 @@ object StringDeserialization extends RecordDeserialization {
       }
     ) {
       throw new KafkaConnectorException(
-        "Record format 'string' can only use the full 'key' or 'value' as specification"
+        ExaError
+          .messageBuilder("E-KCE-18")
+          .message("String deserialization can only use full record format specification 'key' or 'value'.")
+          .mitigation("Please check that record specification does not contains field selections.")
+          .toString()
       )
     } else {
       new AsStringDeserializer(fieldSpecs)

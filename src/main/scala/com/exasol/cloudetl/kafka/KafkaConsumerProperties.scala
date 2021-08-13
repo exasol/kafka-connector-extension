@@ -11,6 +11,7 @@ import scala.jdk.CollectionConverters._
 import com.exasol.ExaMetadata
 import com.exasol.common.AbstractProperties
 import com.exasol.common.CommonProperties
+import com.exasol.errorreporting.ExaError
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import org.apache.kafka.clients.CommonClientConfigs
@@ -287,7 +288,11 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
         "org.apache.kafka.common.security.scram.ScramLoginModule"
       } else {
         throw new KafkaConnectorException(
-          "Please use SASL_JAAS_LOCATION for complex configuration of SASL authentication."
+          ExaError
+            .messageBuilder("F-KCE-9")
+            .message("Could not setup SASL module for secure authentication.")
+            .mitigation("Please use SASL_JAAS_LOCATION for complex configuration of SASL authentication.")
+            .toString()
         )
       }
       saslModuleName + " required " +
@@ -352,8 +357,11 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
   private[this] def validateSaslJaasLocationFileExist(saslJaasLocation: String): Unit =
     if (!Files.isRegularFile(Paths.get(saslJaasLocation))) {
       throw new KafkaConnectorException(
-        s"Unable to find the SASL JAAS file '$saslJaasLocation'. " +
-          s"Please make sure it is successfully uploaded to BucketFS bucket."
+        ExaError
+          .messageBuilder("E-KCE-5")
+          .message("Unable to find the SASL JAAS file at {{JAAS_LOCATION}}.", saslJaasLocation)
+          .mitigation(BUCKETFS_CHECK_MITIGATION)
+          .toString()
       )
     }
 
@@ -754,6 +762,9 @@ object KafkaConsumerProperties extends CommonProperties {
     ""
   )
 
+  private[kafka] final val BUCKETFS_CHECK_MITIGATION: String =
+    "Please make sure it is successfully uploaded to BucketFS bucket."
+
   /**
    * Creates [[KafkaConsumerProperties]] instance.
    *
@@ -821,7 +832,11 @@ object KafkaConsumerProperties extends CommonProperties {
     ).map(_.userPropertyName)
     if (secureConnectionProperties.exists(p => properties.containsKey(p))) {
       throw new KafkaConnectorException(
-        "Please use a named connection object to provide secure SSL properties."
+        ExaError
+          .messageBuilder("E-KCE-6")
+          .message("Providing secure connection values as parameters is not supported.")
+          .mitigation("Please use a named Exasol connection object to provide secure properties.")
+          .toString()
       )
     }
   }
@@ -833,14 +848,20 @@ object KafkaConsumerProperties extends CommonProperties {
     ) {
       if (!Files.isRegularFile(Paths.get(properties.getSSLKeystoreLocation()))) {
         throw new KafkaConnectorException(
-          s"Unable to find the SSL keystore file '${properties.getSSLKeystoreLocation()}'. " +
-            s"Please make sure it is successfully uploaded to BucketFS bucket."
+          ExaError
+            .messageBuilder("E-KCE-7")
+            .message("Unable to find the SSL keystore file at {{LOCATION}}.", properties.getSSLKeystoreLocation())
+            .mitigation(BUCKETFS_CHECK_MITIGATION)
+            .toString()
         )
       }
       if (!Files.isRegularFile(Paths.get(properties.getSSLTruststoreLocation()))) {
         throw new KafkaConnectorException(
-          s"Unable to find the SSL truststore file '${properties.getSSLTruststoreLocation()}'. " +
-            s"Please make sure it is successfully uploaded to BucketFS bucket."
+          ExaError
+            .messageBuilder("E-KCE-8")
+            .message("Unable to find the SSL truststore file at {{LOCATION}}.", properties.getSSLTruststoreLocation())
+            .mitigation(BUCKETFS_CHECK_MITIGATION)
+            .toString()
         )
       }
     }

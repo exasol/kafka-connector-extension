@@ -4,6 +4,7 @@ import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaImportSpecification
 import com.exasol.ExaMetadata
+import com.exasol.errorreporting.ExaError
 
 import com.typesafe.scalalogging.LazyLogging
 
@@ -33,8 +34,11 @@ object KafkaConsumerQueryGenerator extends LazyLogging {
     val topic = kafkaProperties.getTopic()
     if (topic.contains(",")) {
       throw new IllegalArgumentException(
-        "Please provide only a single topic name. Importing data " +
-          "from multiple topics is not supported."
+        ExaError
+          .messageBuilder("E-KCE-10")
+          .message("Importing data from multiple topics is not supported.")
+          .mitigation("Please provide only a single topic name.")
+          .toString()
       )
     }
     logger.info(s"Generating a SQL query to import from '$topic'.")

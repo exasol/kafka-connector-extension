@@ -192,7 +192,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
       KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
     }
     val message = thrown.getMessage()
-    assert(message.contains(s"Error consuming Kafka topic '$topic' data."))
+    assert(message.contains(s"Error consuming Kafka topic '$topic' data. "))
     assert(message.contains("It occurs for partition '0' in node '0' and vm"))
   }
 

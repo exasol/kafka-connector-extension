@@ -5,6 +5,7 @@ import java.nio.file.Paths
 
 import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties._
+import com.exasol.errorreporting.ExaError
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Deserializer
@@ -30,15 +31,15 @@ object KafkaConsumerFactory {
   ): KafkaConsumer[K, V] = {
     val topic = properties.getTopic()
     try {
-      new KafkaConsumer(
-        properties.getProperties(),
-        keyDeserializer,
-        valueDeserializer
-      )
+      new KafkaConsumer(properties.getProperties(), keyDeserializer, valueDeserializer)
     } catch {
       case exception: Throwable =>
         throw new KafkaConnectorException(
-          s"Error creating a Kafka consumer for topic '$topic'. Cause: " + exception.getMessage(),
+          ExaError
+            .messageBuilder("F-KCE-1")
+            .message("Could not create a Kafka consumer for topic {{TOPIC}}.", topic)
+            .ticketMitigation()
+            .toString(),
           exception
         )
     }

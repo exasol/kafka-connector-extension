@@ -9,6 +9,7 @@ import com.exasol.ExaIterator
 import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka._
 import com.exasol.cloudetl.kafka.deserialization._
+import com.exasol.errorreporting.ExaError
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.consumer.ConsumerRecords
@@ -58,9 +59,15 @@ class KafkaRecordConsumer(
     } catch {
       case exception: Throwable =>
         throw new KafkaConnectorException(
-          s"Error consuming Kafka topic '$topic' data. " +
-            s"It occurs for partition '$partitionId' in node '$nodeId' and vm '$vmId' " +
-            "Cause: " + exception.getMessage(),
+          ExaError
+            .messageBuilder("F-KCE-4")
+            .message("Error consuming Kafka topic {{TOPIC}} data. ", topic)
+            .message("It occurs for partition {{PARTITION_ID}} in node {{NODE_ID}} and vm {{VM_ID}}.")
+            .parameter("PARTITION_ID", String.valueOf(partitionId))
+            .parameter("NODE_ID", String.valueOf(nodeId))
+            .parameter("VM_ID", vmId)
+            .ticketMitigation()
+            .toString(),
           exception
         )
     } finally {

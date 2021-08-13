@@ -30,6 +30,7 @@ object Dependencies {
 
   lazy val RuntimeDependencies: Seq[ModuleID] = Seq(
     "com.exasol" %% "import-export-udf-common-scala" % ImportExportUDFVersion,
+    "com.exasol" % "error-reporting-java" % "0.4.0",
     "org.apache.kafka" % "kafka-clients" % KafkaClientsVersion,
     "io.confluent" % "kafka-avro-serializer" % KafkaAvroSerializerVersion
       exclude ("org.slf4j", "slf4j-api")
