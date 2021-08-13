@@ -360,7 +360,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
         ExaError
           .messageBuilder("E-KCE-5")
           .message("Unable to find the SASL JAAS file at {{JAAS_LOCATION}}.", saslJaasLocation)
-          .mitigation("Please make sure it is successfully uploaded to BucketFS bucket.")
+          .mitigation(BUCKETFS_CHECK_MITIGATION)
           .toString()
       )
     }
@@ -762,6 +762,9 @@ object KafkaConsumerProperties extends CommonProperties {
     ""
   )
 
+  private[kafka] final val BUCKETFS_CHECK_MITIGATION: String =
+    "Please make sure it is successfully uploaded to BucketFS bucket."
+
   /**
    * Creates [[KafkaConsumerProperties]] instance.
    *
@@ -848,7 +851,7 @@ object KafkaConsumerProperties extends CommonProperties {
           ExaError
             .messageBuilder("E-KCE-7")
             .message("Unable to find the SSL keystore file at {{LOCATION}}.", properties.getSSLKeystoreLocation())
-            .mitigation("Please make sure it is successfully uploaded to BucketFS bucket.")
+            .mitigation(BUCKETFS_CHECK_MITIGATION)
             .toString()
         )
       }
@@ -857,7 +860,7 @@ object KafkaConsumerProperties extends CommonProperties {
           ExaError
             .messageBuilder("E-KCE-8")
             .message("Unable to find the SSL truststore file at {{LOCATION}}.", properties.getSSLTruststoreLocation())
-            .mitigation("Please make sure it is successfully uploaded to BucketFS bucket.")
+            .mitigation(BUCKETFS_CHECK_MITIGATION)
             .toString()
         )
       }
