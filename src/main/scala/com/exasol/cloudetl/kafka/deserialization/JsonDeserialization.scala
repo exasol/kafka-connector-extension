@@ -23,9 +23,8 @@ object JsonDeserialization extends RecordDeserialization {
       throw new KafkaConnectorException(
         ExaError
           .messageBuilder("E-KCE-16")
-          .message(
-            "Referencing all fields with key.* or value.* is not supported for JSON as the order is not deterministic."
-          )
+          .message("Referencing all fields with key.* or value.* is not supported ")
+          .message("for JSON as the order is not deterministic.")
           .mitigation("Please use specific field references for JSON, for example, value.fieldName.")
           .toString()
       )

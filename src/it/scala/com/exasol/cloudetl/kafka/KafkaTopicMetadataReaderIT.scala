@@ -71,21 +71,21 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
     val thrown = intercept[KafkaConnectorException] {
       KafkaTopicMetadataReader.run(mock[ExaMetadata], iter)
     }
-    assert(thrown.getMessage.contains("Error creating a Kafka consumer for topic"))
+    assert(thrown.getMessage().contains("Could not create a Kafka consumer for topic"))
   }
 
   test("run catches when emit throws an ExaDataTypeException") {
     val thrown = intercept[KafkaConnectorException] {
       emitThrowsAnException(classOf[ExaDataTypeException])
     }
-    assert(thrown.getMessage.contains("Error emitting metadata information for topic"))
+    assert(thrown.getMessage().contains("Error emitting metadata information for topic"))
   }
 
   test("run catches when emit throws an ExaIterationException") {
     val thrown = intercept[KafkaConnectorException] {
       emitThrowsAnException(classOf[ExaIterationException])
     }
-    assert(thrown.getMessage.contains("Error emitting metadata information for topic"))
+    assert(thrown.getMessage().contains("Error iterating Exasol metadata iterator for topic"))
   }
 
   def emitThrowsAnException[T <: Throwable](exception: Class[T]): Unit = {

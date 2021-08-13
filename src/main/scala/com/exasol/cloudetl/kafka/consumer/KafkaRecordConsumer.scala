@@ -61,10 +61,10 @@ class KafkaRecordConsumer(
         throw new KafkaConnectorException(
           ExaError
             .messageBuilder("F-KCE-4")
-            .message("Error consuming Kafka topic {{TOPIC}} data.", topic)
+            .message("Error consuming Kafka topic {{TOPIC}} data. ", topic)
             .message("It occurs for partition {{PARTITION_ID}} in node {{NODE_ID}} and vm {{VM_ID}}.")
-            .parameter("PARTITION_ID", partitionId)
-            .parameter("NODE_ID", nodeId)
+            .parameter("PARTITION_ID", String.valueOf(partitionId))
+            .parameter("NODE_ID", String.valueOf(nodeId))
             .parameter("VM_ID", vmId)
             .ticketMitigation()
             .toString(),

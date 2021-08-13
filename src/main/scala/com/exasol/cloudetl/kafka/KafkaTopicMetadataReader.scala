@@ -55,7 +55,7 @@ object KafkaTopicMetadataReader extends LazyLogging {
         throw new KafkaConnectorException(
           ExaError
             .messageBuilder("F-KCE-3")
-            .message("Error iterating Exasol metadata iterator for topic {{TOPIC}}.", topic)
+            .message("Error emitting metadata information for topic {{TOPIC}}.", topic)
             .mitigation("Please check that Exasol metadata script contains output columns.")
             .toString(),
           exception
