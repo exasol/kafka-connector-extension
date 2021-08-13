@@ -41,20 +41,28 @@ object DeserializationFactory {
     RecordDeserializers(keyDeserializer, valueDeserializer)
   }
 
+  private[this] val supportedDeserializations = Map(
+    "avro" -> AvroDeserialization,
+    "json" -> JsonDeserialization,
+    "string" -> StringDeserialization
+  )
+
   def getDeserialization(format: String): RecordDeserialization =
-    format match {
-      case "avro"   => AvroDeserialization
-      case "json"   => JsonDeserialization
-      case "string" => StringDeserialization
-      case _ =>
+    supportedDeserializations
+      .get(format)
+      .fold {
         throw new KafkaConnectorException(
           ExaError
             .messageBuilder("E-KCE-19")
             .message("The format {{FORMAT}} is not supported.", format)
-            .mitigation("Please use one of 'avro', 'json' or 'string' formats.")
+            .mitigation(
+              "Please use one of {{SUPPORTED_FORMATS}} formats.",
+              supportedDeserializations.keySet.mkString(",")
+            )
             .toString()
         )
-    }
+      }(identity)
+
 }
 
 /**
