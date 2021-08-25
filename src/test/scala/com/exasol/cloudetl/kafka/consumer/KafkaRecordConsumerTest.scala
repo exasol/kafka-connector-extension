@@ -164,7 +164,15 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   }
 
   case class TestKafkaRecordConsumer(properties: KafkaConsumerProperties, startOffset: Long)
-      extends KafkaRecordConsumer(properties, 0, startOffset, 3, 1L, "vm1") {
+      extends KafkaRecordConsumer(
+        properties,
+        0,
+        startOffset,
+        Seq(classOf[String], classOf[Long], classOf[Long]),
+        3,
+        1L,
+        "vm1"
+      ) {
     override final def getRecordConsumer(): KafkaConsumer[FieldType, FieldType] = consumer
   }
 
