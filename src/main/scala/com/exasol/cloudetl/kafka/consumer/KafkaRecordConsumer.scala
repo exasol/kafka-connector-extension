@@ -105,6 +105,7 @@ class KafkaRecordConsumer(
     records: ConsumerRecords[FieldType, FieldType]
   ): Long = {
     var lastRecordOffset = -1L
+    val fieldConverter = new FieldConverter(outputColumnTypes)
     records.asScala.foreach { record =>
       lastRecordOffset = record.offset()
       val metadata: Seq[Object] = Seq(
@@ -114,7 +115,7 @@ class KafkaRecordConsumer(
       val columnsCount = tableColumnCount - metadata.size
       val rowValues = RowBuilder.buildRow(recordFieldSpecifications, record, columnsCount)
       val row: Seq[Any] = rowValues ++ metadata
-      val converted_row: Seq[Any] = new FieldConverter(outputColumnTypes).convertRow(row)
+      val converted_row: Seq[Any] = fieldConverter.convertRow(row)
       iterator.emit(converted_row: _*)
     }
     lastRecordOffset
