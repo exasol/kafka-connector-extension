@@ -7,6 +7,7 @@ Code name:
 ## Refactorings
 
 * #12: Added unified error codes
+* Added timestamp converter for long values (PR #50)
 
 ## Dependency Updates
 
