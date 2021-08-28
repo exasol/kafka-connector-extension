@@ -40,9 +40,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-sbt-cache-
 
-      - name: Check Formatting
-        run: sbt ++${{ matrix.scala }} scalafmtSbtCheck scalafmtCheckAll
-
       - name: Run CI
         run: ./scripts/ci.sh
         env:
