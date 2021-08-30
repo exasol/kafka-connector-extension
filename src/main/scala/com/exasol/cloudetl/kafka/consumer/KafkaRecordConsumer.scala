@@ -115,8 +115,8 @@ class KafkaRecordConsumer(
       val columnsCount = tableColumnCount - metadata.size
       val rowValues = RowBuilder.buildRow(recordFieldSpecifications, record, columnsCount)
       val row: Seq[Any] = rowValues ++ metadata
-      val converted_row: Seq[Any] = fieldConverter.convertRow(row)
-      iterator.emit(converted_row: _*)
+      val convertedRow: Seq[Any] = fieldConverter.convertRow(row)
+      iterator.emit(convertedRow: _*)
     }
     lastRecordOffset
   }
