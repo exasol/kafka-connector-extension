@@ -1,15 +1,20 @@
 package com.exasol.cloudetl.kafka
 
+import java.lang.{Integer => JInt, Long => JLong}
+
+import scala.jdk.CollectionConverters.CollectionHasAsScala
+
 import com.exasol.ExaMetadata
-import com.exasol.common.json
 import com.exasol.common.json.JsonMapper
+
 import com.fasterxml.jackson.databind.JsonNode
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
-import org.mockito.Mockito.times
 import org.mockito.{ArgumentCaptor, Mockito}
-
-import scala.jdk.CollectionConverters.CollectionHasAsScala
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.Mockito.{times, when}
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 /**
  * A test class that tests the {@code RECORD_FIELDS} integration and not the offset and partition
@@ -26,13 +31,24 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
     ()
   }
 
-  private[this] def getEmittedValues(recordFieldsStmt: String): Seq[Any] = {
+  private[this] def getEmittedValues(recordFieldsStmt: String, outputColumnTypes: Seq[Class[_]]): Seq[Any] = {
     val iter = mockExasolIterator(
       properties ++ Map("RECORD_FIELDS" -> recordFieldsStmt),
       Seq(0),
       Seq(-1)
     )
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    val outputColumnTypesWithMeta = outputColumnTypes ++ Seq(classOf[JInt], classOf[JLong])
+    val columnCount = outputColumnTypesWithMeta.size
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(columnCount)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(
+      new Answer[Class[_]]() {
+        override def answer(invocation: InvocationOnMock): Class[_] = {
+          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+          outputColumnTypesWithMeta(columnIndex)
+        }
+      })
+    KafkaTopicDataImporter.run(meta, iter)
 
     val captor = ArgumentCaptor.forClass[Any, Any](classOf[Any])
     Mockito.verify(iter, times(1)).emit(captor.capture())
@@ -44,19 +60,23 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
   test("default must be 'value.*': All fields from the record") {
     createCustomTopic(topic)
     publishToKafka(topic, customRecord)
-    assert(getEmittedValues("value.*") === Seq("abc", 3, 13))
+    assert(
+      getEmittedValues("value.*", Seq(classOf[String], classOf[JInt], classOf[JLong])
+    ) === Seq("abc", 3, 13))
   }
 
   test("must emit multiple record value fields in the order specified") {
     createCustomTopic(topic)
     publishToKafka(topic, customRecord)
-    assert(getEmittedValues("value.col_long, value.col_str") === Seq(13, "abc"))
+    assert(
+      getEmittedValues("value.col_long, value.col_str", Seq(classOf[JLong], classOf[String])
+      ) === Seq(13, "abc"))
   }
 
   test("must be able to reference the full value") {
     createCustomTopic(topic)
     publishToKafka(topic, customRecord)
-    val result = getEmittedValues("value")
+    val result = getEmittedValues("value", Seq(classOf[String]))
     assert(result.size === 1)
     assertJson(
       result(0).asInstanceOf[String],
@@ -72,14 +92,16 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
   test("must be able to reference key values with default RECORD_KEY_FORMAT string") {
     createCustomTopic(topic)
     publishToKafka(topic, "string_key", customRecord)
-    assert(getEmittedValues("key, value.col_long") === Seq("string_key", 13))
+    assert(
+      getEmittedValues("key, value.col_long", Seq(classOf[String], classOf[JLong])
+      ) === Seq("string_key", 13))
   }
 
   test("must fail when the key is accessed with concrete field") {
     createCustomTopic(topic)
     publishToKafka(topic, "string_key", customRecord)
     intercept[KafkaConnectorException] {
-      getEmittedValues("key.someFieldReference")
+      getEmittedValues("key.someFieldReference", Seq(classOf[String]))
     }
   }
 
@@ -87,24 +109,27 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
     createCustomTopic(topic)
     publishToKafka(topic, "string_key", customRecord)
     intercept[KafkaConnectorException] {
-      getEmittedValues("key.*")
+      getEmittedValues("key.*", Seq())
     }
   }
 
   test("must handle null key and values") {
     createCustomTopic(topic)
     publishToKafka(topic, null.asInstanceOf[String], null.asInstanceOf[AvroRecord])
-    assert(getEmittedValues("key, value") === Seq(null, null))
+    assert(getEmittedValues("key, value", Seq(classOf[String], classOf[Any])) === Seq(null, null))
   }
 
   test("must handle null values combined with a present key and timestamps") {
     createCustomTopic(topic)
     publishToKafka(topic, "theKey", null.asInstanceOf[AvroRecord])
 
-    val values = getEmittedValues("key, timestamp, value")
+    val values = getEmittedValues(
+      "key, timestamp, value",
+      Seq(classOf[String], classOf[JLong], classOf[Any])
+    )
     assert(values.size === 3)
     assert(values(0) === "theKey")
-    assert(values(1).isInstanceOf[java.lang.Long])
+    assert(values(1).isInstanceOf[JLong])
     assert(values(2) === null)
   }
 
@@ -123,7 +148,10 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
       )
       ()
     }
-    val values = getEmittedValues("timestamp, value.str_col, key")
+    val values = getEmittedValues(
+      "timestamp, value.str_col, key",
+      Seq(classOf[JLong], classOf[Any], classOf[String])
+    )
     assert(values === Seq(recordTimestamp, null, "record_key"))
   }
 }

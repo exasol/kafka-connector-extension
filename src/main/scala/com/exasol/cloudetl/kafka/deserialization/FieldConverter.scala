@@ -1,5 +1,6 @@
 package com.exasol.cloudetl.kafka.deserialization
 
+import java.lang.{Long => JLong}
 import java.sql.Timestamp
 
 class FieldConverter(
@@ -11,7 +12,7 @@ class FieldConverter(
 
   final def convert(columnType: Class[_], value: Any): Any =
     value match {
-      case x: Long if columnType == classOf[Timestamp] => new Timestamp(x)
-      case _                                           => value
+      case x: JLong if columnType == classOf[Timestamp] => new Timestamp(x)
+      case _                                            => value
     }
 }

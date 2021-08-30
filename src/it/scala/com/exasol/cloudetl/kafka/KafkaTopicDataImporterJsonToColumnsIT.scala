@@ -6,7 +6,9 @@ import com.exasol.ExaMetadata
 
 import org.apache.kafka.common.serialization.{Serializer, StringSerializer}
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{times, verify}
+import org.mockito.Mockito.{times, verify, when}
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
 
@@ -41,7 +43,22 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
     )
 
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(5L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(
+      new Answer[Class[_]]() {
+        override def answer(invocation: InvocationOnMock): Class[_] = {
+          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+          Seq(
+            classOf[String],
+            classOf[JInt],
+            classOf[String],
+            classOf[JInt],
+            classOf[JLong],
+          )(columnIndex)
+        }
+      })
+    KafkaTopicDataImporter.run(meta, iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(1)).emit(

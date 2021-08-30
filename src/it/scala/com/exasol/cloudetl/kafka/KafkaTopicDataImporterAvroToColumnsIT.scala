@@ -11,6 +11,8 @@ import org.apache.kafka.clients.admin.RecordsToDelete
 import org.apache.kafka.common.TopicPartition
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{times, verify, when}
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT {
 
@@ -20,7 +22,22 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     publishToKafka(topic, AvroRecord("hello", 4, 14))
 
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(5L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(
+      new Answer[Class[_]]() {
+        override def answer(invocation: InvocationOnMock): Class[_] = {
+          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+          Seq(
+            classOf[String],
+            classOf[JInt],
+            classOf[JLong],
+            classOf[JInt],
+            classOf[JLong],
+          )(columnIndex)
+        }
+      })
+    KafkaTopicDataImporter.run(meta, iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -68,7 +85,22 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     publishToKafka(topic, AvroRecord("hello", 4, 14))
 
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(5L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(
+      new Answer[Class[_]]() {
+        override def answer(invocation: InvocationOnMock): Class[_] = {
+          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+          Seq(
+            classOf[String],
+            classOf[JInt],
+            classOf[JLong],
+            classOf[JInt],
+            classOf[JLong],
+          )(columnIndex)
+        }
+      })
+    KafkaTopicDataImporter.run(meta, iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -103,7 +135,22 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
 
     // records at 0, 1 are already read, committed
     val iter = mockExasolIterator(properties, Seq(0), Seq(1))
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(5L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(
+      new Answer[Class[_]]() {
+        override def answer(invocation: InvocationOnMock): Class[_] = {
+          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+          Seq(
+            classOf[String],
+            classOf[JInt],
+            classOf[JLong],
+            classOf[JInt],
+            classOf[JLong],
+          )(columnIndex)
+        }
+      })
+    KafkaTopicDataImporter.run(meta, iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -144,7 +191,22 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
 
     // comsumer in two batches each with 2 records
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(5L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(
+      new Answer[Class[_]]() {
+        override def answer(invocation: InvocationOnMock): Class[_] = {
+          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+          Seq(
+            classOf[String],
+            classOf[JInt],
+            classOf[JLong],
+            classOf[JInt],
+            classOf[JLong],
+          )(columnIndex)
+        }
+      })
+    KafkaTopicDataImporter.run(meta, iter)
 
     verify(iter, times(4)).emit(Seq(any[Object]): _*)
     verify(iter, times(4)).emit(
@@ -168,7 +230,22 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
       publishToKafka(topic, AvroRecord(s"$i", i, i.toLong))
     }
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(5L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(
+      new Answer[Class[_]]() {
+        override def answer(invocation: InvocationOnMock): Class[_] = {
+          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+          Seq(
+            classOf[String],
+            classOf[JInt],
+            classOf[JLong],
+            classOf[JInt],
+            classOf[JLong],
+          )(columnIndex)
+        }
+      })
+    KafkaTopicDataImporter.run(meta, iter)
 
     verify(iter, times(5)).emit(Seq(any[Object]): _*)
     verify(iter, times(5)).emit(
@@ -188,8 +265,23 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     when(
       iter.emit("second", JInt.valueOf(3), JLong.valueOf(4), JInt.valueOf(0), JLong.valueOf(1))
     ).thenThrow(classOf[ExaDataTypeException])
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(5L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(
+      new Answer[Class[_]]() {
+        override def answer(invocation: InvocationOnMock): Class[_] = {
+          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+          Seq(
+            classOf[String],
+            classOf[JInt],
+            classOf[JLong],
+            classOf[JInt],
+            classOf[JLong],
+          )(columnIndex)
+        }
+      })
     val thrown = intercept[KafkaConnectorException] {
-      KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+      KafkaTopicDataImporter.run(meta, iter)
     }
     val message = thrown.getMessage()
     assert(message.contains(s"Error consuming Kafka topic '$topic' data. "))
