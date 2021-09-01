@@ -15,8 +15,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
-import org.apache.kafka.common.errors.InvalidTopicException
-import org.apache.kafka.common.errors.TimeoutException
+import org.apache.kafka.common.errors._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -147,12 +146,29 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
     assertExpectedException(new TimeoutException(), "E-KCE-22")
   }
 
-  private[this] def assertExpectedException(exception: Exception, errorCode: String): Unit = {
+  test("throws authorization exception") {
+    assertExpectedException(new AuthorizationException("ErrorCause"), "E-KCE-23", Option("ErrorCause"))
+  }
+
+  test("throws authentication exception") {
+    assertExpectedException(new AuthenticationException("authError"), "E-KCE-24", Option("authError"))
+  }
+
+  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
+  private[this] def assertExpectedException(
+    exception: Exception,
+    errorCode: String,
+    cause: Option[String] = None
+  ): Unit = {
     when(consumer.poll(defaultTimeout)).thenThrow(exception)
     val thrown = intercept[KafkaConnectorException] {
       KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(1)
     }
     assert(thrown.getMessage().startsWith(errorCode))
+    cause.fold {} { case message =>
+      thrown.getMessage().contains(message)
+      ()
+    }
     ()
   }
 

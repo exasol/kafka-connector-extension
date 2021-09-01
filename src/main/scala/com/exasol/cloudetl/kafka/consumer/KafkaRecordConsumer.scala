@@ -15,8 +15,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
-import org.apache.kafka.common.errors.InvalidTopicException
-import org.apache.kafka.common.errors.TimeoutException
+import org.apache.kafka.common.errors._
 
 /**
  * A class that polls data from Kafka topic and emits records into an
@@ -74,7 +73,7 @@ class KafkaRecordConsumer(
           ExaError
             .messageBuilder("E-KCE-21")
             .message(generalErrorMessage(), topic)
-            .message("The provided topic is not valid.")
+            .message("Provided topic is not valid.")
             .mitigation("Please check that the Kafka topic is available and valid.")
             .toString(),
           exception
@@ -89,6 +88,26 @@ class KafkaRecordConsumer(
               "Please ensure that there is network connection between Kafka brokers and Exasol datanode." +
                 "Similarly check that Kafka advertised listeners are reachable from Exasol cluster."
             )
+            .toString(),
+          exception
+        )
+      case exception: AuthorizationException =>
+        throw new KafkaConnectorException(
+          ExaError
+            .messageBuilder("E-KCE-23")
+            .message(generalErrorMessage(), topic)
+            .message("Consumer or consumer group is not allowed to read given topic. Cause: " + exception.getMessage())
+            .mitigation("Please make sure that topic is readable by the this consumer or consumer groups")
+            .toString(),
+          exception
+        )
+      case exception: AuthenticationException =>
+        throw new KafkaConnectorException(
+          ExaError
+            .messageBuilder("E-KCE-24")
+            .message(generalErrorMessage(), topic)
+            .message("Failed to authenticate to Kafka cluster. Cause: " + exception.getMessage())
+            .mitigation("Please ensure that SASL credentials and mechanisms are correct for authentication.")
             .toString(),
           exception
         )
