@@ -74,7 +74,7 @@ class KafkaRecordConsumer(
             .messageBuilder("E-KCE-21")
             .message(generalErrorMessage(), topic)
             .message("Provided topic is not valid.")
-            .mitigation("Please check that the Kafka topic is available and valid.")
+            .mitigation("Please make sure that the Kafka topic is valid.")
             .toString(),
           exception
         )
@@ -85,7 +85,7 @@ class KafkaRecordConsumer(
             .message(generalErrorMessage(), topic)
             .message("Timeout trying to connect to Kafka brokers.")
             .mitigation(
-              "Please ensure that there is network connection between Kafka brokers and Exasol datanode." +
+              "Please ensure that there is a network connection between Kafka brokers and the Exasol datanode." +
                 "Similarly check that Kafka advertised listeners are reachable from Exasol cluster."
             )
             .toString(),
@@ -96,8 +96,8 @@ class KafkaRecordConsumer(
           ExaError
             .messageBuilder("E-KCE-23")
             .message(generalErrorMessage(), topic)
-            .message("Consumer or consumer group is not allowed to read given topic. Cause: " + exception.getMessage())
-            .mitigation("Please make sure that topic is readable by the this consumer or consumer groups")
+            .message("A consumer or a consumer group is not allowed to read the given topic. Cause: " + exception.getMessage())
+            .mitigation("Please make sure that the topic is readable by this consumer or consumer groups")
             .toString(),
           exception
         )
@@ -106,7 +106,7 @@ class KafkaRecordConsumer(
           ExaError
             .messageBuilder("E-KCE-24")
             .message(generalErrorMessage(), topic)
-            .message("Failed to authenticate to Kafka cluster. Cause: " + exception.getMessage())
+            .message("Failed to authenticate to the Kafka cluster. Cause: " + exception.getMessage())
             .mitigation("Please ensure that SASL credentials and mechanisms are correct for authentication.")
             .toString(),
           exception
