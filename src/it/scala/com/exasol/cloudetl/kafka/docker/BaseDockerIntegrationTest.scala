@@ -123,7 +123,13 @@ trait BaseDockerIntegrationTest extends AnyFunSuite with BeforeAndAfterAll {
     }
   }
 
-  private[this] def getExasolDockerImageVersion(): String =
-    System.getProperty("EXASOL_DOCKER_VERSION", DEFAULT_EXASOL_DOCKER_IMAGE)
+  private[this] def getExasolDockerImageVersion(): String = {
+    val dockerVersion = System.getenv("EXASOL_DOCKER_VERSION")
+    if (dockerVersion == null) {
+      DEFAULT_EXASOL_DOCKER_IMAGE
+    } else {
+      dockerVersion
+    }
+  }
 
 }

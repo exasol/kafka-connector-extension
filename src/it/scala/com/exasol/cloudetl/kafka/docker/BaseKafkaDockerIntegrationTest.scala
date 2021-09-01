@@ -135,9 +135,9 @@ trait BaseKafkaDockerIntegrationTest extends BaseDockerIntegrationTest {
 
   override def afterAll(): Unit = {
     adminClient.close()
-    zookeeperContainer.stop()
     schemaRegistryContainer.stop()
     kafkaBrokerContainer.stop()
+    zookeeperContainer.stop()
     super.afterAll()
   }
 

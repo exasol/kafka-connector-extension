@@ -7,7 +7,7 @@ Code name:
 ## Refactorings
 
 * #12: Added unified error codes
-* Added timestamp converter for long values (PR #50)
+* #51: Added timestamp converter for long values
 
 ## Dependency Updates
 
@@ -22,3 +22,6 @@ Code name:
 * Removed `org.testcontainers:kafka:1.16.0`
 
 ### Plugin Updates
+
+* Updated `com.eed3si9n:sbt-assembly:1.0.0` to `1.1.0`
+* Updated `net.bzzt:sbt-reproducible-builds:0.28` to `0.30`
