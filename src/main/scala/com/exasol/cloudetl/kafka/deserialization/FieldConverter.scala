@@ -3,6 +3,9 @@ package com.exasol.cloudetl.kafka.deserialization
 import java.lang.{Long => JLong}
 import java.sql.Timestamp
 
+/**
+ * A class that converts a long value to timestamp if required by the Exasol column output type
+ */
 class FieldConverter(outputColumnTypes: Seq[Class[_]]) {
 
   final def convertRow(row: Seq[Any]): Seq[Any] =
