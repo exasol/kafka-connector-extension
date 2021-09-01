@@ -22,22 +22,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     publishToKafka(topic, AvroRecord("hello", 4, 14))
 
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(5L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
-    KafkaTopicDataImporter.run(meta, iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -85,22 +70,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     publishToKafka(topic, AvroRecord("hello", 4, 14))
 
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(5L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
-    KafkaTopicDataImporter.run(meta, iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -135,22 +105,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
 
     // records at 0, 1 are already read, committed
     val iter = mockExasolIterator(properties, Seq(0), Seq(1))
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(5L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
-    KafkaTopicDataImporter.run(meta, iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -191,22 +146,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
 
     // comsumer in two batches each with 2 records
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(5L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
-    KafkaTopicDataImporter.run(meta, iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(4)).emit(Seq(any[Object]): _*)
     verify(iter, times(4)).emit(
@@ -230,22 +170,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
       publishToKafka(topic, AvroRecord(s"$i", i, i.toLong))
     }
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(5L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
-    KafkaTopicDataImporter.run(meta, iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(5)).emit(Seq(any[Object]): _*)
     verify(iter, times(5)).emit(
@@ -262,30 +187,32 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     publishToKafka(topic, AvroRecord("first", 1, 2))
     publishToKafka(topic, AvroRecord("second", 3, 4))
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    when(
-      iter.emit("second", JInt.valueOf(3), JLong.valueOf(4), JInt.valueOf(0), JLong.valueOf(1))
-    ).thenThrow(classOf[ExaDataTypeException])
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(5L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
+    when(iter.emit("second", JInt.valueOf(3), JLong.valueOf(4), JInt.valueOf(0), JLong.valueOf(1)))
+      .thenThrow(classOf[ExaDataTypeException])
     val thrown = intercept[KafkaConnectorException] {
-      KafkaTopicDataImporter.run(meta, iter)
+      KafkaTopicDataImporter.run(getMockedMetadata(), iter)
     }
     val message = thrown.getMessage()
     assert(message.contains(s"Error consuming Kafka topic '$topic' data. "))
     assert(message.contains("It occurs for partition '0' in node '0' and vm"))
+  }
+
+  private[this] def getMockedMetadata(): ExaMetadata = {
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(5L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(new Answer[Class[_]]() {
+      override def answer(invocation: InvocationOnMock): Class[_] = {
+        val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+        Seq(
+          classOf[String],
+          classOf[JInt],
+          classOf[JLong],
+          classOf[JInt],
+          classOf[JLong]
+        )(columnIndex)
+      }
+    })
+    meta
   }
 
   private[this] def deleteRecordsFromTopic(topic: String, beforeOffset: Int): Unit = {
@@ -309,4 +236,5 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     }
     ()
   }
+
 }

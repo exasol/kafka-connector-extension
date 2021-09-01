@@ -41,13 +41,12 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
     val columnCount = outputColumnTypesWithMeta.size
     val meta = mock[ExaMetadata]
     when(meta.getOutputColumnCount()).thenReturn(columnCount)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          outputColumnTypesWithMeta(columnIndex)
-        }
-      })
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(new Answer[Class[_]]() {
+      override def answer(invocation: InvocationOnMock): Class[_] = {
+        val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+        outputColumnTypesWithMeta(columnIndex)
+      }
+    })
     KafkaTopicDataImporter.run(meta, iter)
 
     val captor = ArgumentCaptor.forClass[Any, Any](classOf[Any])
@@ -60,17 +59,13 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
   test("default must be 'value.*': All fields from the record") {
     createCustomTopic(topic)
     publishToKafka(topic, customRecord)
-    assert(
-      getEmittedValues("value.*", Seq(classOf[String], classOf[JInt], classOf[JLong])
-    ) === Seq("abc", 3, 13))
+    assert(getEmittedValues("value.*", Seq(classOf[String], classOf[JInt], classOf[JLong])) === Seq("abc", 3, 13))
   }
 
   test("must emit multiple record value fields in the order specified") {
     createCustomTopic(topic)
     publishToKafka(topic, customRecord)
-    assert(
-      getEmittedValues("value.col_long, value.col_str", Seq(classOf[JLong], classOf[String])
-      ) === Seq(13, "abc"))
+    assert(getEmittedValues("value.col_long, value.col_str", Seq(classOf[JLong], classOf[String])) === Seq(13, "abc"))
   }
 
   test("must be able to reference the full value") {
@@ -92,9 +87,7 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
   test("must be able to reference key values with default RECORD_KEY_FORMAT string") {
     createCustomTopic(topic)
     publishToKafka(topic, "string_key", customRecord)
-    assert(
-      getEmittedValues("key, value.col_long", Seq(classOf[String], classOf[JLong])
-      ) === Seq("string_key", 13))
+    assert(getEmittedValues("key, value.col_long", Seq(classOf[String], classOf[JLong])) === Seq("string_key", 13))
   }
 
   test("must fail when the key is accessed with concrete field") {

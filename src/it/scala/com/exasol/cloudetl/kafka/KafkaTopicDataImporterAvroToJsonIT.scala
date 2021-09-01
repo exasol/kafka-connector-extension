@@ -23,20 +23,7 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
     publishToKafka(topic, AvroRecord("{'Value':'xyz'}", 5, 15))
 
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(3L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
-    KafkaTopicDataImporter.run(meta, iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(3)).emit(Seq(any[Object]): _*)
     verify(iter, times(3)).emit(
@@ -74,20 +61,7 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
 
     // records at 0, 1 are already read, committed
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(1))
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(3L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
-    KafkaTopicDataImporter.run(meta, iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -122,20 +96,7 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
 
     // comsumer in two batches each with 2 records
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(3L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
-    KafkaTopicDataImporter.run(meta, iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(4)).emit(Seq(any[Object]): _*)
     verify(iter, times(4)).emit(
@@ -144,4 +105,21 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
       anyLong().asInstanceOf[JLong]
     )
   }
+
+  private[this] def getMockedMetadata(): ExaMetadata = {
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(3L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(new Answer[Class[_]]() {
+      override def answer(invocation: InvocationOnMock): Class[_] = {
+        val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+        Seq(
+          classOf[String],
+          classOf[JInt],
+          classOf[JLong]
+        )(columnIndex)
+      }
+    })
+    meta
+  }
+
 }

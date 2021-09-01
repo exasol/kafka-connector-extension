@@ -45,19 +45,18 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
     val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
     val meta = mock[ExaMetadata]
     when(meta.getOutputColumnCount()).thenReturn(5L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(
-      new Answer[Class[_]]() {
-        override def answer(invocation: InvocationOnMock): Class[_] = {
-          val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-          Seq(
-            classOf[String],
-            classOf[JInt],
-            classOf[String],
-            classOf[JInt],
-            classOf[JLong],
-          )(columnIndex)
-        }
-      })
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(new Answer[Class[_]]() {
+      override def answer(invocation: InvocationOnMock): Class[_] = {
+        val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+        Seq(
+          classOf[String],
+          classOf[JInt],
+          classOf[String],
+          classOf[JInt],
+          classOf[JLong]
+        )(columnIndex)
+      }
+    })
     KafkaTopicDataImporter.run(meta, iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
