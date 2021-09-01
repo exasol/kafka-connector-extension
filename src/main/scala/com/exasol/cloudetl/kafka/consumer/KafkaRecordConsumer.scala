@@ -15,6 +15,8 @@ import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
+import org.apache.kafka.common.errors.InvalidTopicException
+import org.apache.kafka.common.errors.TimeoutException
 
 /**
  * A class that polls data from Kafka topic and emits records into an
@@ -57,11 +59,44 @@ class KafkaRecordConsumer(
         )
       } while (shouldContinue(recordOffset, recordCount, totalRecordCount))
     } catch {
+      case exception: IllegalStateException =>
+        throw new KafkaConnectorException(
+          ExaError
+            .messageBuilder("E-KCE-20")
+            .message("Error consuming Kafka topic {{TOPIC}} data. ", topic)
+            .message("Consumer is not subscribed to any topic or assigned any partition.")
+            .mitigation("Please check that the Kafka topic is available and valid.")
+            .toString(),
+          exception
+        )
+      case exception: InvalidTopicException =>
+        throw new KafkaConnectorException(
+          ExaError
+            .messageBuilder("E-KCE-21")
+            .message(generalErrorMessage(), topic)
+            .message("The provided topic is not valid.")
+            .mitigation("Please check that the Kafka topic is available and valid.")
+            .toString(),
+          exception
+        )
+      case exception: TimeoutException =>
+        throw new KafkaConnectorException(
+          ExaError
+            .messageBuilder("E-KCE-22")
+            .message(generalErrorMessage(), topic)
+            .message("Timeout trying to connect to Kafka brokers.")
+            .mitigation(
+              "Please ensure that there is network connection between Kafka brokers and Exasol datanode." +
+                "Similarly check that Kafka advertised listeners are reachable from Exasol cluster."
+            )
+            .toString(),
+          exception
+        )
       case exception: Throwable =>
         throw new KafkaConnectorException(
           ExaError
             .messageBuilder("F-KCE-4")
-            .message("Error consuming Kafka topic {{TOPIC}} data. ", topic)
+            .message(generalErrorMessage(), topic)
             .message("It occurs for partition {{PARTITION_ID}} in node {{NODE_ID}} and vm {{VM_ID}}.")
             .parameter("PARTITION_ID", String.valueOf(partitionId))
             .parameter("NODE_ID", String.valueOf(nodeId))
@@ -74,6 +109,9 @@ class KafkaRecordConsumer(
       consumer.close()
     }
   }
+
+  private[this] def generalErrorMessage(): String =
+    "Error consuming Kafka topic {{TOPIC}} data."
 
   private[this] def updateRecordOffset(currentOffset: Long): Long =
     if (currentOffset == -1) {
