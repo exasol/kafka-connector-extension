@@ -1,0 +1,5 @@
+error-tags:
+  KCE:
+    packages:
+      - com.exasol.cloudetl
+    highest-index: 24
