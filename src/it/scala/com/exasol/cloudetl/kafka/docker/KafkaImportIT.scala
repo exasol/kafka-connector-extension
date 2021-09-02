@@ -1,8 +1,13 @@
 package com.exasol.cloudetl.kafka
 
 import java.sql.ResultSet
-import java.util.UUID
+import java.sql.Timestamp
+import java.util.{TimeZone, UUID}
 
+import com.exasol.cloudetl.kafka.serde._
+import com.exasol.cloudetl.kafka.serde.AvroRecordFormat.Implicits._
+import com.exasol.cloudetl.kafka.serde.AvroSerdes.Implicits._
+import com.exasol.cloudetl.kafka.serde.PrimitiveSerdes.Implicits._
 import com.exasol.dbbuilder.dialects.Table
 import com.exasol.matcher.ResultSetStructureMatcher.table
 import com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK
@@ -33,6 +38,25 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest with BeforeAndAfterEa
   override final def afterEach(): Unit = {
     executeStmt(s"DROP TABLE IF EXISTS ${getTableName()}")
     deleteTopic(topicName)
+  }
+
+  test("import longs as timestamp values") {
+    case class TimestampRecord(timestamp: Long)
+    implicit val timestampRecordValueSerde = valueAvroSerde[TimestampRecord](getExternalSchemaRegistryUrl())
+
+    TimeZone.setDefault(exasolContainer.getTimeZone())
+
+    val timestamp = new Timestamp(System.currentTimeMillis())
+    KafkaImportChecker(Map("COLUMN" -> "TIMESTAMP"))
+      .withImportProperties(Map("RECORD_VALUE_FORMAT" -> "avro"))
+      .withTopicValues(Seq(TimestampRecord(0L), TimestampRecord(1337L), TimestampRecord(timestamp.getTime())))
+      .assert(
+        table()
+          .row(new Timestamp(0L), 0L, 0L)
+          .row(new Timestamp(1337L), 0L, 1L)
+          .row(timestamp, 0L, 2L)
+          .matches(NO_JAVA_TYPE_CHECK)
+      )
   }
 
   test("import string values") {
@@ -98,7 +122,7 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest with BeforeAndAfterEa
       this
     }
 
-    def withTopicValues(values: Seq[String]): KafkaImportChecker = {
+    def withTopicValues[V: ValueSerde](values: Seq[V]): KafkaImportChecker = {
       produceRecords(topicName, values)
       this
     }
@@ -142,17 +166,19 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest with BeforeAndAfterEa
       val rs = executeQuery(s"SELECT * FROM ${getTableName()}")
       block(rs)
       rs.close()
+      ()
     }
   }
 
   private[this] def defaultImportStatement(table: Table): String =
     s"""|IMPORT INTO ${table.getFullyQualifiedName()}
         |FROM SCRIPT $schemaName.KAFKA_CONSUMER WITH
-        |BOOTSTRAP_SERVERS = 'kafka01:9092'
-        |TOPIC_NAME        = '$topicName'
-        |TABLE_NAME        = '${table.getFullyQualifiedName()}'
-        |POLL_TIMEOUT_MS   = '300'
-        |GROUP_ID          = 'exasol-kafka-udf-consumers'
+        |BOOTSTRAP_SERVERS   = 'kafka01:9092'
+        |SCHEMA_REGISTRY_URL = 'http://schema-registry:8081'
+        |TOPIC_NAME          = '$topicName'
+        |TABLE_NAME          = '${table.getFullyQualifiedName()}'
+        |POLL_TIMEOUT_MS     = '300'
+        |GROUP_ID            = 'exasol-kafka-udf-consumers'
     """.stripMargin
 
 }

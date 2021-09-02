@@ -6,7 +6,6 @@ import java.util.Arrays
 import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaIterator
-import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka._
 import com.exasol.cloudetl.kafka.deserialization._
 import com.exasol.errorreporting.ExaError
@@ -24,6 +23,7 @@ class KafkaRecordConsumer(
   properties: KafkaConsumerProperties,
   partitionId: Int,
   partitionStartOffset: Long,
+  outputColumnTypes: Seq[Class[_]],
   tableColumnCount: Int,
   nodeId: Long,
   vmId: String
@@ -105,6 +105,7 @@ class KafkaRecordConsumer(
     records: ConsumerRecords[FieldType, FieldType]
   ): Long = {
     var lastRecordOffset = -1L
+    val fieldConverter = new FieldConverter(outputColumnTypes)
     records.asScala.foreach { record =>
       lastRecordOffset = record.offset()
       val metadata: Seq[Object] = Seq(
@@ -113,8 +114,9 @@ class KafkaRecordConsumer(
       )
       val columnsCount = tableColumnCount - metadata.size
       val rowValues = RowBuilder.buildRow(recordFieldSpecifications, record, columnsCount)
-      val rows: Seq[Any] = rowValues ++ metadata
-      iterator.emit(rows: _*)
+      val row: Seq[Any] = rowValues ++ metadata
+      val convertedRow: Seq[Any] = fieldConverter.convertRow(row)
+      iterator.emit(convertedRow: _*)
     }
     lastRecordOffset
   }
