@@ -1,13 +1,16 @@
-# Kafka Connector Extension 1.3.1, released 2021-??-??
+# Kafka Connector Extension 1.4.0, released 2021-??-??
 
 Code name:
 
 ## Summary
 
+## Features
+
+* #51: Added timestamp converter for long values
+
 ## Refactorings
 
 * #12: Added unified error codes
-* #51: Added timestamp converter for long values
 
 ## Dependency Updates
 
