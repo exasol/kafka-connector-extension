@@ -142,16 +142,12 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
     assertExpectedException(new InvalidTopicException(), "E-KCE-21")
   }
 
-  test("throws timeout exception") {
-    assertExpectedException(new TimeoutException(), "E-KCE-22")
-  }
-
   test("throws authorization exception") {
-    assertExpectedException(new AuthorizationException("ErrorCause"), "E-KCE-23", Option("ErrorCause"))
+    assertExpectedException(new AuthorizationException("ErrorCause"), "E-KCE-22", Option("ErrorCause"))
   }
 
   test("throws authentication exception") {
-    assertExpectedException(new AuthenticationException("authError"), "E-KCE-24", Option("authError"))
+    assertExpectedException(new AuthenticationException("authError"), "E-KCE-23", Option("authError"))
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))

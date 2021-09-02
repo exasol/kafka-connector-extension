@@ -8,6 +8,7 @@ import scala.jdk.CollectionConverters._
 import com.exasol.ExaIterator
 import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka._
+import com.exasol.cloudetl.kafka.KafkaConnectorConstants._
 import com.exasol.cloudetl.kafka.deserialization._
 import com.exasol.errorreporting.ExaError
 
@@ -58,81 +59,11 @@ class KafkaRecordConsumer(
         )
       } while (shouldContinue(recordOffset, recordCount, totalRecordCount))
     } catch {
-      case exception: IllegalStateException =>
-        throw new KafkaConnectorException(
-          ExaError
-            .messageBuilder("E-KCE-20")
-            .message("Error consuming Kafka topic {{TOPIC}} data. ", topic)
-            .message("Consumer is not subscribed to the given topic or it is not assigned any partition of the topic.")
-            .mitigation("Please check that the Kafka topic is available and valid.")
-            .toString(),
-          exception
-        )
-      case exception: InvalidTopicException =>
-        throw new KafkaConnectorException(
-          ExaError
-            .messageBuilder("E-KCE-21")
-            .message(genericErrorMessage(), topic)
-            .message("Provided topic is not valid.")
-            .mitigation("Please make sure that the Kafka topic is valid.")
-            .toString(),
-          exception
-        )
-      case exception: TimeoutException =>
-        throw new KafkaConnectorException(
-          ExaError
-            .messageBuilder("E-KCE-22")
-            .message(genericErrorMessage(), topic)
-            .message("Timeout trying to connect to Kafka brokers.")
-            .mitigation(
-              "Please ensure that there is a network connection between Kafka brokers and the Exasol datanode."
-            )
-            .mitigation("Similarly check that Kafka advertised listeners are reachable from Exasol cluster.")
-            .toString(),
-          exception
-        )
-      case exception: AuthorizationException =>
-        throw new KafkaConnectorException(
-          ExaError
-            .messageBuilder("E-KCE-23")
-            .message(genericErrorMessage(), topic)
-            .message(
-              "A consumer or a consumer group is not allowed to read the given topic. Cause: " + exception.getMessage()
-            )
-            .mitigation("Please make sure that the topic is readable by this consumer or consumer groups")
-            .toString(),
-          exception
-        )
-      case exception: AuthenticationException =>
-        throw new KafkaConnectorException(
-          ExaError
-            .messageBuilder("E-KCE-24")
-            .message(genericErrorMessage(), topic)
-            .message("Failed to authenticate to the Kafka cluster. Cause: " + exception.getMessage())
-            .mitigation("Please ensure that SASL credentials and mechanisms are correct for authentication.")
-            .toString(),
-          exception
-        )
-      case exception: Throwable =>
-        throw new KafkaConnectorException(
-          ExaError
-            .messageBuilder("F-KCE-4")
-            .message(genericErrorMessage(), topic)
-            .message("It occurs for partition {{PARTITION_ID}} in node {{NODE_ID}} and vm {{VM_ID}}.")
-            .parameter("PARTITION_ID", String.valueOf(partitionId))
-            .parameter("NODE_ID", String.valueOf(nodeId))
-            .parameter("VM_ID", vmId)
-            .ticketMitigation()
-            .toString(),
-          exception
-        )
+      case e: Throwable => handleExceptions(e)
     } finally {
       consumer.close()
     }
   }
-
-  private[this] def genericErrorMessage(): String =
-    "Error consuming Kafka topic {{TOPIC}} data."
 
   private[this] def updateRecordOffset(currentOffset: Long): Long =
     if (currentOffset == -1) {
@@ -159,10 +90,7 @@ class KafkaRecordConsumer(
     consumer
   }
 
-  private[this] def emitRecords(
-    iterator: ExaIterator,
-    records: ConsumerRecords[FieldType, FieldType]
-  ): Long = {
+  private[this] def emitRecords(iterator: ExaIterator, records: ConsumerRecords[FieldType, FieldType]): Long = {
     var lastRecordOffset = -1L
     records.asScala.foreach { record =>
       lastRecordOffset = record.offset()
@@ -178,11 +106,7 @@ class KafkaRecordConsumer(
     lastRecordOffset
   }
 
-  private[this] def shouldContinue(
-    recordOffset: Long,
-    recordCount: Int,
-    totalRecordCount: Long
-  ): Boolean =
+  private[this] def shouldContinue(recordOffset: Long, recordCount: Int, totalRecordCount: Long): Boolean =
     (properties
       .isConsumeAllOffsetsEnabled() && recordOffset < partitionEndOffset) ||
       (recordCount >= minRecordsPerRun && totalRecordCount < maxRecordsPerRun)
@@ -200,6 +124,62 @@ class KafkaRecordConsumer(
     val endOffset = partitionEndOffsets.get(topicPartition) - 1
     logger.info(s"The last record offset for partition '$partitionId' is '$endOffset'.")
     endOffset
+  }
+
+  private[this] def handleExceptions(throwable: Throwable): Unit = throwable match {
+    case exception: IllegalStateException =>
+      throw new KafkaConnectorException(
+        ExaError
+          .messageBuilder("E-KCE-20")
+          .message(ERROR_POLLING_TOPIC_DATA, topic)
+          .message("Consumer is not subscribed to the given topic or it is not assigned any partition of the topic.")
+          .mitigation("Please check that the Kafka topic is available and valid.")
+          .toString(),
+        exception
+      )
+    case exception: InvalidTopicException =>
+      throw new KafkaConnectorException(
+        ExaError
+          .messageBuilder("E-KCE-21")
+          .message(ERROR_POLLING_TOPIC_DATA, topic)
+          .message("Provided topic is not valid.")
+          .mitigation("Please make sure that the Kafka topic is valid.")
+          .toString(),
+        exception
+      )
+    case exception: AuthorizationException =>
+      throw new KafkaConnectorException(
+        ExaError
+          .messageBuilder("E-KCE-22")
+          .message(ERROR_POLLING_TOPIC_DATA, topic)
+          .message(AUTHORIZATION_ERROR_MESSAGE + exception.getMessage())
+          .mitigation(AUTHORIZATION_ERROR_MITIGATION)
+          .toString(),
+        exception
+      )
+    case exception: AuthenticationException =>
+      throw new KafkaConnectorException(
+        ExaError
+          .messageBuilder("E-KCE-23")
+          .message(ERROR_POLLING_TOPIC_DATA, topic)
+          .message(AUTHENTICATION_ERROR_MESSAGE + exception.getMessage())
+          .mitigation(AUTHENTICATION_ERROR_MITIGATION)
+          .toString(),
+        exception
+      )
+    case exception: Throwable =>
+      throw new KafkaConnectorException(
+        ExaError
+          .messageBuilder("F-KCE-4")
+          .message(ERROR_POLLING_TOPIC_DATA, topic)
+          .message("It occurs for partition {{PARTITION_ID}} in node {{NODE_ID}} and vm {{VM_ID}}.")
+          .parameter("PARTITION_ID", String.valueOf(partitionId))
+          .parameter("NODE_ID", String.valueOf(nodeId))
+          .parameter("VM_ID", vmId)
+          .ticketMitigation()
+          .toString(),
+        exception
+      )
   }
 
 }
