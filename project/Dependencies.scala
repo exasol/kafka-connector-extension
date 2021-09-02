@@ -15,12 +15,11 @@ object Dependencies {
   // Test dependencies versions
   private val ScalaTestVersion = "3.2.9"
   private val ScalaTestPlusVersion = "1.0.0-M2"
-  private val MockitoCoreVersion = "3.11.2"
+  private val MockitoCoreVersion = "3.12.4"
   private val KafkaSchemaRegistryVersion = "6.2.0"
   private val ExasolTestDBBuilderVersion = "3.2.1"
-  private val ExasolTestContainersVersion = "4.0.0"
+  private val ExasolTestContainersVersion = "4.0.1"
   private val ExasolHamcrestMatcherVersion = "1.4.1"
-  private val TestContainersVersion = "1.16.0"
 
   val Resolvers: Seq[Resolver] = Seq(
     "jitpack.io" at "https://jitpack.io",
@@ -54,7 +53,8 @@ object Dependencies {
     "com.exasol" % "exasol-testcontainers" % ExasolTestContainersVersion,
     "com.exasol" % "test-db-builder-java" % ExasolTestDBBuilderVersion,
     "com.exasol" % "hamcrest-resultset-matcher" % ExasolHamcrestMatcherVersion,
-    "org.testcontainers" % "kafka" % TestContainersVersion
+    "io.confluent" % "kafka-streams-avro-serde" % KafkaAvroSerializerVersion,
+    "com.sksamuel.avro4s" %% "avro4s-core" % "4.0.10"
   ).map(_ % Test)
 
   lazy val AllDependencies: Seq[ModuleID] = RuntimeDependencies ++ TestDependencies

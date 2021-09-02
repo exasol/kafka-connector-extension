@@ -34,6 +34,15 @@ run_cleaning () {
   sbt ++$SCALA_VERSION clean assembly
 }
 
+run_formatting_checks () {
+  echo "############################################"
+  echo "#                                          #"
+  echo "#        ScalaFmt Checks                   #"
+  echo "#                                          #"
+  echo "############################################"
+  sbt ++$SCALA_VERSION scalafmtSbtCheck scalafmtCheckAll
+}
+
 run_unit_tests () {
   echo "############################################"
   echo "#                                          #"
@@ -117,6 +126,7 @@ run_clean_worktree_check () {
 
 run_self_check
 run_cleaning
+run_formatting_checks
 run_unit_tests
 run_integration_tests
 run_coverage_report

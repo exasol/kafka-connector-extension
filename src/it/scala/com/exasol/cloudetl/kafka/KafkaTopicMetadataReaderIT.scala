@@ -7,8 +7,7 @@ import com.exasol.ExaDataTypeException
 import com.exasol.ExaIterationException
 import com.exasol.ExaMetadata
 
-import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 
 @SuppressWarnings(
@@ -64,7 +63,7 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
     verify(iter, times(1)).emit(JInt.valueOf(1), JLong.valueOf(7))
   }
 
-  test("run throws if it cannot create KafkConsumer") {
+  test("run throws if it cannot create KafkaConsumer") {
     createCustomTopic(topic)
     val newProperties = properties + ("BOOTSTRAP_SERVERS" -> "kafka01.internal:9092")
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))

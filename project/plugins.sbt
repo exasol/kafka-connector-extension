@@ -13,7 +13,7 @@ addSbtPlugin("org.wartremover" % "sbt-wartremover-contrib" % "1.3.12")
 // Adds a `assembly` task to create a fat JAR with all of its
 // dependencies
 // https://github.com/sbt/sbt-assembly
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.0.0")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.1.0")
 
 // Adds most common doc api mappings
 // https://github.com/ThoughtWorksInc/sbt-api-mappings
@@ -43,4 +43,4 @@ addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.10.0-RC1")
 
 // Adds a `sbt-reproducible-builds` plugin
 // https://github.com/raboof/sbt-reproducible-builds
-addSbtPlugin("net.bzzt" % "sbt-reproducible-builds" % "0.28")
+addSbtPlugin("net.bzzt" % "sbt-reproducible-builds" % "0.30")

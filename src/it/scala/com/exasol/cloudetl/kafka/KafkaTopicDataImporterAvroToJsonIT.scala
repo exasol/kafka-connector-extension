@@ -5,10 +5,11 @@ import java.lang.{Long => JLong}
 
 import com.exasol.ExaMetadata
 
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.{times, verify, when}
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
 
@@ -22,7 +23,7 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
     publishToKafka(topic, AvroRecord("{'Value':'xyz'}", 5, 15))
 
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(3)).emit(Seq(any[Object]): _*)
     verify(iter, times(3)).emit(
@@ -60,7 +61,7 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
 
     // records at 0, 1 are already read, committed
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(1))
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(2)).emit(Seq(any[Object]): _*)
     verify(iter, times(2)).emit(
@@ -95,7 +96,7 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
 
     // comsumer in two batches each with 2 records
     val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(mock[ExaMetadata], iter)
+    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
 
     verify(iter, times(4)).emit(Seq(any[Object]): _*)
     verify(iter, times(4)).emit(
@@ -104,4 +105,21 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
       anyLong().asInstanceOf[JLong]
     )
   }
+
+  private[this] def getMockedMetadata(): ExaMetadata = {
+    val meta = mock[ExaMetadata]
+    when(meta.getOutputColumnCount()).thenReturn(3L)
+    when(meta.getOutputColumnType(anyInt())).thenAnswer(new Answer[Class[_]]() {
+      override def answer(invocation: InvocationOnMock): Class[_] = {
+        val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+        Seq(
+          classOf[String],
+          classOf[JInt],
+          classOf[JLong]
+        )(columnIndex)
+      }
+    })
+    meta
+  }
+
 }

@@ -31,6 +31,7 @@ object KafkaTopicDataImporter extends LazyLogging {
     val partitionId = iterator.getInteger(PARTITION_ID_INDEX)
     val partitionNextOffset = iterator.getLong(MAXIMUM_OFFSET_INDEX) + 1L
     val outputColumnCount = metadata.getOutputColumnCount().toInt
+    val outputColumnTypes: Seq[Class[_]] = (0 until outputColumnCount).map(x => metadata.getOutputColumnType(x))
     val nodeId = metadata.getNodeId()
     val vmId = metadata.getVmId()
     logger.info(
@@ -41,6 +42,7 @@ object KafkaTopicDataImporter extends LazyLogging {
       kafkaProperties,
       partitionId,
       partitionNextOffset,
+      outputColumnTypes,
       outputColumnCount,
       nodeId,
       vmId
