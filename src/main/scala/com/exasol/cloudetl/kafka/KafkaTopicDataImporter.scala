@@ -2,6 +2,7 @@ package com.exasol.cloudetl.kafka
 
 import com.exasol.ExaIterator
 import com.exasol.ExaMetadata
+import com.exasol.cloudetl.kafka.KafkaConnectorConstants.KEY_VALUE_PROPERTIES_INDEX
 import com.exasol.cloudetl.kafka.consumer.KafkaRecordConsumer
 
 import com.typesafe.scalalogging.LazyLogging
@@ -11,6 +12,9 @@ import com.typesafe.scalalogging.LazyLogging
  * a Kafka topic into an Exasol table.
  */
 object KafkaTopicDataImporter extends LazyLogging {
+
+  private[this] val PARTITION_ID_INDEX: Int = 1
+  private[this] val MAXIMUM_OFFSET_INDEX: Int = 2
 
   /**
    * Consumes Kafka topic records and emits them into an Exasol table.
@@ -23,9 +27,9 @@ object KafkaTopicDataImporter extends LazyLogging {
    * offset as metadata.
    */
   def run(metadata: ExaMetadata, iterator: ExaIterator): Unit = {
-    val kafkaProperties = KafkaConsumerProperties(iterator.getString(0), metadata)
-    val partitionId = iterator.getInteger(1)
-    val partitionNextOffset = iterator.getLong(2) + 1L
+    val kafkaProperties = KafkaConsumerProperties(iterator.getString(KEY_VALUE_PROPERTIES_INDEX), metadata)
+    val partitionId = iterator.getInteger(PARTITION_ID_INDEX)
+    val partitionNextOffset = iterator.getLong(MAXIMUM_OFFSET_INDEX) + 1L
     val outputColumnCount = metadata.getOutputColumnCount().toInt
     val outputColumnTypes: Seq[Class[_]] = (0 until outputColumnCount).map(x => metadata.getOutputColumnType(x))
     val nodeId = metadata.getNodeId()

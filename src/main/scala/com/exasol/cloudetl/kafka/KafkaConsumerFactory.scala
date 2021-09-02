@@ -8,6 +8,7 @@ import com.exasol.cloudetl.kafka.KafkaConsumerProperties._
 import com.exasol.errorreporting.ExaError
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.common.KafkaException
 import org.apache.kafka.common.serialization.Deserializer
 
 /**
@@ -33,7 +34,7 @@ object KafkaConsumerFactory {
     try {
       new KafkaConsumer(properties.getProperties(), keyDeserializer, valueDeserializer)
     } catch {
-      case exception: Throwable =>
+      case exception: KafkaException =>
         throw new KafkaConnectorException(
           ExaError
             .messageBuilder("F-KCE-1")

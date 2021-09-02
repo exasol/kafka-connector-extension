@@ -79,7 +79,7 @@ cd kafka-connector-extension
 Create an assembled jar file,
 
 ```bash
-./sbtx assembly
+sbt assembly
 ```
 
 The packaged jar file should be located at

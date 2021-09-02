@@ -15,6 +15,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
+import org.apache.kafka.common.errors._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -41,8 +42,7 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   )
   private[this] val defaultTimeout = Duration.ofMillis(30000)
   private[this] val defaultEndOffset = 4L
-  private[this] val emptyConsumerRecords =
-    new ConsumerRecords[FieldType, FieldType](Collections.emptyMap())
+  private[this] val emptyConsumerRecords = new ConsumerRecords[FieldType, FieldType](Collections.emptyMap())
 
   type FieldType = Map[FieldSpecification, Seq[Any]]
   private[this] var iterator: ExaIterator = _
@@ -132,6 +132,40 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
       .thenReturn(recordBatch(Seq(2, 3)))
     when(consumer.position(topicPartition)).thenReturn(1L)
     KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(2)
+  }
+
+  test("throws illegal state exception") {
+    assertExpectedException(new IllegalStateException(), "E-KCE-20")
+  }
+
+  test("throws invalid topic exception") {
+    assertExpectedException(new InvalidTopicException(), "E-KCE-21")
+  }
+
+  test("throws authorization exception") {
+    assertExpectedException(new AuthorizationException("ErrorCause"), "E-KCE-22", Option("ErrorCause"))
+  }
+
+  test("throws authentication exception") {
+    assertExpectedException(new AuthenticationException("authError"), "E-KCE-23", Option("authError"))
+  }
+
+  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
+  private[this] def assertExpectedException(
+    exception: Exception,
+    errorCode: String,
+    cause: Option[String] = None
+  ): Unit = {
+    when(consumer.poll(defaultTimeout)).thenThrow(exception)
+    val thrown = intercept[KafkaConnectorException] {
+      KafkaImportChecker(consumeAllOffsetsProperties).assertEmitCount(1)
+    }
+    assert(thrown.getMessage().startsWith(errorCode))
+    cause.fold {} { case message =>
+      thrown.getMessage().contains(message)
+      ()
+    }
+    ()
   }
 
   private[this] def recordBatch(offsets: Seq[Long]): ConsumerRecords[FieldType, FieldType] = {
