@@ -1,8 +1,10 @@
-# Kafka Connector Extension 1.4.0, released 2021-??-??
+# Kafka Connector Extension 1.4.0, released 2021-09-10
 
-Code name:
+Code name: Automatic Timestamp Converter
 
 ## Summary
+
+In this release, we added feature to convert long values to timestamps since epoch. In addition, we improved exceptions by adding our unified error codes.
 
 ## Features
 
