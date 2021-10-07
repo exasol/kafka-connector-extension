@@ -7,7 +7,7 @@ import sbt.librarymanagement.InclExclRule
 object Dependencies {
 
   // Runtime dependencies versions
-  private val ImportExportUDFVersion = "0.2.0"
+  private val ImportExportUDFVersion = "0.3.0-SNAPSHOT"
   private val KafkaClientsVersion = "2.8.0"
   private val KafkaAvroSerializerVersion = "6.2.0"
   private val ScalaCollectionCompatVersion = "2.5.0"
@@ -22,6 +22,7 @@ object Dependencies {
   private val ExasolHamcrestMatcherVersion = "1.4.1"
 
   val Resolvers: Seq[Resolver] = Seq(
+     Resolver.mavenLocal,
     "jitpack.io" at "https://jitpack.io",
     "Confluent Maven Repo" at "https://packages.confluent.io/maven/",
     "Exasol Releases" at "https://maven.exasol.com/artifactory/exasol-releases"
