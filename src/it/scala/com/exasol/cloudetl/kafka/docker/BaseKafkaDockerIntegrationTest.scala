@@ -20,7 +20,7 @@ import org.testcontainers.utility.DockerImageName
 
 trait BaseKafkaDockerIntegrationTest extends BaseDockerIntegrationTest {
 
-  private[this] val DEFAULT_CONFLUENT_PLATFORM_VERSION = "6.2.0"
+  private[this] val DEFAULT_CONFLUENT_PLATFORM_VERSION = "6.2.1"
   private[this] val ZOOKEEPER_PORT = 2181
   private[this] val KAFKA_EXTERNAL_PORT = 29092
   private[this] val SCHEMA_REGISTRY_PORT = 8081
