@@ -4,6 +4,10 @@ Code name:
 
 ## Summary
 
+## Bug Fixes
+
+* #54: Fixed issue with setting empty values to property keys
+
 ## Refactoring
 
 * #55: Added optional check for keystore or truststore files when using `SASL_SSL` protocol
