@@ -7,7 +7,7 @@ import sbt.librarymanagement.InclExclRule
 object Dependencies {
 
   // Runtime dependencies versions
-  private val ImportExportUDFVersion = "0.3.0-SNAPSHOT"
+  private val ImportExportUDFVersion = "0.3.1"
   private val KafkaClientsVersion = "2.8.0"
   private val KafkaAvroSerializerVersion = "6.2.0"
   private val ScalaCollectionCompatVersion = "2.5.0"

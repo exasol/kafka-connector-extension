@@ -13,8 +13,8 @@ import org.scalatest.Assertions.{===, unconstrainedEquality}
  */
 class JsonArgumentMatcher(expectedJson: String) extends ArgumentMatcher[String] {
 
-  private[this] val expectedJsonNode = JsonMapper.parseJson[JsonNode](expectedJson)
+  private[this] val expectedJsonNode = JsonMapper.fromJson[JsonNode](expectedJson)
 
   override final def matches(argument: String): Boolean =
-    JsonMapper.parseJson[JsonNode](argument) === expectedJsonNode
+    JsonMapper.fromJson[JsonNode](argument) === expectedJsonNode
 }
