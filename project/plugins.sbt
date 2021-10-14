@@ -21,7 +21,7 @@ addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings" % "3.0.0")
 
 // Adds Scala Code Coverage (Scoverage) used during unit tests
 // http://github.com/scoverage/sbt-scoverage
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.8.2")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.0")
 
 // Adds SBT Coveralls plugin for uploading Scala code coverage to
 // https://coveralls.io

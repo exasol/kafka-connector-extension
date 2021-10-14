@@ -141,6 +141,6 @@ class JsonDeserializerTest extends AnyFunSuite {
     val values = row(RecordValue)
     assert(values.size === 1)
     val json = values.headOption.map(_.asInstanceOf[String]).getOrElse("")
-    assert(JsonMapper.parseJson[JsonNode](json) === JsonMapper.parseJson[JsonNode](sourceRecord))
+    assert(JsonMapper.fromJson[JsonNode](json) === JsonMapper.fromJson[JsonNode](sourceRecord))
   }
 }

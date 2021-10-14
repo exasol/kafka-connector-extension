@@ -113,13 +113,13 @@ class GenericRecordDeserializerTest extends AnyFunSuite with MockitoSugar {
     assert(row(RecordValue).headOption.getOrElse("").isInstanceOf[String])
 
     val jsonValueInRow = row(RecordValue).headOption.map(_.asInstanceOf[String]).getOrElse("")
-    val expectedJson = JsonMapper.parseJson[JsonNode](
+    val expectedJson = JsonMapper.fromJson[JsonNode](
       """|{"field1": "val1",
          |"field2": 11,
          |"complex": [1,2,3]}
          |""".stripMargin
     )
-    assert(JsonMapper.parseJson[JsonNode](jsonValueInRow) === expectedJson)
+    assert(JsonMapper.fromJson[JsonNode](jsonValueInRow) === expectedJson)
   }
 
 }

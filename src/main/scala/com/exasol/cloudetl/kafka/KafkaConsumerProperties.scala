@@ -9,8 +9,9 @@ import scala.io.{Codec, Source}
 import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaMetadata
+import com.exasol.cloudetl.kafka.KafkaConstants._
 import com.exasol.common.AbstractProperties
-import com.exasol.common.CommonProperties
+import com.exasol.common.PropertiesParser
 import com.exasol.errorreporting.ExaError
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
@@ -152,13 +153,11 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
 
   /** Checks if {@code SECURITY_PROTOCOL} is using {@code SSL} channel. */
   final def isSSLEnabled(): Boolean =
-    List(SecurityProtocol.SSL, SecurityProtocol.SASL_SSL)
-      .contains(SecurityProtocol.valueOf(getSecurityProtocol()))
+    SSL_PROTOCOLS.contains(SecurityProtocol.valueOf(getSecurityProtocol()))
 
   /** Checks if {@code SECURITY_PROTOCOL} is using {@code SASL} authentication. */
   final def isSASLEnabled(): Boolean =
-    List(SecurityProtocol.SASL_PLAINTEXT, SecurityProtocol.SASL_SSL)
-      .contains(SecurityProtocol.valueOf(getSecurityProtocol()))
+    SASL_PROTOCOLS.contains(SecurityProtocol.valueOf(getSecurityProtocol()))
 
   /** Checks if the Schema Registry URL property is set. */
   final def hasSchemaRegistryUrl(): Boolean =
@@ -253,15 +252,13 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
    * otherwise returns the default value.
    */
   final def getSASLMechanism(): String =
-    get(SASL_MECHANISM.userPropertyName)
-      .fold(SASL_MECHANISM.defaultValue)(identity)
+    get(SASL_MECHANISM.userPropertyName).fold(SASL_MECHANISM.defaultValue)(identity)
 
   /**
    * Returns the user provided {@code SASL_JAAS_LOCATION} property value.
    */
   final def getSASLJaasLocation(): String =
-    get(SASL_JAAS_LOCATION.userPropertyName)
-      .fold(SASL_JAAS_LOCATION.defaultValue)(identity)
+    get(SASL_JAAS_LOCATION.userPropertyName).fold(SASL_JAAS_LOCATION.defaultValue)(identity)
 
   /**
    * Returns SASL JAAS config file content.
@@ -340,8 +337,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
    * parsed from user provided Exasol named connection object.
    */
   final def mergeWithConnectionObject(metadata: ExaMetadata): KafkaConsumerProperties = {
-    val connectionParsedMap =
-      parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName, Option(metadata))
+    val connectionParsedMap = parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName, Option(metadata))
     val newProperties = properties ++ connectionParsedMap
     new KafkaConsumerProperties(newProperties)
   }
@@ -352,7 +348,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
    * The resulting string is sorted by keys ordering.
    */
   final def mkString(): String =
-    mkString(KEY_VALUE_SEPARATOR, PROPERTY_SEPARATOR)
+    mkString(INNER_PROPERTY_SEPARATOR, INNER_KEYVALUE_ASSIGNMENT)
 
   private[this] def validateSaslJaasLocationFileExist(saslJaasLocation: String): Unit =
     if (!Files.isRegularFile(Paths.get(saslJaasLocation))) {
@@ -370,7 +366,10 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
 /**
  * A companion object for [[KafkaConsumerProperties]] class.
  */
-object KafkaConsumerProperties extends CommonProperties {
+object KafkaConsumerProperties {
+
+  val INNER_PROPERTY_SEPARATOR: String = ";"
+  val INNER_KEYVALUE_ASSIGNMENT: String = " -> "
 
   /**
    * Internal configuration helper class.
@@ -803,13 +802,16 @@ object KafkaConsumerProperties extends CommonProperties {
   def apply(string: String, metadata: ExaMetadata): KafkaConsumerProperties =
     createConsumerProperties(mapFromString(string), Option(metadata))
 
+  private[this] def mapFromString(string: String): Map[String, String] =
+    PropertiesParser(INNER_PROPERTY_SEPARATOR, INNER_KEYVALUE_ASSIGNMENT).mapFromString(string)
+
   private[this] def createConsumerProperties(
     params: Map[String, String],
     metadataOpt: Option[ExaMetadata]
   ): KafkaConsumerProperties = {
     val properties = new KafkaConsumerProperties(params)
+    validateNoSSLCredentials(properties)
     metadataOpt.fold(properties) { metadata =>
-      validateNoSSLCredentials(properties)
       if (properties.hasNamedConnection()) {
         val newProperties = properties.mergeWithConnectionObject(metadata)
         validateSSLLocationFilesExist(newProperties)
@@ -842,28 +844,35 @@ object KafkaConsumerProperties extends CommonProperties {
   }
 
   private[this] def validateSSLLocationFilesExist(properties: KafkaConsumerProperties): Unit =
-    if (
-      List(SecurityProtocol.SSL, SecurityProtocol.SASL_SSL)
-        .contains(SecurityProtocol.valueOf(properties.getSecurityProtocol()))
-    ) {
-      if (!Files.isRegularFile(Paths.get(properties.getSSLKeystoreLocation()))) {
-        throw new KafkaConnectorException(
-          ExaError
-            .messageBuilder("E-KCE-7")
-            .message("Unable to find the SSL keystore file at {{LOCATION}}.", properties.getSSLKeystoreLocation())
-            .mitigation(BUCKETFS_CHECK_MITIGATION)
-            .toString()
-        )
-      }
-      if (!Files.isRegularFile(Paths.get(properties.getSSLTruststoreLocation()))) {
-        throw new KafkaConnectorException(
-          ExaError
-            .messageBuilder("E-KCE-8")
-            .message("Unable to find the SSL truststore file at {{LOCATION}}.", properties.getSSLTruststoreLocation())
-            .mitigation(BUCKETFS_CHECK_MITIGATION)
-            .toString()
-        )
-      }
+    if (properties.isSSLEnabled()) {
+      validateKeystoreLocation(properties.getSSLKeystoreLocation())
+      validateTrustStoreLocation(properties.getSSLTruststoreLocation())
+    } else if (properties.isSASLEnabled()) {
+      // for SASL protocol, validate location if files exist
+      properties.get(SSL_KEYSTORE_LOCATION.userPropertyName).foreach(validateKeystoreLocation)
+      properties.get(SSL_TRUSTSTORE_LOCATION.userPropertyName).foreach(validateTrustStoreLocation)
+    }
+
+  private[this] def validateKeystoreLocation(path: String): Unit =
+    if (!Files.isRegularFile(Paths.get(path))) {
+      throw new KafkaConnectorException(
+        ExaError
+          .messageBuilder("E-KCE-7")
+          .message("Unable to find the SSL keystore file at {{LOCATION}}.", path)
+          .mitigation(BUCKETFS_CHECK_MITIGATION)
+          .toString()
+      )
+    }
+
+  private[this] def validateTrustStoreLocation(path: String): Unit =
+    if (!Files.isRegularFile(Paths.get(path))) {
+      throw new KafkaConnectorException(
+        ExaError
+          .messageBuilder("E-KCE-8")
+          .message("Unable to find the SSL truststore file at {{LOCATION}}.", path)
+          .mitigation(BUCKETFS_CHECK_MITIGATION)
+          .toString()
+      )
     }
 
 }
