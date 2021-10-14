@@ -22,6 +22,17 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   private[this] def errorMessage(key: String): String =
     s"Please provide a value for the $key property!"
 
+  test("consumer properties can encode and decode property with empty value") {
+    properties = Map(
+      "BOOTSTRAP_SERVERS" -> "kafka01",
+      "SSL_ENDPOINT_IDENTIFICATION_ALGORITHM" -> "",
+      "GROUP_ID" -> ""
+    )
+    val consumer = KafkaConsumerProperties(KafkaConsumerProperties(properties).mkString())
+    assert(consumer.getSSLEndpointIdentificationAlgorithm() === "")
+    assert(consumer.getGroupId() === "")
+  }
+
   test("getBootstrapServers returns bootstrap servers property value") {
     val bootstrapServers = "kafka01.example.com,kafka02.example.com"
     properties = Map("BOOTSTRAP_SERVERS" -> bootstrapServers)
