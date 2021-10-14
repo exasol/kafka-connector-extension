@@ -27,7 +27,7 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
   implicit val stringSerializer = new StringSerializer
 
   private[this] def assertJson(actual: String, expected: String): Unit = {
-    assert(JsonMapper.parseJson[JsonNode](actual) === JsonMapper.parseJson[JsonNode](expected))
+    assert(JsonMapper.fromJson[JsonNode](actual) === JsonMapper.fromJson[JsonNode](expected))
     ()
   }
 

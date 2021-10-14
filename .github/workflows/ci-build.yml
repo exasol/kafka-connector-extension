@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         scala: [ 2.13.6 ]
-        exasol-docker-version: [ 6.2.16-d1, 7.0.12, 7.1.0-d1 ]
+        exasol-docker-version: [ 6.2.17-d1, 7.0.13, 7.1.1 ]
 
     steps:
       - name: Checkout the Repository

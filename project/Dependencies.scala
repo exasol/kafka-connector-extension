@@ -7,19 +7,19 @@ import sbt.librarymanagement.InclExclRule
 object Dependencies {
 
   // Runtime dependencies versions
-  private val ImportExportUDFVersion = "0.2.0"
-  private val KafkaClientsVersion = "2.8.0"
-  private val KafkaAvroSerializerVersion = "6.2.0"
+  private val ImportExportUDFVersion = "0.3.1"
+  private val KafkaClientsVersion = "3.0.0"
+  private val KafkaAvroSerializerVersion = "6.2.1"
   private val ScalaCollectionCompatVersion = "2.5.0"
 
   // Test dependencies versions
-  private val ScalaTestVersion = "3.2.9"
+  private val ScalaTestVersion = "3.2.10"
   private val ScalaTestPlusVersion = "1.0.0-M2"
-  private val MockitoCoreVersion = "3.12.4"
-  private val KafkaSchemaRegistryVersion = "6.2.0"
+  private val MockitoCoreVersion = "4.0.0"
+  private val KafkaSchemaRegistryVersion = "6.2.1"
   private val ExasolTestDBBuilderVersion = "3.2.1"
-  private val ExasolTestContainersVersion = "4.0.1"
-  private val ExasolHamcrestMatcherVersion = "1.4.1"
+  private val ExasolTestContainersVersion = "5.1.0"
+  private val ExasolHamcrestMatcherVersion = "1.5.1"
 
   val Resolvers: Seq[Resolver] = Seq(
     "jitpack.io" at "https://jitpack.io",
@@ -54,7 +54,7 @@ object Dependencies {
     "com.exasol" % "test-db-builder-java" % ExasolTestDBBuilderVersion,
     "com.exasol" % "hamcrest-resultset-matcher" % ExasolHamcrestMatcherVersion,
     "io.confluent" % "kafka-streams-avro-serde" % KafkaAvroSerializerVersion,
-    "com.sksamuel.avro4s" %% "avro4s-core" % "4.0.10"
+    "com.sksamuel.avro4s" %% "avro4s-core" % "4.0.11"
   ).map(_ % Test)
 
   lazy val AllDependencies: Seq[ModuleID] = RuntimeDependencies ++ TestDependencies
