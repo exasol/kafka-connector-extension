@@ -1,12 +1,18 @@
-# Kafka Connector Extension 1.5.0, released 2021-10-??
+# Kafka Connector Extension 1.5.0, released 2021-10-15
 
-Code name:
+Code name: Azure Event Hubs Support
 
 ## Summary
+
+In this release, we added documentation for using the connector to import data from Azure Event Hubs. Please check out the user guide for more information.
 
 ## Bug Fixes
 
 * #54: Fixed issue with setting empty values to property keys
+
+## Documentation
+
+* #56: Updated user guide with Azure Event Hubs usage information
 
 ## Refactoring
 
