@@ -474,7 +474,7 @@ FROM SCRIPT KAFKA_CONSUMER WITH
   CONNECTION_NAME         = 'KAFKA_SASL_CONNECTION';
 ```
 
-If you need more complex SASL configuration, you can create [SASL JAAS
+If you need more complex SASL configuration, you can create a [SASL JAAS
 configuration][kafka-sasl-jaas] file, upload it to Exasol BucketFS and specify
 its path into ``SASL_JAAS_LOCATION``.
 
@@ -492,11 +492,11 @@ IDENTIFIED BY 'SASL_MECHANISM=PLAIN#SASL_USERNAME=$ConnectionString#SASL_PASSWOR
 ```
 
 Please don't forget to substitute `EVENT_HUBS_NAMESPACE_CONNECTION_STRING` with
-your namespace connection string above. You can follow [Get an Event Hubs
+your namespace connection string above. You can follow the [Get an Event Hubs
 connection string][event-hubs-get-connection-string] documentation to obtain it.
 
-_You should notice that we use `#` as separator instead of usual `;`. This
-required because Azure Event Hubs namespace connection string already contains
+_You should notice that we use `#` as separator instead of usual `;`. This is
+required because the Azure Event Hubs namespace connection string already contains
 `;` in itself. Our custom separator prevents splitting it up._
 
 ### Prepare Table for Azure Event Hubs Topic
@@ -531,11 +531,11 @@ FROM SCRIPT KAFKA_EXTENSION.KAFKA_CONSUMER WITH
     TOPIC_NAME           = '<EVENT_HUB_NAME>';
 ```
 
-Please do not forget to replace with correct placeholders.
+Please do not forget to replace the placeholders with actual values.
 
-* `<EVENT_HUBS_NAMESPACE_HOST_NAME>` is a name of your Event Hubs Namespace. You
+* `<EVENT_HUBS_NAMESPACE_HOST_NAME>` is the name of your Event Hubs Namespace. You
   can find this on the overview page of your Event Hub Namespace.
-* `<EVENT_HUB_NAME>` is a name for the Event Hub (a topic in Apache Kafka terms)
+* `<EVENT_HUB_NAME>` is the name for the Event Hub (a topic in Apache Kafka terms)
   that holds data.
 
 [azure-event-hubs]: https://azure.microsoft.com/en-us/services/event-hubs/
@@ -578,16 +578,16 @@ These are optional parameters with their default values.
 * ``RECORD_FIELDS`` - A comma separated list of fields to import from the source
   record. It is recommended to set this when the structure of the Kafka records
   is not under your control and the order and/or the number of fields in the
-  record can change at any time. The options are outlined [Record Format
+  record can change at any time. The options are outlined in the [Record Format
   Configuration](#record-format-configuration) section.
 
   The default is dependent on the serialization format:
   - avro: <b><code>value.*</code></b> &mdash; All fields from the record will be
     imported.
   - json: <b><code>value</code></b> &mdash; The record will be imported as
-    single JSON string into a column.
+    a single JSON string into a column.
   - string: <b><code>value</code></b> &mdash; The record will be imported as
-    single string into a column.
+    a single string into a column.
 
 * ``GROUP_ID`` - It defines the id for this type of consumer. The default value
   is **EXASOL_KAFKA_UDFS_CONSUMERS**. It is a unique string that identifies the
