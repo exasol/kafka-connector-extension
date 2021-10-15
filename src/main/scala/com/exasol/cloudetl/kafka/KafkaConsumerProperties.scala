@@ -328,6 +328,12 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
     if (isSASLEnabled()) {
       props.put(SASL_MECHANISM.kafkaPropertyName, getSASLMechanism())
       props.put(SASL_JAAS_CONFIG.kafkaPropertyName, getSASLJaasConfig())
+      properties.get(SSL_KEYSTORE_LOCATION.userPropertyName).foreach { file =>
+        props.put(SSL_KEYSTORE_LOCATION.kafkaPropertyName, file)
+      }
+      properties.get(SSL_TRUSTSTORE_LOCATION.userPropertyName).foreach { file =>
+        props.put(SSL_TRUSTSTORE_LOCATION.kafkaPropertyName, file)
+      }
     }
     props.toMap.asInstanceOf[Map[String, AnyRef]].asJava
   }
