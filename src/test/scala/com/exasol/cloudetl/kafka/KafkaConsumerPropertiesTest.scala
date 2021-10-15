@@ -4,6 +4,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 import com.exasol.{ExaConnectionInformation, ExaMetadata}
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties._
 
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
@@ -505,16 +506,18 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val properties =
       getSecurityEnabledConsumerProperties("SASL_SSL", Option(DUMMY_KEYSTORE_FILE), Option(DUMMY_TRUSTSTORE_FILE))
     assert(properties.getSASLJaasConfig().contains(s""""pass""""))
+    assert(properties.getSSLKeystoreLocation() === s"$DUMMY_KEYSTORE_FILE")
+    assert(properties.getSSLTruststoreLocation() === s"$DUMMY_TRUSTSTORE_FILE")
   }
 
-  test("apply throws if provided keystore file is not availablewith SSL_SASL protocol") {
+  test("apply throws if provided keystore file is not available with SSL_SASL protocol") {
     val thrown = intercept[KafkaConnectorException] {
       getSecurityEnabledConsumerProperties("SASL_SSL", Option(Paths.get("ssl_keystore_file")))
     }
     assert(thrown.getMessage().contains("Unable to find the SSL keystore file"))
   }
 
-  test("apply throws if provided truststore file is not availablewith SSL_SASL protocol") {
+  test("apply throws if provided truststore file is not available with SSL_SASL protocol") {
     val thrown = intercept[KafkaConnectorException] {
       getSecurityEnabledConsumerProperties(
         "SASL_SSL",
@@ -525,13 +528,42 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(thrown.getMessage().contains("Unable to find the SSL truststore file"))
   }
 
+  test("getProperties contains keystore file with SSL_SASL protocol") {
+    val properties = getSecurityEnabledConsumerProperties("SASL_SSL", Option(DUMMY_KEYSTORE_FILE))
+    assert(properties.getProperties().get(SSL_KEYSTORE_LOCATION.kafkaPropertyName) === s"$DUMMY_KEYSTORE_FILE")
+  }
+
+  test("getProperties contains truststore file with SSL_SASL protocol") {
+    val properties = getSecurityEnabledConsumerProperties("SASL_SSL", None, Option(DUMMY_TRUSTSTORE_FILE))
+    assert(properties.getProperties().get(SSL_TRUSTSTORE_LOCATION.kafkaPropertyName) === s"$DUMMY_TRUSTSTORE_FILE")
+  }
+
+  test("getProperties contains keystore and truststore files with SSL_SASL protocol") {
+    val properties =
+      getSecurityEnabledConsumerProperties("SASL_SSL", Option(DUMMY_KEYSTORE_FILE), Option(DUMMY_TRUSTSTORE_FILE))
+    assert(properties.getProperties().get(SSL_KEYSTORE_LOCATION.kafkaPropertyName) === s"$DUMMY_KEYSTORE_FILE")
+    assert(properties.getProperties().get(SSL_TRUSTSTORE_LOCATION.kafkaPropertyName) === s"$DUMMY_TRUSTSTORE_FILE")
+  }
+
+  test("getProperties contains SSL related information with SSL_SASL protocol") {
+    val properties = getSecurityEnabledConsumerProperties("SASL_SSL", None, None)
+    assert(properties.getProperties().get(SSL_KEY_PASSWORD.kafkaPropertyName) === "kpw")
+    assert(properties.getProperties().get(SSL_KEYSTORE_PASSWORD.kafkaPropertyName) === "kspw")
+    assert(properties.getProperties().get(SSL_TRUSTSTORE_PASSWORD.kafkaPropertyName) === "tspw")
+  }
+
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments")) // fine in tests
   private[this] def getSecurityEnabledConsumerProperties(
     securityProtocol: String,
     keystoreFile: Option[Path] = None,
     truststoreFile: Option[Path] = None
   ): KafkaConsumerProperties = {
-    val properties = Map("SECURITY_PROTOCOL" -> securityProtocol, "CONNECTION_NAME" -> "SSL_CONNECTION")
+    val properties = Map(
+      "BOOTSTRAP_SERVERS" -> "kafka01",
+      "RECORD_FORMAT" -> "string",
+      "SECURITY_PROTOCOL" -> securityProtocol,
+      "CONNECTION_NAME" -> "SSL_CONNECTION"
+    )
     val metadata = mock[ExaMetadata]
     val connectionInformation = mock[ExaConnectionInformation]
     when(metadata.getConnection("SSL_CONNECTION")).thenReturn(connectionInformation)
@@ -542,6 +574,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     if (securityProtocol === "SSL") {
       addSimpleSSLParameters(stringBuilder)
     } else if (securityProtocol === "SASL_SSL") {
+      addSimpleSSLParameters(stringBuilder)
+      stringBuilder.append(";")
       addSimpleSASLParameters(stringBuilder)
     }
     when(connectionInformation.getPassword()).thenReturn(stringBuilder.toString())
@@ -549,7 +583,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   }
 
   private[this] def addSimpleSSLParameters(sb: StringBuilder): Unit = {
-    sb.append("SSL_KEY_PASSWORD=pass123;SSL_KEYSTORE_PASSWORD=pass123;SSL_TRUSTSTORE_PASSWORD=pass123")
+    sb.append("SSL_KEY_PASSWORD=kpw;SSL_KEYSTORE_PASSWORD=kspw;SSL_TRUSTSTORE_PASSWORD=tspw")
     ()
   }
 
