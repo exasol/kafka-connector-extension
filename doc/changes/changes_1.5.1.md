@@ -1,10 +1,10 @@
 # Kafka Connector Extension 1.5.1, released 2021-10-15
 
-Code name: Fixed correctly setting SSL keystore and truststore files
+Code name: Fixed setting SSL keystore and truststore files
 
 ## Summary
 
-This release fixes bug that skips setting SSL keystore and truststore files when using `SASL_SSL` protocol.
+This release fixes a bug that skips setting SSL keystore and truststore files when using `SASL_SSL` protocol.
 
 ## Bug Fixes
 
