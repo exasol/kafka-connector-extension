@@ -481,7 +481,8 @@ its path into ``SASL_JAAS_LOCATION``.
 ## Importing Data From Azure Event Hubs
 
 To import data from [Azure Event Hubs][azure-event-hubs], we are going to create
-a secure **SASL_SSL** connection to encode the credentials.
+a secure **SASL_SSL** connection to encode the credentials. Please note that for
+this you need to choose **Standard** pricing tier.
 
 ```sql
 CREATE OR REPLACE CONNECTION EVENT_HUBS_SASL_CONNECTION
