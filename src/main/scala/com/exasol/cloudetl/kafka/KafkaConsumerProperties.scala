@@ -328,15 +328,23 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
     if (isSASLEnabled()) {
       props.put(SASL_MECHANISM.kafkaPropertyName, getSASLMechanism())
       props.put(SASL_JAAS_CONFIG.kafkaPropertyName, getSASLJaasConfig())
-      properties.get(SSL_KEYSTORE_LOCATION.userPropertyName).foreach { file =>
-        props.put(SSL_KEYSTORE_LOCATION.kafkaPropertyName, file)
-      }
-      properties.get(SSL_TRUSTSTORE_LOCATION.userPropertyName).foreach { file =>
-        props.put(SSL_TRUSTSTORE_LOCATION.kafkaPropertyName, file)
-      }
+      addOptionalParametersForSASL(props)
     }
     props.toMap.asInstanceOf[Map[String, AnyRef]].asJava
   }
+
+  private[this] def addOptionalParametersForSASL(props: MMap[String, String]): Unit =
+    Seq(
+      SSL_KEY_PASSWORD,
+      SSL_KEYSTORE_PASSWORD,
+      SSL_KEYSTORE_LOCATION,
+      SSL_TRUSTSTORE_PASSWORD,
+      SSL_TRUSTSTORE_LOCATION
+    ).foreach { config =>
+      properties.get(config.userPropertyName).foreach { value =>
+        props.put(config.kafkaPropertyName, value)
+      }
+    }
 
   /**
    * Returns a new [[KafkaConsumerProperties]] that merges the key-value pairs

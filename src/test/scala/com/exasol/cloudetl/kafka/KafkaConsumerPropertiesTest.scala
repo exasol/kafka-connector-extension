@@ -545,6 +545,13 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(properties.getProperties().get(SSL_TRUSTSTORE_LOCATION.kafkaPropertyName) === s"$DUMMY_TRUSTSTORE_FILE")
   }
 
+  test("getProperties contains SSL related information with SSL_SASL protocol") {
+    val properties = getSecurityEnabledConsumerProperties("SASL_SSL", None, None)
+    assert(properties.getProperties().get(SSL_KEY_PASSWORD.kafkaPropertyName) === "kpw")
+    assert(properties.getProperties().get(SSL_KEYSTORE_PASSWORD.kafkaPropertyName) === "kspw")
+    assert(properties.getProperties().get(SSL_TRUSTSTORE_PASSWORD.kafkaPropertyName) === "tspw")
+  }
+
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments")) // fine in tests
   private[this] def getSecurityEnabledConsumerProperties(
     securityProtocol: String,
@@ -567,6 +574,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     if (securityProtocol === "SSL") {
       addSimpleSSLParameters(stringBuilder)
     } else if (securityProtocol === "SASL_SSL") {
+      addSimpleSSLParameters(stringBuilder)
+      stringBuilder.append(";")
       addSimpleSASLParameters(stringBuilder)
     }
     when(connectionInformation.getPassword()).thenReturn(stringBuilder.toString())
@@ -574,7 +583,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   }
 
   private[this] def addSimpleSSLParameters(sb: StringBuilder): Unit = {
-    sb.append("SSL_KEY_PASSWORD=pass123;SSL_KEYSTORE_PASSWORD=pass123;SSL_TRUSTSTORE_PASSWORD=pass123")
+    sb.append("SSL_KEY_PASSWORD=kpw;SSL_KEYSTORE_PASSWORD=kspw;SSL_TRUSTSTORE_PASSWORD=tspw")
     ()
   }
 
