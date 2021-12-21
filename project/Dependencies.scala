@@ -8,7 +8,7 @@ object Dependencies {
 
   // Runtime dependencies versions
   private val ImportExportUDFVersion = "0.3.1"
-  private val KafkaClientsVersion = "7.0.1-ce"
+  private val KafkaClientsVersion = "3.0.0"
   private val KafkaAvroSerializerVersion = "7.0.1"
   private val ScalaCollectionCompatVersion = "2.6.0"
 
@@ -39,7 +39,8 @@ object Dependencies {
       exclude ("com.fasterxml.jackson.core", "jackson-databind")
       exclude ("io.swagger", "swagger-core")
       exclude ("io.swagger", "swagger-models"),
-    "org.scala-lang.modules" %% "scala-collection-compat" % ScalaCollectionCompatVersion
+    "org.scala-lang.modules" %% "scala-collection-compat" % ScalaCollectionCompatVersion,
+    "com.google.guava" % "guava" % "31.0.1-jre"
   )
 
   lazy val TestDependencies: Seq[ModuleID] = Seq(
