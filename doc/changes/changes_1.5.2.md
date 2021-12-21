@@ -8,7 +8,7 @@ This release fixes Log4J vulnerabilities and updates dependencies.
 
 ## Bug Fixes
 
-* #xx: Fixed Log4J vulnerabilities and updated dependencies
+* #64: Fixed Log4J vulnerabilities and updated dependencies
 
 ## Dependency Updates
 
