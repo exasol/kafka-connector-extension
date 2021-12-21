@@ -1,5 +1,6 @@
 # Releases
 
+* [1.5.2](changes_1.5.2.md)
 * [1.5.1](changes_1.5.1.md)
 * [1.5.0](changes_1.5.0.md)
 * [1.4.0](changes_1.4.0.md)

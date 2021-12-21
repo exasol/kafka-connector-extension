@@ -10,7 +10,7 @@ lazy val orgSettings = Seq(
 )
 
 lazy val buildSettings = Seq(
-  scalaVersion := "2.13.6"
+  scalaVersion := "2.13.7"
 )
 
 lazy val root =
