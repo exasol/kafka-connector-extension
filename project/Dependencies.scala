@@ -17,7 +17,7 @@ object Dependencies {
   private val ScalaTestPlusVersion = "1.0.0-M2"
   private val MockitoCoreVersion = "4.2.0"
   private val KafkaSchemaRegistryVersion = "7.0.0"
-  private val ExasolTestDBBuilderVersion = "3.2.1"
+  private val ExasolTestDBBuilderVersion = "3.2.2"
   private val ExasolTestContainersVersion = "5.1.1"
   private val ExasolHamcrestMatcherVersion = "1.5.1"
 
