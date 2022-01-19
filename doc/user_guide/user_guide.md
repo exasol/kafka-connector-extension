@@ -151,6 +151,7 @@ CREATE OR REPLACE JAVA SET SCRIPT KAFKA_METADATA(
 EMITS (partition_index DECIMAL(18, 0), max_offset DECIMAL(36,0)) AS
   %scriptclass com.exasol.cloudetl.kafka.KafkaTopicMetadataReader;
   %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
+/
 ```
 
 Please do not change the UDF script names.
