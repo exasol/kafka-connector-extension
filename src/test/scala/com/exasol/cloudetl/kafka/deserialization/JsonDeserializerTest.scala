@@ -104,16 +104,15 @@ class JsonDeserializerTest extends AnyFunSuite {
 
   test("must fail when all fields are referenced") {
     intercept[KafkaConnectorException] {
-      val row = new JsonDeserializer(
-        Seq(RecordValueFields),
-        new StringDeserializer
-      ).deserialize(
-        "randomTopic",
-        """
-          |{
-          |  "number": 1
-          |}""".stripMargin.getBytes(StandardCharsets.UTF_8)
-      )
+      new JsonDeserializer(Seq(RecordValueFields), new StringDeserializer)
+        .deserialize(
+          "randomTopic",
+          """
+            |{
+            |  "number": 1
+            |}
+            |""".stripMargin.getBytes(StandardCharsets.UTF_8)
+        )
     }
   }
 

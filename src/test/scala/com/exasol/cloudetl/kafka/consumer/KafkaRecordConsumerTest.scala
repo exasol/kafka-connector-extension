@@ -104,8 +104,7 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
       .thenReturn(emptyConsumerRecords)
       .thenThrow(new RuntimeException("test should not poll twice"))
     when(consumer.position(topicPartition)).thenReturn(4L)
-    KafkaImportChecker(consumeAllOffsetsProperties, startOffset = defaultEndOffset - 1)
-      .assertEmitCount(0)
+    KafkaImportChecker(consumeAllOffsetsProperties, startOffset = defaultEndOffset - 1).assertEmitCount(0)
   }
 
   test("returns with empty records and offset reset") {
@@ -193,7 +192,7 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
     final def assertEmitCount(count: Int): Unit = {
       val properties = new KafkaConsumerProperties(defaultProperties ++ additionalProperties)
       TestKafkaRecordConsumer(properties, startOffset).emit(iterator)
-      verify(iterator, times(count)).emit(Seq(any[Object]): _*)
+      verify(iterator, times(count)).emit(any(classOf[Array[Object]]))
     }
   }
 
