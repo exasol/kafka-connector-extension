@@ -7,14 +7,12 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import org.testcontainers.DockerClientFactory
 import org.testcontainers.containers.Network
-import org.testcontainers.utility.ResourceReaper
 
 /**
  * A reusable docker network.
  *
- * At the moment, the docker container {@code reuse} is ignored when a
- * network is attached to a container. This class creates docker network
- * that can be attached to reusable container.
+ * At the moment, the docker container {@code reuse} is ignored when a network is attached to a container. This class
+ * creates docker network that can be attached to reusable container.
  *
  * @param name name of the docker network
  * @param reuse boolean value to indicate reusability
@@ -32,7 +30,8 @@ class DockerNamedNetwork(name: String, reuse: Boolean) extends Network with Lazy
           + s"the network manually using 'docker network rm $id'."
       )
     } else {
-      ResourceReaper.instance().removeNetworkById(id)
+      DockerClientFactory.lazyClient().removeNetworkCmd(id).exec()
+      ()
     }
 
   override def apply(base: Statement, description: Description): Statement =
@@ -77,4 +76,5 @@ object DockerNamedNetwork {
     }
     namedNetworks.get(name)
   }
+
 }

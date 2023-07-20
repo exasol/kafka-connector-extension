@@ -2,7 +2,8 @@ package com.exasol.cloudetl.kafka
 
 import java.sql.ResultSet
 import java.sql.Timestamp
-import java.util.{TimeZone, UUID}
+import java.util.TimeZone
+import java.util.UUID
 
 import com.exasol.cloudetl.kafka.serde._
 import com.exasol.cloudetl.kafka.serde.AvroRecordFormat.Implicits._

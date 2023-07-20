@@ -14,9 +14,8 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
 trait BaseDockerIntegrationTest extends AnyFunSuite with BeforeAndAfterAll {
-  private[this] val JAR_DIRECTORY_PATTERN = "scala-"
   private[this] val JAR_NAME_PATTERN = "exasol-kafka-connector-extension-"
-  private[this] val DEFAULT_EXASOL_DOCKER_IMAGE = "7.1.4"
+  private[this] val DEFAULT_EXASOL_DOCKER_IMAGE = "7.1.21"
 
   val network = DockerNamedNetwork("kafka-it-tests", true)
   val exasolContainer = {
@@ -59,10 +58,8 @@ trait BaseDockerIntegrationTest extends AnyFunSuite with BeforeAndAfterAll {
   private[this] def getConnection(): java.sql.Connection =
     exasolContainer.createConnection("")
 
-  private[this] def getAssembledJarName(): String = {
-    val jarDir = findFileOrDirectory("target", JAR_DIRECTORY_PATTERN)
-    findFileOrDirectory("target/" + jarDir, JAR_NAME_PATTERN)
-  }
+  private[this] def getAssembledJarName(): String =
+    findFileOrDirectory("target/", JAR_NAME_PATTERN)
 
   private[this] def createKafkaImportDeploymentScripts(): Unit = {
     val jarPath = s"/buckets/bfsdefault/default/$assembledJarName"
@@ -97,8 +94,7 @@ trait BaseDockerIntegrationTest extends AnyFunSuite with BeforeAndAfterAll {
   }
 
   private[this] def uploadJarToBucket(): Unit = {
-    val jarDir = findFileOrDirectory("target", JAR_DIRECTORY_PATTERN)
-    val jarPath = Paths.get("target", jarDir, assembledJarName)
+    val jarPath = Paths.get("target", assembledJarName)
     exasolContainer.getDefaultBucket.uploadFile(jarPath, assembledJarName)
   }
 

@@ -1,16 +1,21 @@
 package com.exasol.cloudetl.kafka
 
-import java.lang.{Integer => JInt, Long => JLong}
+import java.lang.{Integer => JInt}
+import java.lang.{Long => JLong}
 import java.util.Collections
 
-import scala.jdk.CollectionConverters.{CollectionHasAsScala, MapHasAsJava, MapHasAsScala}
+import scala.jdk.CollectionConverters.CollectionHasAsScala
+import scala.jdk.CollectionConverters.MapHasAsJava
 
-import com.exasol.{ExaDataTypeException, ExaMetadata}
+import com.exasol.ExaDataTypeException
+import com.exasol.ExaMetadata
 
 import org.apache.kafka.clients.admin.RecordsToDelete
 import org.apache.kafka.common.TopicPartition
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
@@ -21,25 +26,25 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     publishToKafka(topic, AvroRecord("abc", 3, 13))
     publishToKafka(topic, AvroRecord("hello", 4, 14))
 
-    val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
+    val mockedIterator = mockExasolIterator(properties, Seq(0), Seq(-1))
+    KafkaTopicDataImporter.run(getMockedMetadata(), mockedIterator)
 
-    verify(iter, times(2)).emit(Seq(any[Object]): _*)
-    verify(iter, times(2)).emit(
+    verify(mockedIterator, times(2)).emit(any(classOf[Array[Object]]))
+    verify(mockedIterator, times(2)).emit(
       anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong],
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong]
     )
-    verify(iter, times(1)).emit(
+    verify(mockedIterator, times(1)).emit(
       "abc",
       JInt.valueOf(3),
       JLong.valueOf(13),
       JInt.valueOf(0),
       JLong.valueOf(0)
     )
-    verify(iter, times(1)).emit(
+    verify(mockedIterator, times(1)).emit(
       "hello",
       JInt.valueOf(4),
       JLong.valueOf(14),
@@ -50,44 +55,37 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
 
   test("run emits records when the starting offset of the topic is greater zero") {
     createCustomTopic(topic)
-
     val startingOffset = 12
-    0.until(startingOffset)
-      .foreach { recordNr =>
-        publishToKafka(
-          topic,
-          AvroRecord(
-            "Some record that we delete" +
-              "to ensure the offset does not start at zero",
-            recordNr,
-            13
-          )
-        )
-      }
+    0.until(startingOffset).foreach { recordNr =>
+      publishToKafka(
+        topic,
+        AvroRecord("Some record that we delete to ensure the offset does not start at zero", recordNr, 13)
+      )
+    }
     deleteRecordsFromTopic(topic, startingOffset)
 
     publishToKafka(topic, AvroRecord("abc", 3, 13))
     publishToKafka(topic, AvroRecord("hello", 4, 14))
 
-    val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
+    val mockedIterator = mockExasolIterator(properties, Seq(0), Seq(-1))
+    KafkaTopicDataImporter.run(getMockedMetadata(), mockedIterator)
 
-    verify(iter, times(2)).emit(Seq(any[Object]): _*)
-    verify(iter, times(2)).emit(
+    verify(mockedIterator, times(2)).emit(any(classOf[Array[Object]]))
+    verify(mockedIterator, times(2)).emit(
       anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong],
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong]
     )
-    verify(iter, times(1)).emit(
+    verify(mockedIterator, times(1)).emit(
       "abc",
       JInt.valueOf(3),
       JLong.valueOf(13),
       JInt.valueOf(0),
       JLong.valueOf(startingOffset + 0L)
     )
-    verify(iter, times(1)).emit(
+    verify(mockedIterator, times(1)).emit(
       "hello",
       JInt.valueOf(4),
       JLong.valueOf(14),
@@ -104,25 +102,25 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     publishToKafka(topic, AvroRecord("xyz", 13, 23))
 
     // records at 0, 1 are already read, committed
-    val iter = mockExasolIterator(properties, Seq(0), Seq(1))
-    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
+    val mockedIterator = mockExasolIterator(properties, Seq(0), Seq(1))
+    KafkaTopicDataImporter.run(getMockedMetadata(), mockedIterator)
 
-    verify(iter, times(2)).emit(Seq(any[Object]): _*)
-    verify(iter, times(2)).emit(
+    verify(mockedIterator, times(2)).emit(any(classOf[Array[Object]]))
+    verify(mockedIterator, times(2)).emit(
       anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong],
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong]
     )
-    verify(iter, times(1)).emit(
+    verify(mockedIterator, times(1)).emit(
       "def",
       JInt.valueOf(7),
       JLong.valueOf(17),
       JInt.valueOf(0),
       JLong.valueOf(2)
     )
-    verify(iter, times(1)).emit(
+    verify(mockedIterator, times(1)).emit(
       "xyz",
       JInt.valueOf(13),
       JLong.valueOf(23),
@@ -145,11 +143,11 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     publishToKafka(topic, AvroRecord("last", 11, 22))
 
     // comsumer in two batches each with 2 records
-    val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
+    val mockedIterator = mockExasolIterator(newProperties, Seq(0), Seq(-1))
+    KafkaTopicDataImporter.run(getMockedMetadata(), mockedIterator)
 
-    verify(iter, times(4)).emit(Seq(any[Object]): _*)
-    verify(iter, times(4)).emit(
+    verify(mockedIterator, times(4)).emit(any(classOf[Array[Object]]))
+    verify(mockedIterator, times(4)).emit(
       anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong],
@@ -166,14 +164,14 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
       "CONSUME_ALL_OFFSETS" -> "true"
     )
     createCustomTopic(topic)
-    for (i <- 1 to 5) {
+    for { i <- 1 to 5 } {
       publishToKafka(topic, AvroRecord(s"$i", i, i.toLong))
     }
-    val iter = mockExasolIterator(newProperties, Seq(0), Seq(-1))
-    KafkaTopicDataImporter.run(getMockedMetadata(), iter)
+    val mockedIterator = mockExasolIterator(newProperties, Seq(0), Seq(-1))
+    KafkaTopicDataImporter.run(getMockedMetadata(), mockedIterator)
 
-    verify(iter, times(5)).emit(Seq(any[Object]): _*)
-    verify(iter, times(5)).emit(
+    verify(mockedIterator, times(5)).emit(any(classOf[Array[Object]]))
+    verify(mockedIterator, times(5)).emit(
       anyString(),
       anyInt().asInstanceOf[JInt],
       anyLong().asInstanceOf[JLong],
@@ -219,11 +217,9 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
     withAdminClient { client =>
       val allPartitions = client
         .describeTopics(Collections.singletonList(topic))
-        .values
-        .asScala
-        .values
-        .head
+        .allTopicNames()
         .get()
+        .get(topic)
         .partitions()
         .asScala
         .map(tpi => new TopicPartition(topic, tpi.partition()))

@@ -51,8 +51,7 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
     verify(iter, times(1)).emit(JInt.valueOf(2), JLong.valueOf(-1))
   }
 
-  // Do not emit partitionId maxOffset pairs if partitionId is not
-  // available in topic partitions
+  // Do not emit partitionId maxOffset pairs if partitionId is not available in topic partitions
   test("run emits partitionId maxOffset pairs with fewer topic partitions") {
     createCustomTopic(topic, partitions = 2)
     val iter = mockExasolIterator(properties, Seq(1, 3), Seq(7, 17))

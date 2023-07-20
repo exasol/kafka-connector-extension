@@ -6,9 +6,7 @@ import com.sksamuel.avro4s.RecordFormat
 import com.sksamuel.avro4s.SchemaFor
 
 trait AvroRecordFormat {
-
   implicit def avroRecordFormat[T: Encoder: Decoder: SchemaFor]: RecordFormat[T] = RecordFormat[T]
-
 }
 
 object AvroRecordFormat {

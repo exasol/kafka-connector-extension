@@ -1,14 +1,16 @@
 package com.exasol.cloudetl.kafka
 
 import scala.util.Random
+
 import com.exasol.ExaIterator
-import io.github.embeddedkafka.schemaregistry.EmbeddedKafka
+
 import org.mockito.ArgumentMatchers.argThat
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.mockito.MockitoSugar
+import io.github.embeddedkafka.schemaregistry.EmbeddedKafka
 
 trait KafkaIntegrationTest
     extends AnyFunSuite
@@ -21,11 +23,7 @@ trait KafkaIntegrationTest
   var properties: Map[String, String] = _
 
   val bootstrapServers = "localhost:6001"
-
-  val defaultProperties = Map(
-    "BOOTSTRAP_SERVERS" -> bootstrapServers,
-    "TABLE_NAME" -> "exasolTable"
-  )
+  val defaultProperties = Map("BOOTSTRAP_SERVERS" -> bootstrapServers, "TABLE_NAME" -> "exasolTable")
 
   def getTopic(): String =
     Random.alphanumeric.take(4).mkString
@@ -47,11 +45,7 @@ trait KafkaIntegrationTest
     ()
   }
 
-  final def mockExasolIterator(
-    params: Map[String, String],
-    partitions: Seq[Int],
-    offsets: Seq[Long]
-  ): ExaIterator = {
+  final def mockExasolIterator(params: Map[String, String], partitions: Seq[Int], offsets: Seq[Long]): ExaIterator = {
     val mockedIterator = mock[ExaIterator]
     when(mockedIterator.getString(0)).thenReturn(KafkaConsumerProperties(params).mkString())
 

@@ -6,7 +6,7 @@ import org.testcontainers.utility.DockerImageName
 /**
  * A Kafka container that exposes a fixed port.
  *
- * This is required since [[GenericContainer]] does not provide public API for exposing fixed ports.
+ * This is required since {@link GenericContainer} does not provide public API for exposing fixed ports.
  */
 class KafkaContainer(image: DockerImageName, fixedPort: Int = 29092) extends GenericContainer(image) {
 

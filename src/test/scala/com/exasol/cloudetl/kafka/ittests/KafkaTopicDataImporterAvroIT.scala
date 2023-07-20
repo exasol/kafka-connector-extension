@@ -5,7 +5,8 @@ import scala.jdk.CollectionConverters._
 import com.exasol.cloudetl.kafka.KafkaTopicDataImporterAvroIT.schemaRegistryUrl
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import org.apache.avro.{AvroRuntimeException, Schema}
+import org.apache.avro.AvroRuntimeException
+import org.apache.avro.Schema
 import org.apache.avro.specific.SpecificRecordBase
 import org.apache.kafka.common.serialization.Serializer
 
@@ -20,6 +21,11 @@ class KafkaTopicDataImporterAvroIT extends KafkaIntegrationTest {
     serializer.configure(properties.asJava, false)
     serializer.asInstanceOf[Serializer[AvroRecord]]
   }
+
+}
+
+object KafkaTopicDataImporterAvroIT {
+  val schemaRegistryUrl = "http://localhost:6002"
 }
 
 case class AvroRecord(var col_str: String, var col_int: Int, var col_long: Long) extends SpecificRecordBase {
@@ -53,15 +59,11 @@ case class AvroRecord(var col_str: String, var col_int: Int, var col_long: Long)
         case (utf8: org.apache.avro.util.Utf8) => utf8.toString
         case _                                 => value.asInstanceOf[String]
       }
-    case 1 =>
-      col_int = value.asInstanceOf[Int]
-    case 2 =>
-      col_long = value.asInstanceOf[Long]
+    case 1 => col_int = value.asInstanceOf[Int]
+    case 2 => col_long = value.asInstanceOf[Long]
     case _ => throw new AvroRuntimeException(s"Unknown index $index!")
   }
 
   override def getSchema(): Schema = avroRecordSchema
-}
-object KafkaTopicDataImporterAvroIT {
-  val schemaRegistryUrl = "http://localhost:6002"
+
 }

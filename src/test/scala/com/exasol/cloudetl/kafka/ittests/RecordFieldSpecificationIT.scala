@@ -1,60 +1,30 @@
 package com.exasol.cloudetl.kafka
 
-import java.lang.{Integer => JInt, Long => JLong}
-
-import scala.jdk.CollectionConverters.CollectionHasAsScala
+import java.lang.{Integer => JInt}
+import java.lang.{Long => JLong}
 
 import com.exasol.ExaMetadata
 import com.exasol.common.json.JsonMapper
 
-import com.fasterxml.jackson.databind.JsonNode
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
-import org.mockito.{ArgumentCaptor, Mockito}
+import com.fasterxml.jackson.databind.JsonNode
+
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.Mockito.{times, when}
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
 /**
- * A test class that tests the {@code RECORD_FIELDS} integration and not the offset and partition
- * handling.
+ * A test class that tests the {@code RECORD_FIELDS} integration and not the offset and partition handling.
  */
 class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
 
   private[this] val customRecord = AvroRecord("abc", 3, 13)
-
   implicit val stringSerializer = new StringSerializer
-
-  private[this] def assertJson(actual: String, expected: String): Unit = {
-    assert(JsonMapper.fromJson[JsonNode](actual) === JsonMapper.fromJson[JsonNode](expected))
-    ()
-  }
-
-  private[this] def getEmittedValues(recordFieldsStmt: String, outputColumnTypes: Seq[Class[_]]): Seq[Any] = {
-    val iter = mockExasolIterator(
-      properties ++ Map("RECORD_FIELDS" -> recordFieldsStmt),
-      Seq(0),
-      Seq(-1)
-    )
-    val outputColumnTypesWithMeta = outputColumnTypes ++ Seq(classOf[JInt], classOf[JLong])
-    val columnCount = outputColumnTypesWithMeta.size
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(columnCount)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(new Answer[Class[_]]() {
-      override def answer(invocation: InvocationOnMock): Class[_] = {
-        val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
-        outputColumnTypesWithMeta(columnIndex)
-      }
-    })
-    KafkaTopicDataImporter.run(meta, iter)
-
-    val captor = ArgumentCaptor.forClass[Any, Any](classOf[Any])
-    Mockito.verify(iter, times(1)).emit(captor.capture())
-
-    val valuesEmitted = captor.getAllValues.asScala
-    valuesEmitted.slice(0, valuesEmitted.size - 2).toSeq
-  }
 
   test("default must be 'value.*': All fields from the record") {
     createCustomTopic(topic)
@@ -115,11 +85,7 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
   test("must handle null values combined with a present key and timestamps") {
     createCustomTopic(topic)
     publishToKafka(topic, "theKey", null.asInstanceOf[AvroRecord])
-
-    val values = getEmittedValues(
-      "key, timestamp, value",
-      Seq(classOf[String], classOf[JLong], classOf[Any])
-    )
+    val values = getEmittedValues("key, timestamp, value", Seq(classOf[String], classOf[JLong], classOf[Any]))
     assert(values.size === 3)
     assert(values(0) === "theKey")
     assert(values(1).isInstanceOf[JLong])
@@ -130,21 +96,38 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
     createCustomTopic(topic)
     val recordTimestamp = 123456L
     withProducer[String, AvroRecord, Unit] { producer =>
-      producer.send(
-        new ProducerRecord[String, AvroRecord](
-          topic,
-          0,
-          recordTimestamp,
-          "record_key",
-          customRecord
-        )
-      )
+      producer.send(new ProducerRecord[String, AvroRecord](topic, 0, recordTimestamp, "record_key", customRecord))
       ()
     }
-    val values = getEmittedValues(
-      "timestamp, value.str_col, key",
-      Seq(classOf[JLong], classOf[Any], classOf[String])
-    )
+    val values = getEmittedValues("timestamp, value.str_col, key", Seq(classOf[JLong], classOf[Any], classOf[String]))
     assert(values === Seq(recordTimestamp, null, "record_key"))
   }
+
+  private[this] def assertJson(actual: String, expected: String): Unit = {
+    assert(JsonMapper.fromJson[JsonNode](actual) === JsonMapper.fromJson[JsonNode](expected))
+    ()
+  }
+
+  private[this] def getEmittedValues(recordFieldsStmt: String, outputColumnTypes: Seq[Class[_]]): Seq[Any] = {
+    val mockedIterator = mockExasolIterator(properties ++ Map("RECORD_FIELDS" -> recordFieldsStmt), Seq(0), Seq(-1))
+    val outputColumnTypesWithMeta = outputColumnTypes ++ Seq(classOf[JInt], classOf[JLong])
+    val columnCount = outputColumnTypesWithMeta.size
+    val exasolMetadata = mock[ExaMetadata]
+    when(exasolMetadata.getOutputColumnCount()).thenReturn(columnCount)
+    when(exasolMetadata.getOutputColumnType(anyInt())).thenAnswer(new Answer[Class[_]]() {
+      override def answer(invocation: InvocationOnMock): Class[_] = {
+        val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
+        outputColumnTypesWithMeta(columnIndex)
+      }
+    })
+    KafkaTopicDataImporter.run(exasolMetadata, mockedIterator)
+
+    val captor = ArgumentCaptor.forClass(classOf[Array[Any]])
+    verify(mockedIterator, times(1)).emit(captor.capture())
+
+    val valuesEmitted = captor.getValue().toSeq
+    // Don't need the last two values (partition and offset)
+    valuesEmitted.slice(0, valuesEmitted.size - 2)
+  }
+
 }

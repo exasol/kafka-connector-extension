@@ -2,6 +2,8 @@ package com.exasol.cloudetl.kafka.serde
 
 import java.util.Map
 
+import scala.language.implicitConversions
+
 import com.sksamuel.avro4s.RecordFormat
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serdes

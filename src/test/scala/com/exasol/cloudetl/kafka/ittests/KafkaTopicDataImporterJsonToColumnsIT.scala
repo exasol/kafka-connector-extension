@@ -1,12 +1,17 @@
 package com.exasol.cloudetl.kafka
 
-import java.lang.{Integer => JInt, Long => JLong}
+import java.lang.{Integer => JInt}
+import java.lang.{Long => JLong}
 
 import com.exasol.ExaMetadata
 
-import org.apache.kafka.common.serialization.{Serializer, StringSerializer}
+import org.apache.kafka.common.serialization.Serializer
+import org.apache.kafka.common.serialization.StringSerializer
+
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
@@ -42,10 +47,10 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
         |}""".stripMargin
     )
 
-    val iter = mockExasolIterator(properties, Seq(0), Seq(-1))
-    val meta = mock[ExaMetadata]
-    when(meta.getOutputColumnCount()).thenReturn(5L)
-    when(meta.getOutputColumnType(anyInt())).thenAnswer(new Answer[Class[_]]() {
+    val mockedIterator = mockExasolIterator(properties, Seq(0), Seq(-1))
+    val exasolMetadata = mock[ExaMetadata]
+    when(exasolMetadata.getOutputColumnCount()).thenReturn(5L)
+    when(exasolMetadata.getOutputColumnType(anyInt())).thenAnswer(new Answer[Class[_]]() {
       override def answer(invocation: InvocationOnMock): Class[_] = {
         val columnIndex = invocation.getArguments()(0).asInstanceOf[JInt]
         Seq(
@@ -57,17 +62,17 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
         )(columnIndex)
       }
     })
-    KafkaTopicDataImporter.run(meta, iter)
+    KafkaTopicDataImporter.run(exasolMetadata, mockedIterator)
 
-    verify(iter, times(2)).emit(Seq(any[Object]): _*)
-    verify(iter, times(1)).emit(
+    verify(mockedIterator, times(2)).emit(any(classOf[Array[Object]]))
+    verify(mockedIterator, times(1)).emit(
       "val1",
       JInt.valueOf(11),
       """{"field":"value"}""",
       JInt.valueOf(0),
       JLong.valueOf(0)
     )
-    verify(iter, times(1)).emit(
+    verify(mockedIterator, times(1)).emit(
       "val2",
       JInt.valueOf(22),
       null,
@@ -75,4 +80,5 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
       JLong.valueOf(1)
     )
   }
+
 }
