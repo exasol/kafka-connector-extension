@@ -27,7 +27,7 @@ Code name:
 * Added `com.sksamuel.avro4s:avro4s-core_2.13:4.1.1`
 * Added `io.confluent:kafka-streams-avro-serde:7.4.1`
 * Added `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.4.1`
-* Added `io.netty:netty-handler:4.1.94.Final`
+* Added `io.netty:netty-handler:4.1.95.Final`
 * Added `org.mockito:mockito-core:5.4.0`
 * Added `org.scalatestplus:scalatestplus-mockito_2.13:1.0.0-M2`
 * Added `org.scalatest:scalatest_2.13:3.2.16`
