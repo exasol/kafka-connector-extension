@@ -27,6 +27,13 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>jitpack</id>
+            <url>https://jitpack.io</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -57,11 +64,6 @@
             <groupId>com.exasol</groupId>
             <artifactId>error-reporting-java</artifactId>
             <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
