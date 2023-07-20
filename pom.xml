@@ -14,6 +14,8 @@
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
     <properties>
+        <!-- Update this once the Avro4s version is updated -->
+        <!-- com.sksamuel.avro4s:avro4s-core_2.13:4.1.1 requires scala version: 2.13.3 -->
         <scala.version>2.13.3</scala.version>
         <scala.compat.version>2.13</scala.compat.version>
         <sonar.sources>.</sonar.sources>
@@ -286,6 +288,12 @@
             <version>4.1.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>4.1.94.Final</version>
+            <scope>test</scope>
+        </dependency>
         <!--
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -483,7 +491,11 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <skip>${ossindex.skip}</skip>
-                    <excludeVulnerabilityIds/>
+                    <excludeVulnerabilityIds>
+                    <!-- Vulnerabilities from org.scala-lang:scala-library:2.13.3 -->
+                    <!-- CWE-502: Deserialization of Untrusted Data (9.8); https://ossindex.sonatype.org/vulnerability/CVE-2022-36944 -->
+                    <exclude>CVE-2022-36944</exclude>
+                </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
             <plugin>
