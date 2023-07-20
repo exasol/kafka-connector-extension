@@ -16,7 +16,6 @@ Code name:
 * Added `com.exasol:import-export-udf-common-scala_2.13:1.1.1`
 * Added `com.google.guava:guava:32.1.1-jre`
 * Added `io.confluent:kafka-avro-serializer:7.4.1`
-* Added `org.apache.kafka:kafka-clients:3.0.0`
 * Added `org.scala-lang.modules:scala-collection-compat_2.13:2.11.0`
 * Added `org.scala-lang:scala-library:2.13.3`
 
