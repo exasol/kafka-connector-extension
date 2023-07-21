@@ -5,7 +5,8 @@ import java.nio.file.Paths
 import java.util.Locale
 
 import scala.collection.mutable.{Map => MMap}
-import scala.io.{Codec, Source}
+import scala.io.Codec
+import scala.io.Source
 import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaMetadata

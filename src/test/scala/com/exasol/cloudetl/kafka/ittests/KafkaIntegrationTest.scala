@@ -4,13 +4,13 @@ import scala.util.Random
 
 import com.exasol.ExaIterator
 
+import io.github.embeddedkafka.schemaregistry.EmbeddedKafka
 import org.mockito.ArgumentMatchers.argThat
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.mockito.MockitoSugar
-import io.github.embeddedkafka.schemaregistry.EmbeddedKafka
 
 trait KafkaIntegrationTest
     extends AnyFunSuite
@@ -49,12 +49,14 @@ trait KafkaIntegrationTest
     val mockedIterator = mock[ExaIterator]
     when(mockedIterator.getString(0)).thenReturn(KafkaConsumerProperties(params).mkString())
 
-    val brokersHead :: brokersTail = Seq.fill(partitions.size - 1)(true) ++ Seq(false)
-    when(mockedIterator.next()).thenReturn(brokersHead, brokersTail: _*)
-    val partitionsHead :: partitionsTail = partitions.map(Integer.valueOf)
-    when(mockedIterator.getInteger(1)).thenReturn(partitionsHead, partitionsTail: _*)
-    val offsetsHead :: offsetsTail = offsets.map(java.lang.Long.valueOf)
-    when(mockedIterator.getLong(2)).thenReturn(offsetsHead, offsetsTail: _*)
+    val brokers = Seq.fill(partitions.size - 1)(true) ++ Seq(false)
+    when(mockedIterator.next()).thenReturn(brokers(0), brokers.tail: _*)
+
+    val partitionIds = partitions.map(Integer.valueOf(_))
+    when(mockedIterator.getInteger(1)).thenReturn(partitionIds(0), partitionIds.tail: _*)
+
+    val offsetIds = offsets.map(java.lang.Long.valueOf(_))
+    when(mockedIterator.getLong(2)).thenReturn(offsetIds(0), offsetIds.tail: _*)
 
     mockedIterator
   }

@@ -1,7 +1,7 @@
 package com.exasol.cloudetl.kafka.serde
 
-import com.sksamuel.avro4s.Encoder
 import com.sksamuel.avro4s.Decoder
+import com.sksamuel.avro4s.Encoder
 import com.sksamuel.avro4s.RecordFormat
 import com.sksamuel.avro4s.SchemaFor
 

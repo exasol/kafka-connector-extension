@@ -7,7 +7,6 @@ import com.exasol.ExaMetadata
 
 import org.apache.kafka.common.serialization.Serializer
 import org.apache.kafka.common.serialization.StringSerializer
-
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify

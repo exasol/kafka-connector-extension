@@ -6,10 +6,9 @@ import java.lang.{Long => JLong}
 import com.exasol.ExaMetadata
 import com.exasol.common.json.JsonMapper
 
+import com.fasterxml.jackson.databind.JsonNode
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
-import com.fasterxml.jackson.databind.JsonNode
-
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito.times

@@ -1,9 +1,9 @@
 package com.exasol.cloudetl.kafka
 
 import java.time.Duration
-import java.util.{Map => JMap}
 import java.util.Arrays
 import java.util.Collections
+import java.util.{Map => JMap}
 
 import com.exasol.ExaIterator
 import com.exasol.cloudetl.kafka.consumer.KafkaRecordConsumer

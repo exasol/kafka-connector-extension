@@ -28,7 +28,7 @@ object KafkaTopicDataImporterAvroIT {
   val schemaRegistryUrl = "http://localhost:6002"
 }
 
-case class AvroRecord(var col_str: String, var col_int: Int, var col_long: Long) extends SpecificRecordBase {
+final case class AvroRecord(var col_str: String, var col_int: Int, var col_long: Long) extends SpecificRecordBase {
 
   private[this] val avroRecordSchema =
     new Schema.Parser().parse(

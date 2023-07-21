@@ -5,10 +5,10 @@ import java.sql.Timestamp
 import java.util.TimeZone
 import java.util.UUID
 
-import com.exasol.cloudetl.kafka.serde._
 import com.exasol.cloudetl.kafka.serde.AvroRecordFormat.Implicits._
 import com.exasol.cloudetl.kafka.serde.AvroSerdes.Implicits._
 import com.exasol.cloudetl.kafka.serde.PrimitiveSerdes.Implicits._
+import com.exasol.cloudetl.kafka.serde._
 import com.exasol.dbbuilder.dialects.Table
 import com.exasol.matcher.ResultSetStructureMatcher.table
 import com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK
@@ -42,7 +42,7 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest with BeforeAndAfterEa
   }
 
   test("import longs as timestamp values") {
-    case class TimestampRecord(timestamp: Long)
+    final case class TimestampRecord(timestamp: Long)
     implicit val timestampRecordValueSerde = valueAvroSerde[TimestampRecord](getExternalSchemaRegistryUrl())
 
     TimeZone.setDefault(exasolContainer.getTimeZone())

@@ -2,15 +2,15 @@ package com.exasol.cloudetl.kafka.serde
 
 import java.util.Map
 
-import scala.language.implicitConversions
-
 import com.sksamuel.avro4s.RecordFormat
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
+import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
+import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.serialization.Serializer
-import org.apache.kafka.common.serialization.Deserializer
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
-import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
+
+import scala.language.implicitConversions
 
 trait AvroSerdes {
 

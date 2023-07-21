@@ -8,9 +8,9 @@ import scala.jdk.CollectionConverters._
 import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka.KafkaTopicDataImporterAvroIT.schemaRegistryUrl
 
+import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.Serializer
 import org.apache.kafka.common.serialization.StringSerializer
-import org.apache.kafka.clients.producer.ProducerRecord
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify

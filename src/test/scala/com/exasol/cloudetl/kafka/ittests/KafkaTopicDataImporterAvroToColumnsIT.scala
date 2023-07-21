@@ -4,9 +4,6 @@ import java.lang.{Integer => JInt}
 import java.lang.{Long => JLong}
 import java.util.Collections
 
-import scala.jdk.CollectionConverters.CollectionHasAsScala
-import scala.jdk.CollectionConverters.MapHasAsJava
-
 import com.exasol.ExaDataTypeException
 import com.exasol.ExaMetadata
 
@@ -18,6 +15,9 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
+
+import scala.jdk.CollectionConverters.CollectionHasAsScala
+import scala.jdk.CollectionConverters.MapHasAsJava
 
 class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT {
 

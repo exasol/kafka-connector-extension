@@ -6,8 +6,8 @@ import java.util.Arrays
 import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaIterator
-import com.exasol.cloudetl.kafka._
 import com.exasol.cloudetl.kafka.KafkaConnectorConstants._
+import com.exasol.cloudetl.kafka._
 import com.exasol.cloudetl.kafka.deserialization._
 import com.exasol.errorreporting.ExaError
 

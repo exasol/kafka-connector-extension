@@ -3,7 +3,8 @@ package com.exasol.cloudetl.kafka
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import com.exasol.{ExaConnectionInformation, ExaMetadata}
+import com.exasol.ExaConnectionInformation
+import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties._
 
 import org.mockito.Mockito.when
