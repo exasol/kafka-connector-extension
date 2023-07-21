@@ -93,24 +93,6 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-databind</artifactId>
                 </exclusion>
-                <!--
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-compress</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.codehaus.jackson</groupId>
-                    <artifactId>jackson-mapper-asl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-http</artifactId>
-                </exclusion>
-                -->
             </exclusions>
         </dependency>
         <dependency>
@@ -123,81 +105,6 @@
             <artifactId>guava</artifactId>
             <version>32.1.1-jre</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.13.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-scala_${scala.compat.version}</artifactId>
-            <version>2.13.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty</artifactId>
-            <version>1.43.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.72.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro</artifactId>
-            <version>1.11.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.exasol</groupId>
-            <artifactId>parquet-io-java</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>1.7.32</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.32</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.17.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <version>2.17.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.scala-logging</groupId>
-            <artifactId>scala-logging_${scala.compat.version}</artifactId>
-            <version>3.9.4</version>
-        </dependency>
-        -->
-        <!--
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
-        </dependency>
-        -->
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.scalatest</groupId>
@@ -287,44 +194,6 @@
             <version>4.1.95.Final</version>
             <scope>test</scope>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <version>2.16.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>2.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.dimafeng</groupId>
-            <artifactId>testcontainers-scala-scalatest_${scala.compat.version}</artifactId>
-            <version>0.39.12</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>localstack</artifactId>
-            <version>1.16.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro</artifactId>
-            <version>1.11.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.13.0</version>
-            <scope>test</scope>
-        </dependency>
-        -->
     </dependencies>
     <build>
         <plugins>
@@ -499,18 +368,12 @@
                     <printEqualFiles>false</printEqualFiles>
                     <failBuildInCaseOfEqualContentConflict>false</failBuildInCaseOfEqualContentConflict>
                     <failBuildInCaseOfConflict>false</failBuildInCaseOfConflict>
-                    <ignoredResourcePatterns>
-                        <!-- <ignoredResourcePattern>git.properties</ignoredResourcePattern> -->
-                        <!-- <ignoredResourcePattern>arrow-git.properties</ignoredResourcePattern> -->
-                        <!-- <ignoredResourcePattern>.*\.properties$</ignoredResourcePattern> -->
-                        <!-- <ignoredResourcePattern>.*\.proto$</ignoredResourcePattern> -->
-                    </ignoredResourcePatterns>
                     <ignoredDependencies>
-                        <!-- <dependency> -->
-                        <!--     <groupId>com.exasol</groupId> -->
-                        <!--     <artifactId>import-export-udf-common-scala_${scala.compat.version}</artifactId> -->
-                        <!--     <version>1.1.1</version> -->
-                        <!-- </dependency> -->
+                        <dependency>
+                            <groupId>com.exasol</groupId>
+                            <artifactId>import-export-udf-common-scala_${scala.compat.version}</artifactId>
+                            <version>1.1.1</version>
+                        </dependency>
                     </ignoredDependencies>
                 </configuration>
             </plugin>
