@@ -149,7 +149,6 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
     assertExpectedException(new AuthenticationException("authError"), "E-KCE-23", Option("authError"))
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
   private[this] def assertExpectedException(
     exception: Exception,
     errorCode: String,
@@ -184,7 +183,6 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   }
 
   // It is alright to use default arguments in tests.
-  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
   case class KafkaImportChecker(
     additionalProperties: Map[String, String] = Map.empty[String, String],
     startOffset: Long = 0L

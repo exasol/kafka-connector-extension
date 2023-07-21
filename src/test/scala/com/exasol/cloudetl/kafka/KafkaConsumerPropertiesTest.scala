@@ -552,7 +552,6 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(properties.getProperties().get(SSL_TRUSTSTORE_PASSWORD.kafkaPropertyName) === "tspw")
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments")) // fine in tests
   private[this] def getSecurityEnabledConsumerProperties(
     securityProtocol: String,
     keystoreFile: Option[Path] = None,

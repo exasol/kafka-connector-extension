@@ -299,7 +299,6 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
   }
 
   /** Returns the Kafka consumer properties as Java map. */
-  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   final def getProperties(): java.util.Map[String, AnyRef] = {
     val props = MMap.empty[String, String]
     props.put(ENABLE_AUTO_COMMIT.kafkaPropertyName, ENABLE_AUTO_COMMIT.defaultValue)

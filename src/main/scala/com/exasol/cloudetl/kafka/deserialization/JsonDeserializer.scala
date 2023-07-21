@@ -33,7 +33,6 @@ object JsonDeserializer {
 
   private val objectMapper = new ObjectMapper
 
-  @SuppressWarnings(Array("org.wartremover.warts.ToString"))
   private def jsonNodeToObject(jsonNode: JsonNode): Any =
     jsonNode.getNodeType match {
       case STRING  => jsonNode.asText()

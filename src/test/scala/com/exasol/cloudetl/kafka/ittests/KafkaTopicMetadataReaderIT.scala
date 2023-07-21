@@ -10,9 +10,6 @@ import com.exasol.ExaMetadata
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 
-@SuppressWarnings(
-  Array("org.wartremover.warts.AsInstanceOf", "org.wartremover.contrib.warts.SymbolicName")
-)
 class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
 
   override def additionalProperties: Map[String, String] =

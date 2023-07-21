@@ -75,7 +75,6 @@ class KafkaRecordConsumer(
   private[this] type FieldType = Map[FieldSpecification, Seq[Any]]
 
   // This is okay, since it is only overridden in tests.
-  @SuppressWarnings(Array("org.wartremover.contrib.warts.UnsafeInheritance"))
   protected def getRecordConsumer(): KafkaConsumer[FieldType, FieldType] = {
     val topicPartition = new TopicPartition(topic, partitionId)
     val recordFields = FieldParser.get(properties.getRecordFields())
