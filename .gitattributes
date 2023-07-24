@@ -11,3 +11,5 @@ doc/changes/changelog.md                                         linguist-genera
 .github/workflows/release_droid_prepare_original_checksum.yml    linguist-generated=true
 .github/workflows/release_droid_print_quick_checksum.yml         linguist-generated=true
 .github/workflows/release_droid_upload_github_release_assets.yml linguist-generated=true
+.settings/org.eclipse.jdt.core.prefs                             linguist-generated=true
+.settings/org.eclipse.jdt.ui.prefs                               linguist-generated=true
