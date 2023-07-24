@@ -37,8 +37,4 @@ Additional resources:
 ## Information for Contributors
 
 * [Developer Guide](doc/development/developer_guide.md)
-* [Releasing Guide](doc/development/releasing.md)
-
-## Dependencies
-
 * [Dependencies](dependencies.md)
