@@ -1,12 +1,14 @@
-# Exasol Kafka Connector Extension 1.6.0, released 2023-??-??
+# Exasol Kafka Connector Extension 1.6.0, released 2023-07-25
 
-Code name:
+Code name: Migrated to `mvn` build
 
 ## Summary
 
+In this release, we migrated from Scala `sbt` based build system to Java `maven` build system. This change fully enables us to use our tooling infrastructure such as GitHub workflows, dependency checks. We also updated all dependencies to their latest versions.
+
 ## Features
 
-* ISSUE_NUMBER: description
+* #69: Migrated from `sbt` to `maven` build system.
 
 ## Dependency Updates
 
