@@ -355,6 +355,7 @@
                     <skip>${ossindex.skip}</skip>
                     <excludeVulnerabilityIds>
                     <!-- Vulnerabilities from org.scala-lang:scala-library:2.13.3 -->
+                    <!-- At the moment we cannot update to the latest scala-library version since avro4s-core_2.13:4.1.1 dependency is not compatible with it -->
                     <!-- CWE-502: Deserialization of Untrusted Data (9.8); https://ossindex.sonatype.org/vulnerability/CVE-2022-36944 -->
                     <exclude>CVE-2022-36944</exclude>
                 </excludeVulnerabilityIds>
