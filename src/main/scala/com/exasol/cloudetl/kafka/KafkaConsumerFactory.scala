@@ -1,10 +1,5 @@
 package com.exasol.cloudetl.kafka
 
-import java.nio.file.Files
-import java.nio.file.Paths
-
-import com.exasol.ExaMetadata
-import com.exasol.cloudetl.kafka.KafkaConsumerProperties._
 import com.exasol.errorreporting.ExaError
 
 import org.apache.kafka.clients.consumer.KafkaConsumer

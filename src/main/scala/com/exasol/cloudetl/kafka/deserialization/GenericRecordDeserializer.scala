@@ -1,11 +1,11 @@
 package com.exasol.cloudetl.kafka.deserialization
 
-import scala.jdk.CollectionConverters.CollectionHasAsScala
-
 import com.exasol.common.avro.AvroConverter
 
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.common.serialization.Deserializer
+
+import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 /**
  * Extract a set of fields from an Avro [[org.apache.avro.generic.GenericRecord]].

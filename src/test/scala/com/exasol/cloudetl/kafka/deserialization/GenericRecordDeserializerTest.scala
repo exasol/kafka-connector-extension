@@ -7,7 +7,8 @@ import com.exasol.common.json.JsonMapper
 
 import com.fasterxml.jackson.databind.JsonNode
 import org.apache.avro.SchemaBuilder
-import org.apache.avro.generic.{GenericRecord, GenericRecordBuilder}
+import org.apache.avro.generic.GenericRecord
+import org.apache.avro.generic.GenericRecordBuilder
 import org.apache.kafka.common.serialization.Deserializer
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when

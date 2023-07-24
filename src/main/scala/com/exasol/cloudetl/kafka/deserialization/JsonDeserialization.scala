@@ -1,9 +1,11 @@
 package com.exasol.cloudetl.kafka.deserialization
 
-import com.exasol.cloudetl.kafka.{KafkaConnectorException, KafkaConsumerProperties}
+import com.exasol.cloudetl.kafka.KafkaConnectorException
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties
 import com.exasol.errorreporting.ExaError
 
-import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
+import org.apache.kafka.common.serialization.Deserializer
+import org.apache.kafka.common.serialization.StringDeserializer
 
 /**
  * Creates deserializers for JSON records.

@@ -5,7 +5,8 @@ import java.nio.file.Paths
 import java.util.Locale
 
 import scala.collection.mutable.{Map => MMap}
-import scala.io.{Codec, Source}
+import scala.io.Codec
+import scala.io.Source
 import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaMetadata
@@ -299,7 +300,6 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
   }
 
   /** Returns the Kafka consumer properties as Java map. */
-  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   final def getProperties(): java.util.Map[String, AnyRef] = {
     val props = MMap.empty[String, String]
     props.put(ENABLE_AUTO_COMMIT.kafkaPropertyName, ENABLE_AUTO_COMMIT.defaultValue)

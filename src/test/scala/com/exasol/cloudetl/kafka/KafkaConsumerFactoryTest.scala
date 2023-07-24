@@ -4,7 +4,6 @@ import com.exasol.ExaMetadata
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.VoidDeserializer
-import org.mockito.Mockito.when
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.mockito.MockitoSugar
 

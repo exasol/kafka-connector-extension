@@ -1,9 +1,9 @@
 package com.exasol.cloudetl.kafka
 
 import java.time.Duration
-import java.util.{Map => JMap}
 import java.util.Arrays
 import java.util.Collections
+import java.util.{Map => JMap}
 
 import com.exasol.ExaIterator
 import com.exasol.cloudetl.kafka.consumer.KafkaRecordConsumer
@@ -104,8 +104,7 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
       .thenReturn(emptyConsumerRecords)
       .thenThrow(new RuntimeException("test should not poll twice"))
     when(consumer.position(topicPartition)).thenReturn(4L)
-    KafkaImportChecker(consumeAllOffsetsProperties, startOffset = defaultEndOffset - 1)
-      .assertEmitCount(0)
+    KafkaImportChecker(consumeAllOffsetsProperties, startOffset = defaultEndOffset - 1).assertEmitCount(0)
   }
 
   test("returns with empty records and offset reset") {
@@ -150,7 +149,6 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
     assertExpectedException(new AuthenticationException("authError"), "E-KCE-23", Option("authError"))
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
   private[this] def assertExpectedException(
     exception: Exception,
     errorCode: String,
@@ -185,7 +183,6 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   }
 
   // It is alright to use default arguments in tests.
-  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
   case class KafkaImportChecker(
     additionalProperties: Map[String, String] = Map.empty[String, String],
     startOffset: Long = 0L
@@ -193,7 +190,7 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
     final def assertEmitCount(count: Int): Unit = {
       val properties = new KafkaConsumerProperties(defaultProperties ++ additionalProperties)
       TestKafkaRecordConsumer(properties, startOffset).emit(iterator)
-      verify(iterator, times(count)).emit(Seq(any[Object]): _*)
+      verify(iterator, times(count)).emit(any(classOf[Array[Object]]))
     }
   }
 

@@ -27,7 +27,6 @@ trait PathTest extends AnyFunSuite with BeforeAndAfterEach with MockitoSugar {
   private[kafka] var importSpec: ExaImportSpecification = _
   private[kafka] var exportSpec: ExaExportSpecification = _
 
-  @SuppressWarnings(Array("org.wartremover.contrib.warts.UnsafeInheritance"))
   override def beforeEach(): Unit = {
     metadata = mock[ExaMetadata]
     importSpec = mock[ExaImportSpecification]

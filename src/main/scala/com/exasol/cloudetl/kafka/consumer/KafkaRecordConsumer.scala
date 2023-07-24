@@ -6,8 +6,8 @@ import java.util.Arrays
 import scala.jdk.CollectionConverters._
 
 import com.exasol.ExaIterator
-import com.exasol.cloudetl.kafka._
 import com.exasol.cloudetl.kafka.KafkaConnectorConstants._
+import com.exasol.cloudetl.kafka._
 import com.exasol.cloudetl.kafka.deserialization._
 import com.exasol.errorreporting.ExaError
 
@@ -75,7 +75,6 @@ class KafkaRecordConsumer(
   private[this] type FieldType = Map[FieldSpecification, Seq[Any]]
 
   // This is okay, since it is only overridden in tests.
-  @SuppressWarnings(Array("org.wartremover.contrib.warts.UnsafeInheritance"))
   protected def getRecordConsumer(): KafkaConsumer[FieldType, FieldType] = {
     val topicPartition = new TopicPartition(topic, partitionId)
     val recordFields = FieldParser.get(properties.getRecordFields())

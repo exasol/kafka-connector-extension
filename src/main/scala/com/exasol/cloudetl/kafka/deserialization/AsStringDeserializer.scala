@@ -1,6 +1,7 @@
 package com.exasol.cloudetl.kafka.deserialization
 
-import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
+import org.apache.kafka.common.serialization.Deserializer
+import org.apache.kafka.common.serialization.StringDeserializer
 
 /**
  * Emits the string representation record as single element sequence.

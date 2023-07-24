@@ -1,13 +1,15 @@
 package com.exasol.cloudetl.kafka.deserialization
 
-import scala.jdk.CollectionConverters.MapHasAsJava
-
-import com.exasol.cloudetl.kafka.{KafkaConnectorException, KafkaConsumerProperties}
+import com.exasol.cloudetl.kafka.KafkaConnectorException
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties
 import com.exasol.errorreporting.ExaError
 
-import io.confluent.kafka.serializers.{AbstractKafkaSchemaSerDeConfig, KafkaAvroDeserializer}
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
+import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.common.serialization.Deserializer
+
+import scala.jdk.CollectionConverters.MapHasAsJava
 
 /**
  * Creates deserializers for avro records that are serialized with the Confluent schema registry.

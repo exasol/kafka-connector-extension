@@ -1,0 +1,6 @@
+sources:
+  - type: maven
+    path: pom.xml
+    modules:
+      - jar_artifact
+      - integration_tests

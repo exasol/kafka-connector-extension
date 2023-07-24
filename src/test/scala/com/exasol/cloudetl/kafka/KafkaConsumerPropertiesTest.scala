@@ -3,7 +3,8 @@ package com.exasol.cloudetl.kafka
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import com.exasol.{ExaConnectionInformation, ExaMetadata}
+import com.exasol.ExaConnectionInformation
+import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties._
 
 import org.mockito.Mockito.when
@@ -552,7 +553,6 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(properties.getProperties().get(SSL_TRUSTSTORE_PASSWORD.kafkaPropertyName) === "tspw")
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments")) // fine in tests
   private[this] def getSecurityEnabledConsumerProperties(
     securityProtocol: String,
     keystoreFile: Option[Path] = None,

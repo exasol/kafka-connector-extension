@@ -1,12 +1,17 @@
 package com.exasol.cloudetl.kafka.deserialization
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException
-import com.exasol.cloudetl.kafka.deserialization.JsonDeserializer.{jsonNodeToObject, objectMapper}
+import com.exasol.cloudetl.kafka.deserialization.JsonDeserializer.jsonNodeToObject
+import com.exasol.cloudetl.kafka.deserialization.JsonDeserializer.objectMapper
 import com.exasol.errorreporting.ExaError
 
-import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
-import com.fasterxml.jackson.databind.node.JsonNodeType.{BOOLEAN, NUMBER, STRING}
-import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.JsonNodeType.BOOLEAN
+import com.fasterxml.jackson.databind.node.JsonNodeType.NUMBER
+import com.fasterxml.jackson.databind.node.JsonNodeType.STRING
+import org.apache.kafka.common.serialization.Deserializer
+import org.apache.kafka.common.serialization.StringDeserializer
 
 class JsonDeserializer(fieldSpecs: Seq[FieldSpecification], stringDeserializer: StringDeserializer)
     extends Deserializer[Map[FieldSpecification, Seq[Any]]] {
@@ -33,7 +38,6 @@ object JsonDeserializer {
 
   private val objectMapper = new ObjectMapper
 
-  @SuppressWarnings(Array("org.wartremover.warts.ToString"))
   private def jsonNodeToObject(jsonNode: JsonNode): Any =
     jsonNode.getNodeType match {
       case STRING  => jsonNode.asText()
