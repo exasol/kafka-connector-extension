@@ -4,9 +4,9 @@ Code name: Migrated to `mvn` build
 
 ## Summary
 
-In this release, we migrated from Scala `sbt` based build system to Java `maven` build system. This change fully enables us to use our tooling infrastructure such as GitHub workflows, dependency checks. We also updated all dependencies to their latest versions.
+In this release, we migrated from Scala `sbt` based build system to Java `maven` build system. This change fully enables us to use our tooling infrastructure such as GitHub workflows, dependency checks etc. We also updated all dependencies to their latest versions.
 
-## Features
+## Refactoring
 
 * #69: Migrated from `sbt` to `maven` build system.
 
