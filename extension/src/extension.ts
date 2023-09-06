@@ -7,7 +7,7 @@ const SCRIPTS: ScriptDefinition[] = [
     {
         name: "KAFKA_METADATA",
         type: "SET",
-        args: `params VARCHAR(2000), kafka_partition DECIMAL(18,0), kafka_offset DECIMAL(36,0)`,
+        args: `partition_index DECIMAL(18,0), max_offset DECIMAL(36,0)`,
         scriptClass: "com.exasol.cloudetl.kafka.KafkaTopicMetadataReader"
     },
     {
