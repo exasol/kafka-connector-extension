@@ -9,7 +9,7 @@ readonly project_dir
 readonly target_dir="$project_dir/target"
 readonly extension_config="$project_dir/extension/src/extension-description.ts"
 
-readonly all_built_files=("$target_dir"/exasol-cloud-storage-extension-*.jar)
+readonly all_built_files=("$target_dir"/exasol-kafka-connector-extension-*.jar)
 readonly file_count=${#all_built_files[@]}
 
 if [ "$file_count" -ne 1 ]; then
@@ -24,7 +24,7 @@ file_size_bytes=$(stat -c%s "$complete_path")
 readonly file_size_bytes
 
 version=
-if [[ $file_name =~ ^exasol-cloud-storage-extension-(.*).jar$ ]]; then
+if [[ $file_name =~ ^exasol-kafka-connector-extension-(.*).jar$ ]]; then
     version=${BASH_REMATCH[1]}
 else
     echo "ERROR: Could not extract version from filename $file_name"

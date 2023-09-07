@@ -3,7 +3,7 @@ import { ExaScriptsRow } from '@exasol/extension-manager-interface/dist/exasolSc
 import { describe, expect, it } from '@jest/globals';
 import { createExtension } from "./extension";
 import { EXTENSION_DESCRIPTION } from './extension-description';
-import { createMockContext, getInstalledExtension } from './test-utils';
+import { createMockContext, getInstalledExtension, scriptWithVersion } from './test-utils';
 
 const currentVersion = EXTENSION_DESCRIPTION.version
 

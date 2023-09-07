@@ -10,6 +10,7 @@
     <properties>
         <!-- Update this once the Avro4s version is updated -->
         <!-- com.sksamuel.avro4s:avro4s-core_2.13:4.1.1 requires scala version: 2.13.3 -->
+        <java.version>11</java.version>
         <scala.version>2.13.3</scala.version>
         <scala.compat.version>2.13</scala.compat.version>
         <sonar.sources>.</sonar.sources>
@@ -554,4 +555,10 @@
             </plugin>
         </plugins>
     </build>
+    <parent>
+        <artifactId>kafka-connector-extension-generated-parent</artifactId>
+        <groupId>com.exasol</groupId>
+        <version>1.7.0</version>
+        <relativePath>pk_generated_parent.pom</relativePath>
+    </parent>
 </project>
