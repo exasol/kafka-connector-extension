@@ -1,12 +1,12 @@
 {
-    "name": "cloud-storage-extension",
+    "name": "kafka-connector-extension",
     "version": "0.0.0",
     "main": "dist/extension.js",
-    "description": "Cloud storage extension",
+    "description": "Kafka connector extension",
     "license": "MIT",
     "scripts": {
         "build": "npm run generate && npm run compile",
-        "compile": "tsc --build && esbuild dist/extension.js --bundle --outfile=dist/cloud-storage-extension.js --target=es6",
+        "compile": "tsc --build && esbuild dist/extension.js --bundle --outfile=dist/kafka-connector-extension.js --target=es6",
         "generate": "bash generate-description.sh",
         "lint": "eslint ./src/",
         "clean": "rm -rf dist/",
