@@ -315,7 +315,7 @@ class ExtensionIT {
     private void assertScriptsInstalled() {
         setup.exasolMetadata().assertScript(table() //
                 .row(setScript("KAFKA_CONSUMER", "com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator")) //
-                .row(setScript("KAFKA_IMPORT", "com.exasol.cloudetl.kinesis.KinesisShardDataImporter")) //
+                .row(setScript("KAFKA_IMPORT", "com.exasol.cloudetl.kafka.KafkaTopicDataImporter")) //
                 .row(setScript("KAFKA_METADATA", "com.exasol.cloudetl.kafka.KafkaTopicMetadataReader")) //
                 .matches());
     }
