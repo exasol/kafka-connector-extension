@@ -377,6 +377,9 @@
                         <!-- At the moment we cannot update to the latest scala-library version since avro4s-core_2.13:4.1.1 dependency is not compatible with it -->
                         <!-- CWE-502: Deserialization of Untrusted Data (9.8); https://ossindex.sonatype.org/vulnerability/CVE-2022-36944 -->
                         <exclude>CVE-2022-36944</exclude>
+                        <!-- Excludes netty-handler and aXMLRPC vulnerabilities, both have no fix as of 11.09.23 -->
+                        <exclude>CVE-2023-4586</exclude>
+                        <exclude>CVE-2020-36641</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
