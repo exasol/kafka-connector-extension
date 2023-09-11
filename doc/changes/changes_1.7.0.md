@@ -18,7 +18,7 @@ Code name:
 
 ### Test Dependency Updates
 
-* Added `com.exasol:extension-manager-integration-test-java:0.5.0`
+* Added `com.exasol:extension-manager-integration-test-java:0.5.1`
 * Updated `com.exasol:test-db-builder-java:3.4.2` to `3.5.0`
 * Updated `io.confluent:kafka-streams-avro-serde:7.4.1` to `7.5.0`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.4.1` to `7.5.0`
