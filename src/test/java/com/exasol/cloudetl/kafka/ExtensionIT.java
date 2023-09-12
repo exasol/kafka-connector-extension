@@ -280,8 +280,8 @@ class ExtensionIT {
         final String sql = "IMPORT INTO " + targetTable.getFullyQualifiedName() + "\n" + //
                 " FROM SCRIPT " + ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".KAFKA_CONSUMER WITH\n" + //
                 " BOOTSTRAP_SERVERS = '" + bootstrapServers + "'\n" + //
-                " RECORD_KEY_FORMAT='string'" + "'\n" + //
-                " RECORD_VALUE_FORMAT='string'" + "'\n" + //
+                " RECORD_KEY_FORMAT = 'string'" + "\n" + //
+                " RECORD_VALUE_FORMAT = 'string'" + "\n" + //
                 // " SCHEMA_REGISTRY_URL = '" + kafkaConnection + "'\n" + //is an URL to the Schema Registry server.
                 // This is only required if you are importing Avro records. It is used to retrieve Avro schemas of Kafka
                 // topics. Avro is set as default record value format.
