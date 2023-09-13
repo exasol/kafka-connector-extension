@@ -43,6 +43,7 @@ class KafkaTestSetup implements AutoCloseable {
         final Properties properties = new Properties();
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, container.getBootstrapServers());
         final String topicName = "testTopic";
+        LOG.info("Topicname: " + topicName);
         // CREATE TOPIC AND WAIT
         try (Admin admin = Admin.create(properties)) {
             final int partitions = 1;
@@ -53,23 +54,29 @@ class KafkaTestSetup implements AutoCloseable {
 
             final KafkaFuture<Void> future = result.values().get(topicName);
             final var createTopicsResult = future.get();
+        } catch (final Exception ex) {
+            LOG.warning("Exception occurred during Kafka topic creation: '" + ex.getMessage() + "'");
         }
-        // PRODUCE
-        final Properties producerProps = new Properties();
-        producerProps.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, container.getBootstrapServers());
-        producerProps.put("acks", "all");
-        producerProps.put("retries", 0);
-        producerProps.put("batch.size", 16384);
-        producerProps.put("linger.ms", 1);
-        producerProps.put("buffer.memory", 33554432);
-        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        try {
+            // PRODUCE
+            final Properties producerProps = new Properties();
+            producerProps.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, container.getBootstrapServers());
+            producerProps.put("acks", "all");
+            producerProps.put("retries", 0);
+            producerProps.put("batch.size", 16384);
+            producerProps.put("linger.ms", 1);
+            producerProps.put("buffer.memory", 33554432);
+            producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+            producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-        final Producer<String, String> producer = new KafkaProducer<>(producerProps);
-        // for (int i = 0; i < 100; i++)
-        producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(1), "OK"));
-        producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(2), "WARN"));
-        producer.close();
+            final Producer<String, String> producer = new KafkaProducer<>(producerProps);
+            // for (int i = 0; i < 100; i++)
+            producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(1), "OK"));
+            producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(2), "WARN"));
+            producer.close();
+        } catch (final Exception ex) {
+            LOG.warning("Exception occurred producing Kafka records: '" + ex.getMessage() + "'");
+        }
         // RETURN kafkaTestSetup object
         return new KafkaTestSetup(container, topicName);
     }
