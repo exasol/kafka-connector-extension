@@ -239,24 +239,18 @@ class ExtensionIT {
                 .build();
     }
 
-    // TODo
     private void verifyImportWorks() {
         final ExasolSchema schema = exasolObjectFactory.createSchema("TESTING_SCHEMA_" + System.currentTimeMillis());
-        // final String connectionName = "KAFKA_CONNECTION";
 
-        try {// (final KafkaStream stream = kafkaSetup.createStream("extension-stream", 1)) {
-
-            // stream.putRecord(sensorDataPayload(1, "OK"), PARTITION_KEY);
-            // stream.putRecord(sensorDataPayload(2, "WARN"), PARTITION_KEY);
+        try {
 
             final Table targetTable = schema.createTableBuilder("TARGET")
-                    // TODO: check variables
-                    .column("SENSOR_ID", "INTEGER").column("STATUS", "VARCHAR(10)")
-                    //
+
+                    .column("SENSOR_ID", "INTEGER").column("STATUS", "VARCHAR(10)") //
                     .column("KAFKA_PARTITION", "DECIMAL(18, 0)").column("KAFKA_OFFSET", "DECIMAL(36, 0)").build();
-            // CREATE CONNECTION (see
+            // CREATE CONNECTION (optional, see
             // https://github.com/exasol/kafka-connector-extension/blob/main/doc/user_guide/user_guide.md#importing-records)
-            // OPTIONAL
+
             executeKafkaImport(targetTable, kafkaSetup);
 
             assertQueryResult(
@@ -271,15 +265,15 @@ class ExtensionIT {
         }
     }
 
-    // TODO
-    //
     private void executeKafkaImport(final Table targetTable, final KafkaTestSetup kafkaSetup) {
         final String bootstrapServers = kafkaSetup.getContainer().getBootstrapServers();
 
+        final String modifiedBootstrapServers = bootstrapServers.replaceAll("localhost",
+                IntegrationTestConstants.DOCKER_IP_ADDRESS);
         executeStatement("OPEN SCHEMA " + ExtensionManagerSetup.EXTENSION_SCHEMA_NAME);
         final String sql = "IMPORT INTO " + targetTable.getFullyQualifiedName() + "\n" + //
                 " FROM SCRIPT " + ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".KAFKA_CONSUMER WITH\n" + //
-                " BOOTSTRAP_SERVERS = '" + bootstrapServers + "'\n" + //
+                " BOOTSTRAP_SERVERS = '" + modifiedBootstrapServers + "'\n" + //
                 " RECORD_KEY_FORMAT = 'string'" + "\n" + //
                 " RECORD_VALUE_FORMAT = 'string'" + "\n" + //
                 // " SCHEMA_REGISTRY_URL = '" + kafkaConnection + "'\n" + //is an URL to the Schema Registry server.
