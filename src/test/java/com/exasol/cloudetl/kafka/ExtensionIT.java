@@ -281,7 +281,8 @@ class ExtensionIT {
                 // topics. Avro is set as default record value format.
                 " TOPIC_NAME = '" + kafkaSetup.getTopicName() + "'\n" + //
                 " TABLE_NAME = '" + targetTable.getFullyQualifiedName() + "'\n" + //
-                " GROUP_ID = 'exasol-kafka-udf-consumers'\n";
+                " GROUP_ID = 'exaudf' \n" + //
+                " CONSUME_ALL_OFFSETS = 'true' \n";
         LOGGER.info("Executing query '" + sql + "'");
         executeStatement(sql);
     }

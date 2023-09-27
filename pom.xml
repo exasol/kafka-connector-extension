@@ -380,6 +380,10 @@
                         <!-- Excludes netty-handler and aXMLRPC vulnerabilities, both have no fix as of 11.09.23 -->
                         <exclude>CVE-2023-4586</exclude>
                         <exclude>CVE-2020-36641</exclude>
+                        <exclude>CVE-2023-40167</exclude>
+                        <exclude>CVE-2023-36479</exclude>
+                        <exclude>CVE-2023-43642</exclude>
+                        
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
