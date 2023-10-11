@@ -260,8 +260,8 @@ class ExtensionIT {
                     "select status, kafka_partition, kafka_offset from " + targetTable.getFullyQualifiedName()
                             + " order by status",
                     table("VARCHAR", "DECIMAL", "DECIMAL") //
-                            .row( "OK", 0L, 0L) //
-                            .row( "WARN", 0L, 1L) //
+                            .row( "OK", 0L, 0) //
+                            .row( "WARN", 0L, 1) //
                             .matches());
         } finally {
             schema.drop();

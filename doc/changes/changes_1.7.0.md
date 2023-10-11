@@ -27,6 +27,6 @@ Code name:
 
 ### Plugin Dependency Updates
 
-* Updated `com.exasol:project-keeper-maven-plugin:2.9.9` to `2.9.11`
+* Updated `com.exasol:project-keeper-maven-plugin:2.9.9` to `2.9.12`
 * Updated `org.apache.maven.plugins:maven-enforcer-plugin:3.3.0` to `3.4.0`
 * Added `org.codehaus.mojo:exec-maven-plugin:3.1.0`
