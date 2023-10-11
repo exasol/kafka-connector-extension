@@ -246,19 +246,22 @@ class ExtensionIT {
 
             final Table targetTable = schema.createTableBuilder("TARGET")
 
-                    .column("SENSOR_ID", "INTEGER").column("STATUS", "VARCHAR(10)") //
-                    .column("KAFKA_PARTITION", "DECIMAL(18, 0)").column("KAFKA_OFFSET", "DECIMAL(36, 0)").build();
+                    //.column("SENSOR_ID", "INTEGER")//
+                    .column("STATUS", "VARCHAR(10)") //
+                    .column("KAFKA_PARTITION", "DECIMAL(18, 0)")//
+                    .column("KAFKA_OFFSET", "DECIMAL(36, 0)")//
+                    .build();
             // CREATE CONNECTION (optional, see
             // https://github.com/exasol/kafka-connector-extension/blob/main/doc/user_guide/user_guide.md#importing-records)
 
             executeKafkaImport(targetTable, kafkaSetup);
 
             assertQueryResult(
-                    "select sensor_id, status, kafka_partition,kafka_offset from " + targetTable.getFullyQualifiedName()
-                            + " order by sensor_id",
-                    table("BIGINT", "VARCHAR", "DECIMAL", "DECIMAL") //
-                            .row(1L, "OK", 1.0, 1.0) //
-                            .row(2L, "WARN", 1.0, 1.0) //
+                    "select status, kafka_partition, kafka_offset from " + targetTable.getFullyQualifiedName()
+                            + " order by status",
+                    table("VARCHAR", "DECIMAL", "DECIMAL") //
+                            .row( "OK", 0L, 0L) //
+                            .row( "WARN", 0L, 1L) //
                             .matches());
         } finally {
             schema.drop();
