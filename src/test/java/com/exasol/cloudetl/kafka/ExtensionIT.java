@@ -224,7 +224,7 @@ class ExtensionIT {
         final List<InstallationsResponseInstallation> installations = setup.client().getInstallations();
         final InstallationsResponseInstallation expectedInstallation = new InstallationsResponseInstallation()
                 .name(expectedName).version(expectedVersion);
-        // The extension is installed twice (previous and current version), so each one returns the same installation.
+        // The extension definition is installed twice (previous and current version), so each one returns the same installation.
         assertAll(() -> assertThat(installations, hasSize(2)),
                 () -> assertThat(installations.get(0), equalTo(expectedInstallation)),
                 () -> assertThat(installations.get(1), equalTo(expectedInstallation)));
@@ -241,18 +241,11 @@ class ExtensionIT {
 
     private void verifyImportWorks() {
         final ExasolSchema schema = exasolObjectFactory.createSchema("TESTING_SCHEMA_" + System.currentTimeMillis());
-
         try {
-
             final Table targetTable = schema.createTableBuilder("TARGET")
-
                     .column("SENSOR_ID", "INTEGER").column("STATUS", "VARCHAR(10)") //
                     .column("KAFKA_PARTITION", "DECIMAL(18, 0)").column("KAFKA_OFFSET", "DECIMAL(36, 0)").build();
-            // CREATE CONNECTION (optional, see
-            // https://github.com/exasol/kafka-connector-extension/blob/main/doc/user_guide/user_guide.md#importing-records)
-
             executeKafkaImport(targetTable, kafkaSetup);
-
             assertQueryResult(
                     "select sensor_id, status, kafka_partition,kafka_offset from " + targetTable.getFullyQualifiedName()
                             + " order by sensor_id",
