@@ -386,6 +386,7 @@
                         <exclude>CVE-2023-44487</exclude>
                         <exclude>CVE-2023-39410</exclude>
                         <exclude>CVE-2023-36478</exclude>
+                        <exclude>CVE-2023-44981</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
