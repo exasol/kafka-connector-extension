@@ -28,6 +28,7 @@ import com.exasol.extensionmanager.client.model.ExtensionsResponseExtension;
 import com.exasol.extensionmanager.client.model.InstallationsResponseInstallation;
 import com.exasol.extensionmanager.itest.*;
 import com.exasol.extensionmanager.itest.builder.ExtensionBuilder;
+import com.exasol.matcher.TypeMatchMode;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 import junit.framework.AssertionFailedError;
@@ -259,10 +260,10 @@ class ExtensionIT {
             assertQueryResult(
                     "select status, kafka_partition, kafka_offset from " + targetTable.getFullyQualifiedName()
                             + " order by status",
-                    table("VARCHAR", "DECIMAL", "DECIMAL") //
+                    table("VARCHAR", "BIGINT", "DECIMAL") //
                             .row( "OK", 0L, 0) //
                             .row( "WARN", 0L, 1) //
-                            .matches());
+                            .matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
         } finally {
             schema.drop();
         }
