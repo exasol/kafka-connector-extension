@@ -285,7 +285,6 @@ class ExtensionIT {
                 " TABLE_NAME = '" + targetTable.getFullyQualifiedName() + "'\n" + //
                 " GROUP_ID = 'exaudf' \n" + //
                 " CONSUME_ALL_OFFSETS = 'true' \n";
-        LOGGER.info("Executing query '" + sql + "'");
         executeStatement(sql);
     }
 
