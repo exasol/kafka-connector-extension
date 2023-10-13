@@ -60,9 +60,6 @@ describe("Kafka Connector Extension", () => {
         function setScript(name: string, className: string, version = EXTENSION_DESCRIPTION.version): ExaScriptsRow {
             return script({ name, inputType: "SET", text: text(name, className, version) })
         }
-        function scalarScript(name: string, className: string, version = EXTENSION_DESCRIPTION.version): ExaScriptsRow {
-            return script({ name, inputType: "SCALAR", text: text(name, className, version) })
-        }
 
         it("returns empty list when no adapter script is available", () => {
             expect(findInstallations([])).toHaveLength(0)

@@ -1,6 +1,7 @@
 package com.exasol.cloudetl.kafka;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
@@ -30,7 +31,6 @@ class KafkaTestSetup implements AutoCloseable {
     private KafkaTestSetup(final org.testcontainers.containers.KafkaContainer container, final String topicName) {
         this.container = container;
         this.topicName = topicName;
-        // this.client = client;
     }
 
     public org.testcontainers.containers.KafkaContainer getContainer() {
@@ -41,11 +41,6 @@ class KafkaTestSetup implements AutoCloseable {
         return this.topicName;
     }
 
-    private static final int ZOOKEEPER_PORT = 2181;
-    private static final int KAFKA_EXTERNAL_PORT = 29092;
-    private static final int SCHEMA_REGISTRY_PORT = 8081;
-    private static final int ADMIN_TIMEOUT_MILLIS = 5000;
-
     static KafkaTestSetup create() throws ExecutionException, InterruptedException {
 
         @SuppressWarnings("resource")
@@ -54,8 +49,6 @@ class KafkaTestSetup implements AutoCloseable {
                 .withEmbeddedZookeeper()//
                 .withReuse(true);
         kafkaContainer.start();
-        // return String.format("PLAINTEXT://%s:%s", this.getHost(), this.getMappedPort(9093));
-        // container.start();
 
         final Properties properties = new Properties();
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaContainer.getBootstrapServers());
@@ -72,11 +65,12 @@ class KafkaTestSetup implements AutoCloseable {
             final KafkaFuture<Void> future = result.values().get(topicName);
             future.get();
 
-            final Set<String> topicNames = admin.listTopics().names().get();
+            //final Set<String> topicNames = admin.listTopics().names().get();
 
             LOG.info("Succesfully created topic");
         } catch (final Exception ex) {
             LOG.warning("Exception occurred during Kafka topic creation: '" + ex.getMessage() + "'");
+            throw ex;
         }
         // PRODUCE
         final Properties producerProps = new Properties();
@@ -92,22 +86,20 @@ class KafkaTestSetup implements AutoCloseable {
         final Producer<String, String> producer = new KafkaProducer<>(producerProps);
         try {
 
-            // for (int i = 0; i < 100; i++)
             producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(1), "OK"));
             producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(2), "WARN"));
 
         } catch (final Exception ex) {
             LOG.warning("Exception occurred producing Kafka records: '" + ex.getMessage() + "'");
+            throw ex;
         } finally {
             producer.close();
         }
-        // RETURN kafkaTestSetup object
         return new KafkaTestSetup(kafkaContainer, topicName);
     }
 
     @Override
     public void close() {
-        // this.client.shutdown();
         this.container.close();
     }
 

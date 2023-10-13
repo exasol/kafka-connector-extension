@@ -43,8 +43,6 @@ class ExtensionIT {
     private static final String PROJECT_VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
     private static final Path ADAPTER_JAR = getAdapterJar();
 
-    private static final String PARTITION_KEY = "partitionKey-1";
-
     private static ExasolTestSetup exasolTestSetup;
     private static ExtensionManagerSetup setup;
     private static ExtensionManagerClient client;
@@ -289,11 +287,6 @@ class ExtensionIT {
                 " CONSUME_ALL_OFFSETS = 'true' \n";
         LOGGER.info("Executing query '" + sql + "'");
         executeStatement(sql);
-    }
-
-    private String sensorDataPayload(final int sensor, final String status) {
-        final String json = "{'sensor': " + sensor + ", 'status': '" + status + "'}";
-        return json.replaceAll("'", "\"");
     }
 
     private void executeStatement(final String sql) {

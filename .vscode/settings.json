@@ -14,5 +14,8 @@
             "-Djava.util.logging.config.file=src/test/resources/logging.properties"
         ]
     },
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "files.watcherExclude": {
+        "**/target": true
+    }
 }
