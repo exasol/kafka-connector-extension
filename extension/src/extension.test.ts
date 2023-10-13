@@ -92,15 +92,15 @@ describe("Kafka Connector Extension", () => {
             const context = createMockContext();
             createExtension().install(context, EXTENSION_DESCRIPTION.version);
             const executeCalls = context.mocks.sqlExecute.mock.calls
-            expect(executeCalls.length).toBe(10)
+            expect(executeCalls.length).toBe(6)
 
             const expectedScriptNames = ["KAFKA_METADATA", "KAFKA_IMPORT", "KAFKA_CONSUMER"]
 
-            const createScriptStatements = executeCalls.slice(0, 5).map(args => args[0])
-            const createCommentStatements = executeCalls.slice(5, 10).map(args => args[0])
+            const createScriptStatements = executeCalls.slice(0, 3).map(args => args[0])
+            const createCommentStatements = executeCalls.slice(3, 6).map(args => args[0])
 
-            expect(createScriptStatements).toHaveLength(5)
-            expect(createCommentStatements).toHaveLength(5)
+            expect(createScriptStatements).toHaveLength(3)
+            expect(createCommentStatements).toHaveLength(3)
 
             const expectedComment = `Created by Extension Manager for Kafka Connector Extension ${EXTENSION_DESCRIPTION.version}`
             for (let i = 0; i < expectedScriptNames.length; i++) {
