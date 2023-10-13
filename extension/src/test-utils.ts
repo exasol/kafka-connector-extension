@@ -52,4 +52,10 @@ export function createMockContext(): ContextMock {
         }
     }
 }
+export function script({ schema = "schema", name = "name", inputType, resultType, type = "", text = "", comment }: Partial<ExaScriptsRow>): ExaScriptsRow {
+    return { schema, name, inputType, resultType, type, text, comment }
+}
+export function scriptWithVersion(name: string, version: string): ExaScriptsRow {
+    return script({ name, text: `CREATE ... %jar /path/to/exasol-kafka-connector-extension-${version}.jar; more text` })
+}
 
