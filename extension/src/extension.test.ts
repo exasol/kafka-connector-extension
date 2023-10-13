@@ -77,7 +77,7 @@ describe("Kafka Connector Extension", () => {
         it("fails for inconsistent version", () => {
             const scripts: ExaScriptsRow[] = [
                 setScript("KAFKA_METADATA", "com.exasol.cloudetl.kafka.KafkaTopicMetadataReader"),
-                setScript("KAFKA_IMPORT", "com.exasol.cloudetl.kafka.KafkaTopicDataImporter"),
+                setScript("KAFKA_IMPORT", "com.exasol.cloudetl.kafka.KafkaTopicDataImporter", "0.0.0"),
                 setScript("KAFKA_CONSUMER", "com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator"),
             ]
             expect(() => findInstallations(scripts)).toThrowError(new PreconditionFailedError(`Not all scripts use the same version. Found 2 different versions: '${currentVersion}, 0.0.0'`))
