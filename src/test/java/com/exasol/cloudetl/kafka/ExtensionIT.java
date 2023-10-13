@@ -21,7 +21,8 @@ import org.junit.jupiter.api.*;
 
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.dbbuilder.dialects.Table;
-import com.exasol.dbbuilder.dialects.exasol.*;
+import com.exasol.dbbuilder.dialects.exasol.ExasolObjectFactory;
+import com.exasol.dbbuilder.dialects.exasol.ExasolSchema;
 import com.exasol.exasoltestsetup.ExasolTestSetup;
 import com.exasol.exasoltestsetup.ExasolTestSetupFactory;
 import com.exasol.extensionmanager.client.model.ExtensionsResponseExtension;
@@ -60,8 +61,7 @@ class ExtensionIT {
         client = setup.client();
         kafkaSetup = KafkaTestSetup.create();
         connection = exasolTestSetup.createConnection();
-        exasolObjectFactory = new ExasolObjectFactory(connection,
-                ExasolObjectConfiguration.builder().withJvmOptions("-Dcom.amazonaws.sdk.disableCbor=true").build());
+        exasolObjectFactory = new ExasolObjectFactory(connection);
     }
 
     private static Path getAdapterJar() {
