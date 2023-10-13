@@ -71,7 +71,7 @@ describe("Kafka Connector Extension", () => {
                 setScript("KAFKA_IMPORT", "com.exasol.cloudetl.kafka.KafkaTopicDataImporter"),
                 setScript("KAFKA_CONSUMER", "com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator"),
             ]
-            expect(findInstallations(scripts)).toStrictEqual([{ name: "Cloud Storage Extension", version: EXTENSION_DESCRIPTION.version }])
+            expect(findInstallations(scripts)).toStrictEqual([{ name: "Kafka Connector Extension", version: EXTENSION_DESCRIPTION.version }])
         })
 
         it("fails for inconsistent version", () => {
