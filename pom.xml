@@ -173,6 +173,27 @@
             </exclusions>
         </dependency>
         <dependency>
+            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-5072 -->
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20231013</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-44981 -->
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-44487 in org.eclipse.jetty.http2:http2-common -->
+            <groupId>org.eclipse.jetty.http2</groupId>
+            <artifactId>http2-server</artifactId>
+            <version>11.0.17</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
             <version>7.5.1</version>
@@ -188,6 +209,13 @@
             <groupId>com.sksamuel.avro4s</groupId>
             <artifactId>avro4s-core_${scala.compat.version}</artifactId>
             <version>4.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Upgrade transitive dependency of com.sksamuel.avro4s:avro4s-core_2.13 to fix CVE-2023-39410 -->
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.11.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -381,16 +409,8 @@
                         <exclude>CVE-2023-36479</exclude>
                         <!-- org.xerial.snappy:snappy-java:jar:1.1.10.1:runtime; vulnerability under org.testcontainers:kafka:jar:1.19.0:test -->
                         <exclude>CVE-2023-43642</exclude>
-                        <!-- org.eclipse.jetty.http2:http2-common:jar:9.4.51.v20230217:test -->
-                        <exclude>CVE-2023-44487</exclude>
-                        <!-- org.apache.avro:avro:jar:1.9.2:test  -->
-                        <exclude>CVE-2023-39410</exclude>
                         <!-- org.eclipse.jetty.http2:http2-hpack:jar:9.4.51.v20230217:test -->
                         <exclude>CVE-2023-36478</exclude>
-                        <!-- org.apache.zookeeper:zookeeper:jar:3.6.3:test -->
-                        <exclude>CVE-2023-44981</exclude>
-                        <!-- org.json:json:jar:20230227:test -->
-                        <exclude>CVE-2023-5072</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>

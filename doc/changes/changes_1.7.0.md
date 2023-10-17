@@ -21,16 +21,8 @@ Adds extension manager support.
         * CVE-2023-36479
     * org.xerial.snappy:snappy-java:jar:1.1.10.1:runtime; vulnerability under org.testcontainers:kafka:jar:1.19.0:test
         * CVE-2023-43642
-    * org.eclipse.jetty.http2:http2-common:jar:9.4.51.v20230217:test
-        * CVE-2023-44487
-    * org.apache.avro:avro:jar:1.9.2:test 
-        * CVE-2023-39410
     * org.eclipse.jetty.http2:http2-hpack:jar:9.4.51.v20230217:test
         * CVE-2023-36478
-    * org.apache.zookeeper:zookeeper:jar:3.6.3:test
-        * CVE-2023-44981
-    * org.json:json:jar:20230227:test
-        * CVE-2023-5072
 
 ## Dependency Updates
 
@@ -49,6 +41,10 @@ Adds extension manager support.
 * Updated `io.confluent:kafka-streams-avro-serde:7.4.1` to `7.5.1`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.4.1` to `7.5.1`
 * Updated `io.netty:netty-handler:4.1.95.Final` to `4.1.100.Final`
+* Added `org.apache.avro:avro:1.11.3`
+* Added `org.apache.zookeeper:zookeeper:3.9.1`
+* Added `org.eclipse.jetty.http2:http2-server:11.0.17`
+* Added `org.json:json:20231013`
 * Updated `org.mockito:mockito-core:5.4.0` to `5.6.0`
 * Updated `org.scalatestplus:scalatestplus-mockito_2.13:1.0.0-M2` to `1.0.0-SNAP5`
 * Updated `org.scalatest:scalatest_2.13:3.2.16` to `3.3.0-SNAP4`
