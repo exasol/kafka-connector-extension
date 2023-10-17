@@ -12,15 +12,17 @@ Code name:
 
 ### Compile Dependency Updates
 
-* Updated `com.google.guava:guava:32.1.1-jre` to `32.1.2-jre`
-* Updated `io.confluent:kafka-avro-serializer:7.4.1` to `7.5.0`
+* Updated `com.google.guava:guava:32.1.1-jre` to `32.1.3-jre`
+* Updated `io.confluent:kafka-avro-serializer:7.4.1` to `7.5.1`
 * Added `org.apache.kafka:kafka-clients:3.5.1`
 
 ### Test Dependency Updates
 
-* Added `com.exasol:extension-manager-integration-test-java:0.5.1`
-* Updated `com.exasol:test-db-builder-java:3.4.2` to `3.5.0`
-* Updated `io.confluent:kafka-streams-avro-serde:7.4.1` to `7.5.0`
+* Updated `com.exasol:exasol-testcontainers:6.6.1` to `6.6.2`
+* Added `com.exasol:extension-manager-integration-test-java:0.5.2`
+* Updated `com.exasol:hamcrest-resultset-matcher:1.6.0` to `1.6.1`
+* Updated `com.exasol:test-db-builder-java:3.4.2` to `3.5.1`
+* Updated `io.confluent:kafka-streams-avro-serde:7.4.1` to `7.5.1`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.4.1` to `7.5.0`
 * Added `org.testcontainers:kafka:1.19.0`
 * Added `org.testcontainers:testcontainers:1.19.0`

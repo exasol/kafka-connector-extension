@@ -59,7 +59,7 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>7.5.0</version>
+            <version>7.5.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>32.1.2-jre</version>
+            <version>32.1.3-jre</version>
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
@@ -123,25 +123,25 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>6.6.1</version>
+            <version>6.6.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>3.5.0</version>
+            <version>3.5.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.6.0</version>
+            <version>1.6.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.1</version>
+            <version>0.5.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -175,7 +175,7 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
-            <version>7.5.0</version>
+            <version>7.5.1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -377,16 +377,26 @@
                         <!-- At the moment we cannot update to the latest scala-library version since avro4s-core_2.13:4.1.1 dependency is not compatible with it -->
                         <!-- CWE-502: Deserialization of Untrusted Data (9.8); https://ossindex.sonatype.org/vulnerability/CVE-2022-36944 -->
                         <exclude>CVE-2022-36944</exclude>
-                        <!-- Excludes netty-handler and aXMLRPC vulnerabilities, both have no fix as of 11.09.23 -->
-                        <exclude>CVE-2023-4586</exclude>
+                        <!-- io.netty:netty-handler:jar:4.1.95.Final:test -->
+                        <exclude>CVE-2023-4586</exclude> 
+                        <!-- fr.turri:aXMLRPC:jar:1.13.0:test -->
                         <exclude>CVE-2020-36641</exclude>
+                        <!-- org.eclipse.jetty:jetty-http:jar:9.4.51.v20230217:test -->
                         <exclude>CVE-2023-40167</exclude>
+                        <!-- org.eclipse.jetty:jetty-servlets:jar:9.4.51.v20230217:test -->
                         <exclude>CVE-2023-36479</exclude>
+                        <!-- org.xerial.snappy:snappy-java:jar:1.1.10.1:runtime; vulnerability under org.testcontainers:kafka:jar:1.19.0:test -->
                         <exclude>CVE-2023-43642</exclude>
+                        <!-- org.eclipse.jetty.http2:http2-common:jar:9.4.51.v20230217:test -->
                         <exclude>CVE-2023-44487</exclude>
+                        <!-- org.apache.avro:avro:jar:1.9.2:test  -->
                         <exclude>CVE-2023-39410</exclude>
+                        <!-- org.eclipse.jetty.http2:http2-hpack:jar:9.4.51.v20230217:test -->
                         <exclude>CVE-2023-36478</exclude>
+                        <!-- org.apache.zookeeper:zookeeper:jar:3.6.3:test -->
                         <exclude>CVE-2023-44981</exclude>
+                        <!-- org.json:json:jar:20230227:test -->
+                        <exclude>CVE-2023-5072</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
