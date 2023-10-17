@@ -19,7 +19,7 @@
 | ------------------------------------------ | ----------------------------------------- |
 | [scalatest][12]                            | [the Apache License, ASL Version 2.0][13] |
 | [scalatestplus-mockito][14]                | [Apache-2.0][13]                          |
-| [mockito-core][15]                         | [The MIT License][16]                     |
+| [mockito-core][15]                         | [MIT][16]                                 |
 | [Test containers for Exasol on Docker][17] | [MIT License][18]                         |
 | [Test Database Builder for Java][19]       | [MIT License][20]                         |
 | [Matcher for SQL Result Sets][21]          | [MIT License][22]                         |
@@ -28,7 +28,6 @@
 | [kafka-streams-avro-serde][27]             | [Apache License 2.0][7]                   |
 | [avro4s-core][28]                          | [MIT][26]                                 |
 | [Netty/Handler][29]                        | [Apache License, Version 2.0][1]          |
-| [Testcontainers Core][30]                  | [MIT][31]                                 |
 | [Testcontainers :: Kafka][30]              | [MIT][31]                                 |
 
 ## Plugin Dependencies

@@ -47,12 +47,17 @@ Adds extension manager support.
 * Updated `com.exasol:hamcrest-resultset-matcher:1.6.0` to `1.6.1`
 * Updated `com.exasol:test-db-builder-java:3.4.2` to `3.5.1`
 * Updated `io.confluent:kafka-streams-avro-serde:7.4.1` to `7.5.1`
-* Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.4.1` to `7.5.0`
-* Added `org.testcontainers:kafka:1.19.0`
-* Added `org.testcontainers:testcontainers:1.19.0`
+* Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.4.1` to `7.5.1`
+* Updated `io.netty:netty-handler:4.1.95.Final` to `4.1.100.Final`
+* Updated `org.mockito:mockito-core:5.4.0` to `5.6.0`
+* Updated `org.scalatestplus:scalatestplus-mockito_2.13:1.0.0-M2` to `1.0.0-SNAP5`
+* Updated `org.scalatest:scalatest_2.13:3.2.16` to `3.3.0-SNAP4`
+* Added `org.testcontainers:kafka:1.19.1`
 
 ### Plugin Dependency Updates
 
+* Updated `com.diffplug.spotless:spotless-maven-plugin:2.37.0` to `2.40.0`
 * Updated `com.exasol:project-keeper-maven-plugin:2.9.9` to `2.9.12`
 * Updated `org.apache.maven.plugins:maven-enforcer-plugin:3.3.0` to `3.4.0`
+* Updated `org.apache.maven.plugins:maven-javadoc-plugin:3.5.0` to `3.6.0`
 * Added `org.codehaus.mojo:exec-maven-plugin:3.1.0`
