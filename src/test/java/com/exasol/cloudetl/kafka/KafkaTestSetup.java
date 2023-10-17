@@ -64,10 +64,7 @@ class KafkaTestSetup implements AutoCloseable {
 
             final KafkaFuture<Void> future = result.values().get(topicName);
             future.get();
-
-            //final Set<String> topicNames = admin.listTopics().names().get();
-
-            LOG.info("Succesfully created topic");
+            LOG.info(() -> "Succesfully created topic " + topicName);
         } catch (final Exception ex) {
             LOG.warning("Exception occurred during Kafka topic creation: '" + ex.getMessage() + "'");
             throw ex;

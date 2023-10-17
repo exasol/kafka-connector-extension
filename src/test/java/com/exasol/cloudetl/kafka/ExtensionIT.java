@@ -245,7 +245,6 @@ class ExtensionIT {
 
             final Table targetTable = schema.createTableBuilder("TARGET")
 
-                    //.column("SENSOR_ID", "INTEGER")//
                     .column("STATUS", "VARCHAR(10)") //
                     .column("KAFKA_PARTITION", "DECIMAL(18, 0)")//
                     .column("KAFKA_OFFSET", "DECIMAL(36, 0)")//
