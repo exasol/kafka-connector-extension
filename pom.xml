@@ -187,20 +187,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-44487 in org.eclipse.jetty.http2:http2-common -->
-            <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>http2-server</artifactId>
-            <version>11.0.17</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-36479 -->
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <version>11.0.17</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
             <version>7.5.1</version>
@@ -416,6 +402,14 @@
                         <exclude>CVE-2023-4586</exclude> 
                         <!-- fr.turri:aXMLRPC:jar:1.13.0:test -->
                         <exclude>CVE-2020-36641</exclude>
+                        <!-- org.eclipse.jetty:jetty-http:jar:9.4.51.v20230217:test -->
+                        <exclude>CVE-2023-40167</exclude>
+                        <!-- org.eclipse.jetty.http2:http2-common:jar:9.4.51.v20230217:test -->
+                        <exclude>CVE-2023-44487</exclude>
+                        <!-- org.eclipse.jetty:jetty-servlets:jar:9.4.51.v20230217:test -->
+                        <exclude>CVE-2023-36479</exclude>
+                        <!-- org.eclipse.jetty.http2:http2-hpack:jar:9.4.51.v20230217:test -->
+                        <exclude>CVE-2023-36478</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>

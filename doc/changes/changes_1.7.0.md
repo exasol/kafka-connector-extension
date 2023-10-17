@@ -13,6 +13,10 @@ Adds extension manager support.
 * Test dependencies:
     * `io.netty:netty-handler:jar:4.1.95.Final`: CVE-2023-4586 
     * `fr.turri:aXMLRPC:jar:1.13.0`: CVE-2020-36641
+    * `org.eclipse.jetty:jetty-http:jar:9.4.51.v20230217:test`: CVE-2023-40167
+    * `org.eclipse.jetty.http2:http2-common:jar:9.4.51.v20230217:test`: CVE-2023-44487
+    * `org.eclipse.jetty:jetty-servlets:jar:9.4.51.v20230217:test`: CVE-2023-36479
+    * `org.eclipse.jetty.http2:http2-hpack:jar:9.4.51.v20230217:test`: CVE-2023-36478
 
 ## Features
 
@@ -38,8 +42,6 @@ Adds extension manager support.
 * Updated `io.netty:netty-handler:4.1.95.Final` to `4.1.100.Final`
 * Added `org.apache.avro:avro:1.11.3`
 * Added `org.apache.zookeeper:zookeeper:3.9.1`
-* Added `org.eclipse.jetty.http2:http2-server:11.0.17`
-* Added `org.eclipse.jetty:jetty-servlets:11.0.17`
 * Added `org.json:json:20231013`
 * Updated `org.mockito:mockito-core:5.4.0` to `5.6.0`
 * Updated `org.scalatestplus:scalatestplus-mockito_2.13:1.0.0-M2` to `1.0.0-SNAP5`
