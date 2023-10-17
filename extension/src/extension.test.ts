@@ -60,9 +60,6 @@ describe("Kafka Connector Extension", () => {
         function setScript(name: string, className: string, version = EXTENSION_DESCRIPTION.version): ExaScriptsRow {
             return script({ name, inputType: "SET", text: text(name, className, version) })
         }
-        function scalarScript(name: string, className: string, version = EXTENSION_DESCRIPTION.version): ExaScriptsRow {
-            return script({ name, inputType: "SCALAR", text: text(name, className, version) })
-        }
 
         it("returns empty list when no adapter script is available", () => {
             expect(findInstallations([])).toHaveLength(0)
@@ -74,13 +71,13 @@ describe("Kafka Connector Extension", () => {
                 setScript("KAFKA_IMPORT", "com.exasol.cloudetl.kafka.KafkaTopicDataImporter"),
                 setScript("KAFKA_CONSUMER", "com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator"),
             ]
-            expect(findInstallations(scripts)).toStrictEqual([{ name: "Cloud Storage Extension", version: EXTENSION_DESCRIPTION.version }])
+            expect(findInstallations(scripts)).toStrictEqual([{ name: "Kafka Connector Extension", version: EXTENSION_DESCRIPTION.version }])
         })
 
         it("fails for inconsistent version", () => {
             const scripts: ExaScriptsRow[] = [
                 setScript("KAFKA_METADATA", "com.exasol.cloudetl.kafka.KafkaTopicMetadataReader"),
-                setScript("KAFKA_IMPORT", "com.exasol.cloudetl.kafka.KafkaTopicDataImporter"),
+                setScript("KAFKA_IMPORT", "com.exasol.cloudetl.kafka.KafkaTopicDataImporter", "0.0.0"),
                 setScript("KAFKA_CONSUMER", "com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator"),
             ]
             expect(() => findInstallations(scripts)).toThrowError(new PreconditionFailedError(`Not all scripts use the same version. Found 2 different versions: '${currentVersion}, 0.0.0'`))
@@ -95,15 +92,15 @@ describe("Kafka Connector Extension", () => {
             const context = createMockContext();
             createExtension().install(context, EXTENSION_DESCRIPTION.version);
             const executeCalls = context.mocks.sqlExecute.mock.calls
-            expect(executeCalls.length).toBe(10)
+            expect(executeCalls.length).toBe(6)
 
             const expectedScriptNames = ["KAFKA_METADATA", "KAFKA_IMPORT", "KAFKA_CONSUMER"]
 
-            const createScriptStatements = executeCalls.slice(0, 5).map(args => args[0])
-            const createCommentStatements = executeCalls.slice(5, 10).map(args => args[0])
+            const createScriptStatements = executeCalls.slice(0, 3).map(args => args[0])
+            const createCommentStatements = executeCalls.slice(3, 6).map(args => args[0])
 
-            expect(createScriptStatements).toHaveLength(5)
-            expect(createCommentStatements).toHaveLength(5)
+            expect(createScriptStatements).toHaveLength(3)
+            expect(createCommentStatements).toHaveLength(3)
 
             const expectedComment = `Created by Extension Manager for Kafka Connector Extension ${EXTENSION_DESCRIPTION.version}`
             for (let i = 0; i < expectedScriptNames.length; i++) {

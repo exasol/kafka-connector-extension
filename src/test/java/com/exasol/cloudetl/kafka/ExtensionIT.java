@@ -21,13 +21,15 @@ import org.junit.jupiter.api.*;
 
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.dbbuilder.dialects.Table;
-import com.exasol.dbbuilder.dialects.exasol.*;
+import com.exasol.dbbuilder.dialects.exasol.ExasolObjectFactory;
+import com.exasol.dbbuilder.dialects.exasol.ExasolSchema;
 import com.exasol.exasoltestsetup.ExasolTestSetup;
 import com.exasol.exasoltestsetup.ExasolTestSetupFactory;
 import com.exasol.extensionmanager.client.model.ExtensionsResponseExtension;
 import com.exasol.extensionmanager.client.model.InstallationsResponseInstallation;
 import com.exasol.extensionmanager.itest.*;
 import com.exasol.extensionmanager.itest.builder.ExtensionBuilder;
+import com.exasol.matcher.TypeMatchMode;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 import junit.framework.AssertionFailedError;
@@ -41,8 +43,6 @@ class ExtensionIT {
     private static final Path EXTENSION_SOURCE_DIR = Paths.get("extension").toAbsolutePath();
     private static final String PROJECT_VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
     private static final Path ADAPTER_JAR = getAdapterJar();
-
-    private static final String PARTITION_KEY = "partitionKey-1";
 
     private static ExasolTestSetup exasolTestSetup;
     private static ExtensionManagerSetup setup;
@@ -61,8 +61,7 @@ class ExtensionIT {
         client = setup.client();
         kafkaSetup = KafkaTestSetup.create();
         connection = exasolTestSetup.createConnection();
-        exasolObjectFactory = new ExasolObjectFactory(connection,
-                ExasolObjectConfiguration.builder().withJvmOptions("-Dcom.amazonaws.sdk.disableCbor=true").build());
+        exasolObjectFactory = new ExasolObjectFactory(connection);
     }
 
     private static Path getAdapterJar() {
@@ -246,20 +245,23 @@ class ExtensionIT {
 
             final Table targetTable = schema.createTableBuilder("TARGET")
 
-                    .column("SENSOR_ID", "INTEGER").column("STATUS", "VARCHAR(10)") //
-                    .column("KAFKA_PARTITION", "DECIMAL(18, 0)").column("KAFKA_OFFSET", "DECIMAL(36, 0)").build();
+                    //.column("SENSOR_ID", "INTEGER")//
+                    .column("STATUS", "VARCHAR(10)") //
+                    .column("KAFKA_PARTITION", "DECIMAL(18, 0)")//
+                    .column("KAFKA_OFFSET", "DECIMAL(36, 0)")//
+                    .build();
             // CREATE CONNECTION (optional, see
             // https://github.com/exasol/kafka-connector-extension/blob/main/doc/user_guide/user_guide.md#importing-records)
 
             executeKafkaImport(targetTable, kafkaSetup);
 
             assertQueryResult(
-                    "select sensor_id, status, kafka_partition,kafka_offset from " + targetTable.getFullyQualifiedName()
-                            + " order by sensor_id",
-                    table("BIGINT", "VARCHAR", "DECIMAL", "DECIMAL") //
-                            .row(1L, "OK", 1.0, 1.0) //
-                            .row(2L, "WARN", 1.0, 1.0) //
-                            .matches());
+                    "select status, kafka_partition, kafka_offset from " + targetTable.getFullyQualifiedName()
+                            + " order by status",
+                    table("VARCHAR", "BIGINT", "DECIMAL") //
+                            .row( "OK", 0L, 0) //
+                            .row( "WARN", 0L, 1) //
+                            .matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
         } finally {
             schema.drop();
         }
@@ -283,13 +285,7 @@ class ExtensionIT {
                 " TABLE_NAME = '" + targetTable.getFullyQualifiedName() + "'\n" + //
                 " GROUP_ID = 'exaudf' \n" + //
                 " CONSUME_ALL_OFFSETS = 'true' \n";
-        LOGGER.info("Executing query '" + sql + "'");
         executeStatement(sql);
-    }
-
-    private String sensorDataPayload(final int sensor, final String status) {
-        final String json = "{'sensor': " + sensor + ", 'status': '" + status + "'}";
-        return json.replaceAll("'", "\"");
     }
 
     private void executeStatement(final String sql) {

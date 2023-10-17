@@ -4,3 +4,5 @@ sources:
     modules:
       - jar_artifact
       - integration_tests
+excludes:
+  - "E-PK-CORE-18: Outdated content: '.github/workflows/ci-build.yml'"

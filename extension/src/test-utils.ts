@@ -52,16 +52,10 @@ export function createMockContext(): ContextMock {
         }
     }
 }
-
 export function script({ schema = "schema", name = "name", inputType, resultType, type = "", text = "", comment }: Partial<ExaScriptsRow>): ExaScriptsRow {
     return { schema, name, inputType, resultType, type, text, comment }
-}
-export function adapterScript({ name = "S3_FILES_ADAPTER", type = "ADAPTER", text = "adapter script" }: Partial<ExaScriptsRow>): ExaScriptsRow {
-    return script({ name, type, text })
-}
-export function importScript({ name = "IMPORT_FROM_S3_DOCUMENT_FILES", type = "UDF", inputType = "SET", resultType = "EMITS" }: Partial<ExaScriptsRow>): ExaScriptsRow {
-    return script({ name, type, inputType, resultType })
 }
 export function scriptWithVersion(name: string, version: string): ExaScriptsRow {
     return script({ name, text: `CREATE ... %jar /path/to/exasol-kafka-connector-extension-${version}.jar; more text` })
 }
+
