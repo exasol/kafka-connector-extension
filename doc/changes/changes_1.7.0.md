@@ -6,23 +6,17 @@ Code name: Extension manager support
 
 Adds extension manager support.
 
+**Note** This release contains the following known vulnerabilities in dependencies:
+
+* Compile dependencies:
+    * `org.scala-lang:scala-library:jar:2.13.3`: CVE-2022-36944
+* Test dependencies:
+    * `io.netty:netty-handler:jar:4.1.95.Final`: CVE-2023-4586 
+    * `fr.turri:aXMLRPC:jar:1.13.0`: CVE-2020-36641
+
 ## Features
 
-* 72: Adds extension manager support.
-
-* Excluded the following CVEs in test dependencies:
-    * io.netty:netty-handler:jar:4.1.95.Final:test
-        * CVE-2023-4586 
-    * fr.turri:aXMLRPC:jar:1.13.0:test
-        * CVE-2020-36641
-    * org.eclipse.jetty:jetty-http:jar:9.4.51.v20230217:test
-        * CVE-2023-40167
-    * org.eclipse.jetty:jetty-servlets:jar:9.4.51.v20230217:test
-        * CVE-2023-36479
-    * org.xerial.snappy:snappy-java:jar:1.1.10.1:runtime; vulnerability under org.testcontainers:kafka:jar:1.19.0:test
-        * CVE-2023-43642
-    * org.eclipse.jetty.http2:http2-hpack:jar:9.4.51.v20230217:test
-        * CVE-2023-36478
+* 72: Added extension manager support.
 
 ## Dependency Updates
 
@@ -31,6 +25,7 @@ Adds extension manager support.
 * Updated `com.google.guava:guava:32.1.1-jre` to `32.1.3-jre`
 * Updated `io.confluent:kafka-avro-serializer:7.4.1` to `7.5.1`
 * Added `org.apache.kafka:kafka-clients:3.5.1`
+* Added `org.xerial.snappy:snappy-java:1.1.10.5`
 
 ### Test Dependency Updates
 
@@ -44,6 +39,7 @@ Adds extension manager support.
 * Added `org.apache.avro:avro:1.11.3`
 * Added `org.apache.zookeeper:zookeeper:3.9.1`
 * Added `org.eclipse.jetty.http2:http2-server:11.0.17`
+* Added `org.eclipse.jetty:jetty-servlets:11.0.17`
 * Added `org.json:json:20231013`
 * Updated `org.mockito:mockito-core:5.4.0` to `5.6.0`
 * Updated `org.scalatestplus:scalatestplus-mockito_2.13:1.0.0-M2` to `1.0.0-SNAP5`

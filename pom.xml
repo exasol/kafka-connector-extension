@@ -194,6 +194,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-36479 -->
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>11.0.17</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
             <version>7.5.1</version>
@@ -234,6 +241,12 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>3.5.1</version>
+        </dependency>
+        <dependency>
+            <!-- Upgrade transitive dependency of org.apache.kafka:kafka-clients to fix CVE-2023-43642 -->
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>1.1.10.5</version>
         </dependency>
     </dependencies>
     <build>
@@ -403,14 +416,6 @@
                         <exclude>CVE-2023-4586</exclude> 
                         <!-- fr.turri:aXMLRPC:jar:1.13.0:test -->
                         <exclude>CVE-2020-36641</exclude>
-                        <!-- org.eclipse.jetty:jetty-http:jar:9.4.51.v20230217:test -->
-                        <exclude>CVE-2023-40167</exclude>
-                        <!-- org.eclipse.jetty:jetty-servlets:jar:9.4.51.v20230217:test -->
-                        <exclude>CVE-2023-36479</exclude>
-                        <!-- org.xerial.snappy:snappy-java:jar:1.1.10.1:runtime; vulnerability under org.testcontainers:kafka:jar:1.19.0:test -->
-                        <exclude>CVE-2023-43642</exclude>
-                        <!-- org.eclipse.jetty.http2:http2-hpack:jar:9.4.51.v20230217:test -->
-                        <exclude>CVE-2023-36478</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
