@@ -250,8 +250,6 @@ class ExtensionIT {
                     .column("KAFKA_PARTITION", "DECIMAL(18, 0)")//
                     .column("KAFKA_OFFSET", "DECIMAL(36, 0)")//
                     .build();
-            // CREATE CONNECTION (optional, see
-            // https://github.com/exasol/kafka-connector-extension/blob/main/doc/user_guide/user_guide.md#importing-records)
 
             executeKafkaImport(targetTable, kafkaSetup);
 
