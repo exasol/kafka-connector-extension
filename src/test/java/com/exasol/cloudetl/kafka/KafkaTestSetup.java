@@ -10,6 +10,8 @@ import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.KafkaFuture;
 import org.testcontainers.utility.DockerImageName;
 
+//This class was created because the original kafkaContainer only accepted localhost connections and was tough to set up to do otherwise manually
+//This is a Q&D workaround for this issue
 class KafkaContainerTweaked extends org.testcontainers.containers.KafkaContainer {
     public KafkaContainerTweaked(final DockerImageName dockerImageName) {
         super(dockerImageName);
@@ -53,7 +55,35 @@ class KafkaTestSetup implements AutoCloseable {
         final Properties properties = new Properties();
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaContainer.getBootstrapServers());
         final String topicName = "testTopic";
-        LOG.info("Topicname: " + topicName);
+        createTopic(properties, topicName);
+        return new KafkaTestSetup(kafkaContainer, topicName);
+    }
+    
+    public void produceTestTopicRecords() {
+        final Properties producerProps = new Properties();
+        producerProps.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, this.container.getBootstrapServers());
+        producerProps.put("acks", "all");
+        producerProps.put("retries", 0);
+        producerProps.put("batch.size", 16384);
+        producerProps.put("linger.ms", 1);
+        producerProps.put("buffer.memory", 33554432);
+        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
+        final Producer<String, String> producer = new KafkaProducer<>(producerProps);
+        try {
+
+            producer.send(new ProducerRecord<String, String>(this.topicName, Integer.toString(1), "OK"));
+            producer.send(new ProducerRecord<String, String>(this.topicName, Integer.toString(2), "WARN"));
+
+        } catch (final Exception ex) {
+            LOG.warning("Exception occurred producing Kafka records: '" + ex.getMessage() + "'");
+            throw ex;
+        } finally {
+            producer.close();
+        }
+    }
+    private static void createTopic(final Properties properties, final String topicName) throws InterruptedException, ExecutionException {
         // CREATE TOPIC AND WAIT
         try (Admin admin = Admin.create(properties)) {
             final int partitions = 1;
@@ -69,30 +99,6 @@ class KafkaTestSetup implements AutoCloseable {
             LOG.warning("Exception occurred during Kafka topic creation: '" + ex.getMessage() + "'");
             throw ex;
         }
-        // PRODUCE
-        final Properties producerProps = new Properties();
-        producerProps.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaContainer.getBootstrapServers());
-        producerProps.put("acks", "all");
-        producerProps.put("retries", 0);
-        producerProps.put("batch.size", 16384);
-        producerProps.put("linger.ms", 1);
-        producerProps.put("buffer.memory", 33554432);
-        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
-        final Producer<String, String> producer = new KafkaProducer<>(producerProps);
-        try {
-
-            producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(1), "OK"));
-            producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(2), "WARN"));
-
-        } catch (final Exception ex) {
-            LOG.warning("Exception occurred producing Kafka records: '" + ex.getMessage() + "'");
-            throw ex;
-        } finally {
-            producer.close();
-        }
-        return new KafkaTestSetup(kafkaContainer, topicName);
     }
 
     @Override

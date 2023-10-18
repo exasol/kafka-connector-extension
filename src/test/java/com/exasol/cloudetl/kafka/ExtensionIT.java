@@ -145,6 +145,7 @@ class ExtensionIT {
     @Test
     void importWorksAfterInstallation() throws SQLException {
         setup.client().install();
+        kafkaSetup.produceTestTopicRecords();
         verifyImportWorks();
     }
 
