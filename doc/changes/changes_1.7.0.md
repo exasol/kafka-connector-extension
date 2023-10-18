@@ -1,4 +1,4 @@
-# Exasol Kafka Connector Extension 1.7.0, released 2023-10-17
+# Exasol Kafka Connector Extension 1.7.0, released 2023-10-18
 
 Code name: Extension manager support
 
