@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>kafka-connector-extension-generated-parent</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
     <packaging>pom</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -51,7 +51,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
@@ -157,7 +157,6 @@
                     <checkCompileClasspath>true</checkCompileClasspath>
                     <checkRuntimeClasspath>true</checkRuntimeClasspath>
                     <checkTestClasspath>false</checkTestClasspath>
-                    <quiet>true</quiet>
                     <preferLocal>true</preferLocal>
                     <useResultFile>false</useResultFile>
                 </configuration>
