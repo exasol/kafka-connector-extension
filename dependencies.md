@@ -62,11 +62,6 @@
 | [spotless-maven-plugin][67]                             | [The Apache Software License, Version 2.0][32] |
 | [scalafix-maven-plugin][68]                             | [BSD-3-Clause][69]                             |
 | [Exec Maven Plugin][70]                                 | [Apache License 2][32]                         |
-| [Maven Clean Plugin][71]                                | [The Apache Software License, Version 2.0][10] |
-| [Maven Resources Plugin][72]                            | [The Apache Software License, Version 2.0][10] |
-| [Maven Install Plugin][73]                              | [The Apache Software License, Version 2.0][10] |
-| [Maven Deploy Plugin][74]                               | [The Apache Software License, Version 2.0][10] |
-| [Maven Site Plugin 3][75]                               | [The Apache Software License, Version 2.0][10] |
 
 [0]: https://www.scala-lang.org/
 [1]: https://www.apache.org/licenses/LICENSE-2.0
@@ -139,8 +134,3 @@
 [68]: https://github.com/evis/scalafix-maven-plugin
 [69]: https://opensource.org/licenses/BSD-3-Clause
 [70]: https://www.mojohaus.org/exec-maven-plugin
-[71]: http://maven.apache.org/plugins/maven-clean-plugin/
-[72]: http://maven.apache.org/plugins/maven-resources-plugin/
-[73]: http://maven.apache.org/plugins/maven-install-plugin/
-[74]: http://maven.apache.org/plugins/maven-deploy-plugin/
-[75]: http://maven.apache.org/plugins/maven-site-plugin/
