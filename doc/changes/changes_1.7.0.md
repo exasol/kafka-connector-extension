@@ -1,4 +1,4 @@
-# Exasol Kafka Connector Extension 1.7.0, released 2023-10-18
+# Exasol Kafka Connector Extension 1.7.0, released 2023-10-24
 
 Code name: Extension manager support
 
@@ -51,7 +51,7 @@ Adds extension manager support.
 ### Plugin Dependency Updates
 
 * Updated `com.diffplug.spotless:spotless-maven-plugin:2.37.0` to `2.40.0`
-* Updated `com.exasol:project-keeper-maven-plugin:2.9.9` to `2.9.12`
+* Updated `com.exasol:project-keeper-maven-plugin:2.9.9` to `2.9.13`
 * Updated `org.apache.maven.plugins:maven-enforcer-plugin:3.3.0` to `3.4.0`
 * Updated `org.apache.maven.plugins:maven-javadoc-plugin:3.5.0` to `3.6.0`
 * Added `org.codehaus.mojo:exec-maven-plugin:3.1.0`

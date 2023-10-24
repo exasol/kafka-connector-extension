@@ -399,7 +399,7 @@
                         <!-- CWE-502: Deserialization of Untrusted Data (9.8); https://ossindex.sonatype.org/vulnerability/CVE-2022-36944 -->
                         <exclude>CVE-2022-36944</exclude>
                         <!-- io.netty:netty-handler:jar:4.1.95.Final:test -->
-                        <exclude>CVE-2023-4586</exclude> 
+                        <exclude>CVE-2023-4586</exclude>
                         <!-- fr.turri:aXMLRPC:jar:1.13.0:test -->
                         <exclude>CVE-2020-36641</exclude>
                         <!-- org.eclipse.jetty:jetty-http:jar:9.4.51.v20230217:test -->
@@ -433,7 +433,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>2.9.12</version>
+                <version>2.9.13</version>
                 <executions>
                     <execution>
                         <goals>
