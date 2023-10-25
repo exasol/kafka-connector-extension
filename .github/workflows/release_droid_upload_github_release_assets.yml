@@ -35,7 +35,7 @@ jobs:
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ github.event.inputs.upload_url }}
-          asset_path: extension/dist/kinesis-connector-extension.js*
+          asset_path: extension/dist/kafka-connector-extension.js*
       - name: Upload assets to the GitHub release draft
         uses: shogo82148/actions-upload-release-asset@v1
         with:
