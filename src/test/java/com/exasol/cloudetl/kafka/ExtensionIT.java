@@ -13,7 +13,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
 import org.hamcrest.Matcher;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.dbbuilder.dialects.Table;
@@ -88,13 +89,6 @@ class ExtensionIT extends AbstractScriptExtensionIT {
         }
     }
 
-    @Test
-    void importWorksAfterInstallation() throws SQLException {
-        setup.client().install();
-        kafkaSetup.produceTestTopicRecords();
-        assertScriptsExist();
-    }
-
     @Override
     protected ExtensionManagerSetup getSetup() {
         return setup;
@@ -114,6 +108,7 @@ class ExtensionIT extends AbstractScriptExtensionIT {
 
     @Override
     protected void assertScriptsWork() {
+        kafkaSetup.produceTestTopicRecords();
         final ExasolSchema schema = exasolObjectFactory.createSchema("TESTING_SCHEMA_" + System.currentTimeMillis());
         try {
             final Table targetTable = schema.createTableBuilder("TARGET").column("STATUS", "VARCHAR(10)") //
