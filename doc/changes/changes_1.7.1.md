@@ -15,7 +15,6 @@ This release adds integration tests with Exasol DB version 8.
 ### Compile Dependency Updates
 
 * Updated `io.confluent:kafka-avro-serializer:7.5.1` to `7.5.2`
-* Updated `org.apache.kafka:kafka-clients:3.5.1` to `3.5.2`
 
 ### Test Dependency Updates
 

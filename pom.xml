@@ -226,7 +226,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>3.5.2</version>
+            <version>3.5.1</version>
         </dependency>
         <dependency>
             <!-- Upgrade transitive dependency of org.apache.kafka:kafka-clients to fix CVE-2023-43642 -->
