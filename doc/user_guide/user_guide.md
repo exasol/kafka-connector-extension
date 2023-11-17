@@ -479,6 +479,8 @@ If you need more complex SASL configuration, you can create a [SASL JAAS
 configuration][kafka-sasl-jaas] file, upload it to Exasol BucketFS and specify
 its path into ``SASL_JAAS_LOCATION``.
 
+
+
 ## Importing Data From Azure Event Hubs
 
 To import data from [Azure Event Hubs][azure-event-hubs], we are going to create
