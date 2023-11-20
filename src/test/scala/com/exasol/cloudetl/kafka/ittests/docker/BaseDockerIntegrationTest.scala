@@ -15,7 +15,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 trait BaseDockerIntegrationTest extends AnyFunSuite with BeforeAndAfterAll {
   private[this] val JAR_NAME_PATTERN = "exasol-kafka-connector-extension-"
-  private[this] val DEFAULT_EXASOL_DOCKER_IMAGE = "7.1.21"
+  private[this] val DEFAULT_EXASOL_DOCKER_IMAGE = "7.1.24"
 
   val network = DockerNamedNetwork("kafka-it-tests", true)
   val exasolContainer = {

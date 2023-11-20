@@ -113,7 +113,7 @@ describe("Kafka Connector Extension", () => {
         })
         it("fails for wrong version", () => {
             expect(() => { createExtension().install(createMockContext(), "wrongVersion") })
-                .toThrow(`Installing version 'wrongVersion' not supported, try '${EXTENSION_DESCRIPTION.version}'.`)
+                .toThrow(`Version 'wrongVersion' not supported, can only use '${EXTENSION_DESCRIPTION.version}'.`)
         })
     })
 
@@ -182,7 +182,7 @@ describe("Kafka Connector Extension", () => {
         })
         it("fails for wrong version", () => {
             expect(() => { createExtension().uninstall(createMockContext(), "wrongVersion") })
-                .toThrow(`Uninstalling version 'wrongVersion' not supported, try '${EXTENSION_DESCRIPTION.version}'.`)
+                .toThrow(`Version 'wrongVersion' not supported, can only use '${EXTENSION_DESCRIPTION.version}'.`)
         })
     })
 
@@ -222,4 +222,3 @@ describe("Kafka Connector Extension", () => {
         })
     })
 })
-
