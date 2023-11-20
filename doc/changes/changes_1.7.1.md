@@ -19,7 +19,7 @@ This release adds integration tests with Exasol DB version 8.
 ### Test Dependency Updates
 
 * Updated `com.exasol:exasol-testcontainers:6.6.2` to `6.6.3`
-* Updated `com.exasol:extension-manager-integration-test-java:0.5.1` to `0.5.6`
+* Updated `com.exasol:extension-manager-integration-test-java:0.5.1` to `0.5.7`
 * Updated `com.exasol:hamcrest-resultset-matcher:1.6.1` to `1.6.2`
 * Updated `io.confluent:kafka-streams-avro-serde:7.5.1` to `7.5.2`
 * Updated `io.netty:netty-handler:4.1.100.Final` to `4.1.101.Final`
