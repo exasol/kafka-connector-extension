@@ -1,4 +1,4 @@
-# Exasol Kafka Connector Extension 1.7.1, released 2023-11-20
+# Exasol Kafka Connector Extension 1.7.1, released 2023-11-21
 
 Code name: Test with Exasol v8
 
