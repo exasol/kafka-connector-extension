@@ -479,6 +479,16 @@ If you need more complex SASL configuration, you can create a [SASL JAAS
 configuration][kafka-sasl-jaas] file, upload it to Exasol BucketFS and specify
 its path into ``SASL_JAAS_LOCATION``.
 
+Please note that JAAS configuration file should contain just login module definitions. Example of config file:
+```
+com.sun.security.auth.module.Krb5LoginModule required
+doNotPrompt=true
+useKeyTab=true
+storeKey=true
+keyTab="/buckets/bfsdefault/bucket1/kafka.keytab"
+principal="principal@DOMAIN.COM";
+```
+
 ## Importing Data From Azure Event Hubs
 
 To import data from [Azure Event Hubs][azure-event-hubs], we are going to create
