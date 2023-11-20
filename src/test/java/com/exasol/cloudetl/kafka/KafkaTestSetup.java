@@ -13,21 +13,15 @@ import org.testcontainers.utility.DockerImageName;
 
 class KafkaTestSetup implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(KafkaTestSetup.class.getName());
-    private final String topicName;
     private final KafkaContainer container;
 
-    private KafkaTestSetup(final KafkaContainer container, final String topicName) {
+    private KafkaTestSetup(final KafkaContainer container) {
         this.container = container;
-        this.topicName = topicName;
     }
 
     public String getBootstrapServers() {
         return this.container.getBootstrapServers() //
                 .replaceAll("localhost", IntegrationTestConstants.DOCKER_IP_ADDRESS);
-    }
-
-    public String getTopicName() {
-        return this.topicName;
     }
 
     static KafkaTestSetup create() throws ExecutionException, InterruptedException {
@@ -37,19 +31,14 @@ class KafkaTestSetup implements AutoCloseable {
                 .withEmbeddedZookeeper()//
                 .withReuse(true);
         kafkaContainer.start();
-
-        final Properties properties = new Properties();
-        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaContainer.getBootstrapServers());
-        final String topicName = "testTopic";
-        createTopic(properties, topicName);
-        return new KafkaTestSetup(kafkaContainer, topicName);
+        return new KafkaTestSetup(kafkaContainer);
     }
 
-    public void produceTestTopicRecords() {
+    public void produceTestTopicRecords(final String topicName) {
         final Producer<String, String> producer = new KafkaProducer<>(getProducerProps());
         try {
-            producer.send(new ProducerRecord<String, String>(this.topicName, Integer.toString(1), "OK"));
-            producer.send(new ProducerRecord<String, String>(this.topicName, Integer.toString(2), "WARN"));
+            producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(1), "OK"));
+            producer.send(new ProducerRecord<String, String>(topicName, Integer.toString(2), "WARN"));
         } finally {
             producer.close();
         }
@@ -68,8 +57,9 @@ class KafkaTestSetup implements AutoCloseable {
         return producerProps;
     }
 
-    private static void createTopic(final Properties properties, final String topicName)
-            throws InterruptedException, ExecutionException {
+    void createTopic(final String topicName) {
+        final Properties properties = new Properties();
+        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, container.getBootstrapServers());
         try (Admin admin = Admin.create(properties)) {
             final int partitions = 1;
             final short replicationFactor = 1;
@@ -78,6 +68,11 @@ class KafkaTestSetup implements AutoCloseable {
             final KafkaFuture<Void> future = result.values().get(topicName);
             future.get();
             LOG.info(() -> "Successfully created topic " + topicName);
+        } catch (final InterruptedException exception) {
+            Thread.currentThread().interrupt();
+        } catch (final ExecutionException exception) {
+            throw new IllegalStateException("Failed to create topic " + topicName + ": " + exception.getMessage(),
+                    exception);
         }
     }
 

@@ -108,7 +108,9 @@ class ExtensionIT extends AbstractScriptExtensionIT {
 
     @Override
     protected void assertScriptsWork() {
-        kafkaSetup.produceTestTopicRecords();
+        final String topicName = "testTopic-" + System.currentTimeMillis();
+        kafkaSetup.createTopic(topicName);
+        kafkaSetup.produceTestTopicRecords(topicName);
         final ExasolSchema schema = exasolObjectFactory.createSchema("TESTING_SCHEMA_" + System.currentTimeMillis());
         try {
             final Table targetTable = schema.createTableBuilder("TARGET") //
@@ -116,7 +118,7 @@ class ExtensionIT extends AbstractScriptExtensionIT {
                     .column("KAFKA_PARTITION", "DECIMAL(18, 0)") //
                     .column("KAFKA_OFFSET", "DECIMAL(36, 0)") //
                     .build();
-            executeKafkaImport(targetTable, kafkaSetup);
+            executeKafkaImport(targetTable, kafkaSetup, topicName);
             assertQueryResult(
                     "select status, kafka_partition, kafka_offset from " + targetTable.getFullyQualifiedName()
                             + " order by status",
@@ -129,14 +131,14 @@ class ExtensionIT extends AbstractScriptExtensionIT {
         }
     }
 
-    private void executeKafkaImport(final Table targetTable, final KafkaTestSetup kafkaSetup) {
+    private void executeKafkaImport(final Table targetTable, final KafkaTestSetup kafkaSetup, final String topicName) {
         executeStatement("OPEN SCHEMA " + ExtensionManagerSetup.EXTENSION_SCHEMA_NAME);
         final String sql = "IMPORT INTO " + targetTable.getFullyQualifiedName() + "\n" + //
                 " FROM SCRIPT " + ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".KAFKA_CONSUMER WITH\n" + //
                 " BOOTSTRAP_SERVERS = '" + kafkaSetup.getBootstrapServers() + "'\n" + //
                 " RECORD_KEY_FORMAT = 'string'" + "\n" + //
                 " RECORD_VALUE_FORMAT = 'string'" + "\n" + //
-                " TOPIC_NAME = '" + kafkaSetup.getTopicName() + "'\n" + //
+                " TOPIC_NAME = '" + topicName + "'\n" + //
                 " TABLE_NAME = '" + targetTable.getFullyQualifiedName() + "'\n" + //
                 " GROUP_ID = 'exaudf' \n" + //
                 " CONSUME_ALL_OFFSETS = 'true' \n";
