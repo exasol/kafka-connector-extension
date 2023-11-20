@@ -111,9 +111,10 @@ class ExtensionIT extends AbstractScriptExtensionIT {
         kafkaSetup.produceTestTopicRecords();
         final ExasolSchema schema = exasolObjectFactory.createSchema("TESTING_SCHEMA_" + System.currentTimeMillis());
         try {
-            final Table targetTable = schema.createTableBuilder("TARGET").column("STATUS", "VARCHAR(10)") //
-                    .column("KAFKA_PARTITION", "DECIMAL(18, 0)")//
-                    .column("KAFKA_OFFSET", "DECIMAL(36, 0)")//
+            final Table targetTable = schema.createTableBuilder("TARGET") //
+                    .column("STATUS", "VARCHAR(10)") //
+                    .column("KAFKA_PARTITION", "DECIMAL(18, 0)") //
+                    .column("KAFKA_OFFSET", "DECIMAL(36, 0)") //
                     .build();
             executeKafkaImport(targetTable, kafkaSetup);
             assertQueryResult(
@@ -129,14 +130,10 @@ class ExtensionIT extends AbstractScriptExtensionIT {
     }
 
     private void executeKafkaImport(final Table targetTable, final KafkaTestSetup kafkaSetup) {
-        final String bootstrapServers = kafkaSetup.getContainer().getBootstrapServers();
-
-        final String modifiedBootstrapServers = bootstrapServers.replaceAll("localhost",
-                IntegrationTestConstants.DOCKER_IP_ADDRESS);
         executeStatement("OPEN SCHEMA " + ExtensionManagerSetup.EXTENSION_SCHEMA_NAME);
         final String sql = "IMPORT INTO " + targetTable.getFullyQualifiedName() + "\n" + //
                 " FROM SCRIPT " + ExtensionManagerSetup.EXTENSION_SCHEMA_NAME + ".KAFKA_CONSUMER WITH\n" + //
-                " BOOTSTRAP_SERVERS = '" + modifiedBootstrapServers + "'\n" + //
+                " BOOTSTRAP_SERVERS = '" + kafkaSetup.getBootstrapServers() + "'\n" + //
                 " RECORD_KEY_FORMAT = 'string'" + "\n" + //
                 " RECORD_VALUE_FORMAT = 'string'" + "\n" + //
                 " TOPIC_NAME = '" + kafkaSetup.getTopicName() + "'\n" + //
