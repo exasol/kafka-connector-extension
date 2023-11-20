@@ -7,19 +7,22 @@ const SCRIPTS: ScriptDefinition[] = [
     {
         name: "KAFKA_METADATA",
         type: "SET",
-        args: `partition_index DECIMAL(18,0), max_offset DECIMAL(36,0)`,
+        parameters: "...",
+        emitParameters: `partition_index DECIMAL(18,0), max_offset DECIMAL(36,0)`,
         scriptClass: "com.exasol.cloudetl.kafka.KafkaTopicMetadataReader"
     },
     {
         name: "KAFKA_IMPORT",
         type: "SET",
-        args: "...",
+        parameters: "...",
+        emitParameters: "...",
         scriptClass: "com.exasol.cloudetl.kafka.KafkaTopicDataImporter"
     },
     {
         name: "KAFKA_CONSUMER",
         type: "SET",
-        args: "...",
+        parameters: "...",
+        emitParameters: "...",
         scriptClass: "com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator"
     }
 ]
@@ -30,7 +33,7 @@ export function createExtension(): ExasolExtension {
         description: "Exasol Kafka Extension for accessing Apache Kafka",
         category: "cloud-storage-importer",
         version: EXTENSION_DESCRIPTION.version,
-        file: { name: EXTENSION_DESCRIPTION.fileName, size: EXTENSION_DESCRIPTION.fileSizeBytes },
+        files: [{ name: EXTENSION_DESCRIPTION.fileName, size: EXTENSION_DESCRIPTION.fileSizeBytes }],
         scripts: SCRIPTS,
         scriptVersionExtractor: jarFileVersionExtractor(/exasol-kafka-connector-extension-(\d+\.\d+\.\d+).jar/)
     }
