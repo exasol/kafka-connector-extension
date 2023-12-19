@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  matrix-build:
     runs-on: ubuntu-20.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.exasol_db_version }}
@@ -16,9 +16,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        exasol_db_version: ["7.1.24", "8.23.1"]
+        exasol_db_version: ["8.23.1", "7.1.25"]
     env:
-      DEFAULT_EXASOL_DB_VERSION: "7.1.24"
+      DEFAULT_EXASOL_DB_VERSION: "8.23.1"
     steps:
       - name: Free Disk Space
         if: ${{ true }}
@@ -55,7 +55,7 @@ jobs:
           # Set additional environment variable as in scala projects the scalatest plugin does not forward
           # the system property -Dcom.exasol.dockerdb.image to the test's implementation.
           EXASOL_DB_VERSION: ${{ matrix.exasol_db_version }}
-      - name: Publish Test Report
+      - name: Publish Test Report for Exasol ${{ matrix.exasol_db_version }}
         uses: scacap/action-surefire-report@v1
         if: ${{ always() && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
         with:
@@ -72,3 +72,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build:
+    needs: matrix-build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Build successful"
