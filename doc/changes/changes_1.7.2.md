@@ -13,7 +13,6 @@ This release fixes CVE-2023-6378 in dependencies `ch.qos.logback/logback-core@1.
 
 ### Compile Dependency Updates
 
-* Updated `com.exasol:import-export-udf-common-scala_2.13:1.1.1` to `2.0.0`
 * Updated `com.google.guava:guava:32.1.3-jre` to `33.0.0-jre`
 
 ### Test Dependency Updates
