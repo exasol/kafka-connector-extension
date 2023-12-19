@@ -7,16 +7,32 @@ Using the connector you can import data from a Kafka topic into an Exasol table.
 
 ## Table of Contents
 
-- [Getting Started](#getting-started)
-- [Deployment](#deployment)
-- [Record Format Configuration](#record-format-configuration)
-- [Preparing Exasol Table](#preparing-exasol-table)
-- [Avro Data Mapping](#avro-data-mapping)
-- [JSON Data Mapping](#json-data-mapping)
-- [Importing Records](#importing-records)
-- [Secure Connection to Kafka Cluster](#secure-connection-to-kafka-cluster)
-- [Importing Data From Azure Event Hubs](#importing-data-from-azure-event-hubs)
-- [Kafka Consumer Properties](#kafka-consumer-properties)
+- [User Guide](#user-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Getting Started](#getting-started)
+    - [Parallelism](#parallelism)
+    - [Schema Registry](#schema-registry)
+  - [Deployment](#deployment)
+    - [Download the Latest JAR File](#download-the-latest-jar-file)
+    - [Building From Source](#building-from-source)
+    - [Create an Exasol BucketFS Bucket](#create-an-exasol-bucketfs-bucket)
+    - [Upload the JAR File to the Bucket](#upload-the-jar-file-to-the-bucket)
+    - [Create UDF Scripts](#create-udf-scripts)
+  - [Record Format Configuration](#record-format-configuration)
+    - [Example](#example)
+  - [Preparing Exasol Table](#preparing-exasol-table)
+  - [Avro Data Mapping](#avro-data-mapping)
+  - [JSON Data Mapping](#json-data-mapping)
+  - [Importing Records](#importing-records)
+  - [Secure Connection to Kafka Cluster](#secure-connection-to-kafka-cluster)
+    - [Import Kafka Topic Data Using Encrypted Connection](#import-kafka-topic-data-using-encrypted-connection)
+    - [Import Kafka Topic Data With Authentication](#import-kafka-topic-data-with-authentication)
+  - [Importing Data From Azure Event Hubs](#importing-data-from-azure-event-hubs)
+    - [Prepare Table for Azure Event Hubs Topic](#prepare-table-for-azure-event-hubs-topic)
+    - [Import Data From Azure Event Hub](#import-data-from-azure-event-hub)
+  - [Kafka Consumer Properties](#kafka-consumer-properties)
+    - [Required Properties](#required-properties)
+    - [Optional Properties](#optional-properties)
 
 ## Getting Started
 
@@ -61,7 +77,7 @@ checksum provided together with the jar file.
 To check the SHA256 sum of the downloaded jar, run the command:
 
 ```sh
-sha256sum exasol-kafka-connector-extension-<VERSION>.jar
+sha256sum exasol-kafka-connector-extension-1.7.2.jar
 ```
 
 ### Building From Source
@@ -84,7 +100,7 @@ sbt assembly
 ```
 
 The packaged jar file should be located at
-`target/scala-2.12/exasol-kafka-connector-extension-<VERSION>.jar`.
+`target/scala-2.12/exasol-kafka-connector-extension-1.7.2.jar`.
 
 ### Create an Exasol BucketFS Bucket
 
@@ -106,7 +122,7 @@ jar, please make sure the BucketFS ports are open.
 Upload the jar file using the `curl` command:
 
 ```bash
-curl -X PUT -T exasol-kafka-connector-extension-<VERSION>.jar \
+curl -X PUT -T exasol-kafka-connector-extension-1.7.2.jar \
   http://w:<WRITE_PASSWORD>@<EXASOL_DATANODE>:2580/<BUCKET_NAME>/
 ```
 
@@ -135,12 +151,12 @@ OPEN SCHEMA KAFKA_EXTENSION;
 
 CREATE OR REPLACE JAVA SET SCRIPT KAFKA_CONSUMER(...) EMITS (...) AS
   %scriptclass com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator;
-  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
+  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-1.7.2.jar;
 /
 
 CREATE OR REPLACE JAVA SET SCRIPT KAFKA_IMPORT(...) EMITS (...) AS
   %scriptclass com.exasol.cloudetl.kafka.KafkaTopicDataImporter;
-  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
+  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-1.7.2.jar;
 /
 
 CREATE OR REPLACE JAVA SET SCRIPT KAFKA_METADATA(
@@ -150,7 +166,7 @@ CREATE OR REPLACE JAVA SET SCRIPT KAFKA_METADATA(
 )
 EMITS (partition_index DECIMAL(18, 0), max_offset DECIMAL(36,0)) AS
   %scriptclass com.exasol.cloudetl.kafka.KafkaTopicMetadataReader;
-  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-<VERSION>.jar;
+  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-1.7.2.jar;
 /
 ```
 
