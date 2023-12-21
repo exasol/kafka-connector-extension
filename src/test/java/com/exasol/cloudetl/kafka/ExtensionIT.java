@@ -28,16 +28,13 @@ import com.exasol.extensionmanager.itest.base.AbstractScriptExtensionIT;
 import com.exasol.extensionmanager.itest.base.ExtensionITConfig;
 import com.exasol.extensionmanager.itest.builder.ExtensionBuilder;
 import com.exasol.matcher.TypeMatchMode;
-import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 
 import junit.framework.AssertionFailedError;
 
 class ExtensionIT extends AbstractScriptExtensionIT {
     private static final Logger LOGGER = Logger.getLogger(ExtensionIT.class.getName());
-
     private static final String EXTENSION_ID = "kafka-connector-extension.js";
     private static final Path EXTENSION_SOURCE_DIR = Paths.get("extension").toAbsolutePath();
-    private static final String PROJECT_VERSION = MavenProjectVersionGetter.getCurrentProjectVersion();
     private static final Path ADAPTER_JAR = getAdapterJar();
 
     private static ExasolTestSetup exasolTestSetup;
@@ -63,8 +60,7 @@ class ExtensionIT extends AbstractScriptExtensionIT {
     }
 
     private static Path getAdapterJar() {
-        final Path jar = Paths.get("target").resolve("exasol-kafka-connector-extension-" + PROJECT_VERSION + ".jar")
-                .toAbsolutePath();
+        final Path jar = Paths.get("target").resolve(IntegrationTestConstants.JAR_FILE_NAME).toAbsolutePath();
         if (Files.exists(jar)) {
             return jar;
         } else {
@@ -96,12 +92,12 @@ class ExtensionIT extends AbstractScriptExtensionIT {
 
     @Override
     protected ExtensionITConfig createConfig() {
-        final String previousVersion = "1.7.0";
+        final String previousVersion = "1.7.1";
         final String previousVersionJarFile = "exasol-kafka-connector-extension-" + previousVersion + ".jar";
-        return ExtensionITConfig.builder().projectName("kafka-connector-extension").currentVersion(PROJECT_VERSION)
-                .extensionId(EXTENSION_ID).previousVersion(previousVersion)
-                .previousVersionJarFile(previousVersionJarFile).expectedParameterCount(-1)
-                .extensionName("Kafka Connector Extension") //
+        return ExtensionITConfig.builder().projectName("kafka-connector-extension")
+                .currentVersion(IntegrationTestConstants.PROJECT_VERSION).extensionId(EXTENSION_ID)
+                .previousVersion(previousVersion).previousVersionJarFile(previousVersionJarFile)
+                .expectedParameterCount(-1).extensionName("Kafka Connector Extension") //
                 .extensionDescription("Exasol Kafka Extension for accessing Apache Kafka") //
                 .build();
     }
@@ -179,7 +175,8 @@ class ExtensionIT extends AbstractScriptExtensionIT {
     }
 
     private Object[] script(final String name, final String inputType, final String scriptClass) {
-        final String comment = "Created by Extension Manager for Kafka Connector Extension " + PROJECT_VERSION;
+        final String comment = "Created by Extension Manager for Kafka Connector Extension "
+                + IntegrationTestConstants.PROJECT_VERSION;
         final String jarPath = "/buckets/bfsdefault/default/" + ADAPTER_JAR.getFileName().toString();
         return new Object[] { name, "UDF", inputType, "EMITS", allOf(//
                 containsString("%jar " + jarPath + ";"), //
