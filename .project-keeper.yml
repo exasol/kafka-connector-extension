@@ -8,7 +8,7 @@ build:
   runnerOs: ubuntu-20.04
   freeDiskSpace: true
   exasolDbVersions:
-    - "8.23.1"
+    - "8.24.0"
     - "7.1.25"
 excludes:
   - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_upload_github_release_assets.yml'"
