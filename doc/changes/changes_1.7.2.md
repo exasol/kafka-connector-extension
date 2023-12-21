@@ -1,4 +1,4 @@
-# Exasol Kafka Connector Extension 1.7.2, released 2023-12-22
+# Exasol Kafka Connector Extension 1.7.2, released 2023-12-21
 
 Code name: Fix CVE-2023-6378 in `logback` test dependencies
 
