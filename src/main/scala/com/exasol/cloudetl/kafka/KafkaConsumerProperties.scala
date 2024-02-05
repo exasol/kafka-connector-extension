@@ -397,7 +397,6 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
           .toString()
       )
     }
-
 }
 
 /**
