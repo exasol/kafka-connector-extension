@@ -554,8 +554,8 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   }
 
   test("error is throws when non-existent krb5.conf file passed") {
-    val properties = getSecurityEnabledConsumerProperties(
-      "SASL_SSL", krb5confFile = Option(Paths.get("krb5_non_existing")))
+    val properties =
+      getSecurityEnabledConsumerProperties("SASL_SSL", krb5confFile = Option(Paths.get("krb5_non_existing")))
     val thrown = intercept[KafkaConnectorException] {
       properties.getProperties()
     }
