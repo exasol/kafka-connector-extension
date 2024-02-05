@@ -308,7 +308,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
     if (krb5confLocation.isEmpty) {
       ""
     } else {
-      if (!Files.isRegularFile(Paths.get(krb5confLocation))) {
+      if (!Files.isRegularFile(Paths.get(krb5confLocation.get))) {
         throw new KafkaConnectorException(
           ExaError
             .messageBuilder("E-KCE-28")
