@@ -473,6 +473,9 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   private[this] val DUMMY_SASL_JAAS_FILE =
     Paths.get(getClass.getResource("/kafka_client_jaas.conf").toURI).toAbsolutePath
 
+  private[this] val DUMMY_KRB5CONF_FILE =
+    Paths.get(getClass.getResource("/test_krb5.conf").toURI).toAbsolutePath
+
   test("apply returns a SSL enabled consumer properties") {
     val properties =
       getSecurityEnabledConsumerProperties("SSL", Option(DUMMY_KEYSTORE_FILE), Option(DUMMY_TRUSTSTORE_FILE))
@@ -562,6 +565,12 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val message = thrown.getMessage()
     assert(message.contains("Unable to find the custom krb5.conf file"))
     assert(message.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
+  }
+
+  test("property is set when existing krb5.conf file passed") {
+    val properties = getSecurityEnabledConsumerProperties("SASL_SSL", krb5confFile = Option(DUMMY_KRB5CONF_FILE))
+    val props = properties.getProperties()
+    assert(props.get(SASL_KRB5CONF_LOCATION.kafkaPropertyName) === s"$DUMMY_KRB5CONF_FILE")
   }
 
   private[this] def getSecurityEnabledConsumerProperties(
