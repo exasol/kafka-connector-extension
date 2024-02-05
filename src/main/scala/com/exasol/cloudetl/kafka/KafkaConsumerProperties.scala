@@ -758,6 +758,16 @@ object KafkaConsumerProperties {
   )
 
   /**
+   * SASL krb5.conf file location. It is can be used when [[SECURITY_PROTOCOL]] is set to {@code SASL_PLAINTEXT}
+   * or {@code SASL_SSL} to provide location of custom krb5.conf. It has to be bucketfs path.
+   */
+  private[kafka] final val SASL_KRB5CONF_LOCATION: Config[String] = Config[String](
+    "SASL_KRB5CONF_LOCATION",
+    "",
+    ""
+  )
+
+  /**
    * SASL password. It is used when [[SASL_MECHANISM]] is set to {@code PLAIN}, {@code Digest-*} or {@code SCRAM-*}.
    */
   private[kafka] final val SASL_PASSWORD: Config[String] = Config[String](
