@@ -489,6 +489,9 @@ keyTab="/buckets/bfsdefault/bucket1/kafka.keytab"
 principal="principal@DOMAIN.COM";
 ```
 
+In some complex setups, you might need to provide custom ``krb5.conf`` file. Thes could be done by uploading it to the 
+BucketFS and providing the path in ``SASL_KRB5CONF_LOCATION`` parameter, similar to ``SASL_JAAS_LOCATION``.
+
 ## Importing Data From Azure Event Hubs
 
 To import data from [Azure Event Hubs][azure-event-hubs], we are going to create
@@ -689,6 +692,9 @@ not in import statement itself.
 * ``SASL_JAAS_LOCATION`` - It is the location of the JAAS configuration file for
   more complex configuration of SASL authentication. It should refer to the file
   stored inside a bucket in Exasol BucketFS.
+
+* ``SASL_KRB5CONF_LOCATION`` - It is the location of the custom ``krb5.conf`` file. 
+  It should refer to the file stored inside a bucket in Exasol BucketFS. 
 
 [gh-releases]: https://github.com/exasol/kafka-connector-extension/releases
 [schema-registry]: https://docs.confluent.io/current/schema-registry/index.html
