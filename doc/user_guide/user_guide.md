@@ -489,8 +489,7 @@ keyTab="/buckets/bfsdefault/bucket1/kafka.keytab"
 principal="principal@DOMAIN.COM";
 ```
 
-In some complex setups, you might need to provide custom ``krb5.conf`` file. Thes could be done by uploading it to the 
-BucketFS and providing the path in ``SASL_KRB5CONF_LOCATION`` parameter, similar to ``SASL_JAAS_LOCATION``.
+In some complex setups, you might need to provide a custom ``krb5.conf`` file. Thes could be done by uploading it to the BucketFS and providing the path in ``SASL_KRB5CONF_LOCATION`` parameter, similar to ``SASL_JAAS_LOCATION``.
 
 ## Importing Data From Azure Event Hubs
 
