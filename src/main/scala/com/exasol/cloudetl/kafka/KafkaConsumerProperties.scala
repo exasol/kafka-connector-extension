@@ -299,6 +299,28 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
     }
   }
 
+  /**
+   * Gets custom krb5.conf file location. Checks that user provided path exists.
+   * @return file path or empty string
+   */
+  final def getSASLKrb5ConfLocation(): String = {
+    val krb5confLocation = get(SASL_KRB5CONF_LOCATION.userPropertyName)
+    if (krb5confLocation.isEmpty) {
+      ""
+    } else {
+      if (!Files.isRegularFile(Paths.get(krb5confLocation.get))) {
+        throw new KafkaConnectorException(
+          ExaError
+            .messageBuilder("E-KCE-28")
+            .message("Unable to find the custom krb5.conf file at {{JAAS_LOCATION}}", krb5confLocation)
+            .mitigation(BUCKETFS_CHECK_MITIGATION)
+            .toString()
+        )
+      }
+      krb5confLocation.get
+    }
+  }
+
   /** Returns the Kafka consumer properties as Java map. */
   final def getProperties(): java.util.Map[String, AnyRef] = {
     val props = MMap.empty[String, String]
@@ -328,6 +350,7 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
     if (isSASLEnabled()) {
       props.put(SASL_MECHANISM.kafkaPropertyName, getSASLMechanism())
       props.put(SASL_JAAS_CONFIG.kafkaPropertyName, getSASLJaasConfig())
+      props.put(SASL_KRB5CONF_LOCATION.kafkaPropertyName, getSASLKrb5ConfLocation())
       addOptionalParametersForSASL(props)
     }
     props.toMap.asInstanceOf[Map[String, AnyRef]].asJava
@@ -374,7 +397,6 @@ class KafkaConsumerProperties(private val properties: Map[String, String]) exten
           .toString()
       )
     }
-
 }
 
 /**
@@ -754,6 +776,16 @@ object KafkaConsumerProperties {
   private[kafka] final val SASL_JAAS_LOCATION: Config[String] = Config[String](
     "SASL_JAAS_LOCATION",
     "",
+    ""
+  )
+
+  /**
+   * SASL krb5.conf file location. It is can be used when [[SECURITY_PROTOCOL]] is set to {@code SASL_PLAINTEXT}
+   * or {@code SASL_SSL} to provide location of custom krb5.conf.
+   */
+  private[kafka] final val SASL_KRB5CONF_LOCATION: Config[String] = Config[String](
+    "SASL_KRB5CONF_LOCATION",
+    "java.security.krb5.conf",
     ""
   )
 

@@ -473,6 +473,9 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   private[this] val DUMMY_SASL_JAAS_FILE =
     Paths.get(getClass.getResource("/kafka_client_jaas.conf").toURI).toAbsolutePath
 
+  private[this] val DUMMY_KRB5CONF_FILE =
+    Paths.get(getClass.getResource("/test_krb5.conf").toURI).toAbsolutePath
+
   test("apply returns a SSL enabled consumer properties") {
     val properties =
       getSecurityEnabledConsumerProperties("SSL", Option(DUMMY_KEYSTORE_FILE), Option(DUMMY_TRUSTSTORE_FILE))
@@ -553,10 +556,28 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     assert(properties.getProperties().get(SSL_TRUSTSTORE_PASSWORD.kafkaPropertyName) === "tspw")
   }
 
+  test("error is throws when non-existent krb5.conf file passed") {
+    val properties =
+      getSecurityEnabledConsumerProperties("SASL_SSL", krb5confFile = Option(Paths.get("krb5_non_existing")))
+    val thrown = intercept[KafkaConnectorException] {
+      properties.getProperties()
+    }
+    val message = thrown.getMessage()
+    assert(message.contains("Unable to find the custom krb5.conf file"))
+    assert(message.contains("Please make sure it is successfully uploaded to BucketFS bucket"))
+  }
+
+  test("property is set when existing krb5.conf file passed") {
+    val properties = getSecurityEnabledConsumerProperties("SASL_SSL", krb5confFile = Option(DUMMY_KRB5CONF_FILE))
+    val props = properties.getProperties()
+    assert(props.get(SASL_KRB5CONF_LOCATION.kafkaPropertyName) === s"$DUMMY_KRB5CONF_FILE")
+  }
+
   private[this] def getSecurityEnabledConsumerProperties(
     securityProtocol: String,
     keystoreFile: Option[Path] = None,
-    truststoreFile: Option[Path] = None
+    truststoreFile: Option[Path] = None,
+    krb5confFile: Option[Path] = None
   ): KafkaConsumerProperties = {
     val properties = Map(
       "BOOTSTRAP_SERVERS" -> "kafka01",
@@ -571,6 +592,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     val stringBuilder = new StringBuilder()
     keystoreFile.foreach(file => stringBuilder.append("SSL_KEYSTORE_LOCATION=").append(file).append(";"))
     truststoreFile.foreach(file => stringBuilder.append("SSL_TRUSTSTORE_LOCATION=").append(file).append(";"))
+    krb5confFile.foreach(file => stringBuilder.append("SASL_KRB5CONF_LOCATION=").append(file).append(";"))
     if (securityProtocol === "SSL") {
       addSimpleSSLParameters(stringBuilder)
     } else if (securityProtocol === "SASL_SSL") {

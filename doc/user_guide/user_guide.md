@@ -61,7 +61,7 @@ checksum provided together with the jar file.
 To check the SHA256 sum of the downloaded jar, run the command:
 
 ```sh
-sha256sum exasol-kafka-connector-extension-1.7.2.jar
+sha256sum exasol-kafka-connector-extension-1.7.3.jar
 ```
 
 ### Building From Source
@@ -84,7 +84,7 @@ sbt assembly
 ```
 
 The packaged jar file should be located at
-`target/scala-2.12/exasol-kafka-connector-extension-1.7.2.jar`.
+`target/scala-2.12/exasol-kafka-connector-extension-1.7.3.jar`.
 
 ### Create an Exasol BucketFS Bucket
 
@@ -106,7 +106,7 @@ jar, please make sure the BucketFS ports are open.
 Upload the jar file using the `curl` command:
 
 ```bash
-curl -X PUT -T exasol-kafka-connector-extension-1.7.2.jar \
+curl -X PUT -T exasol-kafka-connector-extension-1.7.3.jar \
   http://w:<WRITE_PASSWORD>@<EXASOL_DATANODE>:2580/<BUCKET_NAME>/
 ```
 
@@ -135,12 +135,12 @@ OPEN SCHEMA KAFKA_EXTENSION;
 
 CREATE OR REPLACE JAVA SET SCRIPT KAFKA_CONSUMER(...) EMITS (...) AS
   %scriptclass com.exasol.cloudetl.kafka.KafkaConsumerQueryGenerator;
-  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-1.7.2.jar;
+  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-1.7.3.jar;
 /
 
 CREATE OR REPLACE JAVA SET SCRIPT KAFKA_IMPORT(...) EMITS (...) AS
   %scriptclass com.exasol.cloudetl.kafka.KafkaTopicDataImporter;
-  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-1.7.2.jar;
+  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-1.7.3.jar;
 /
 
 CREATE OR REPLACE JAVA SET SCRIPT KAFKA_METADATA(
@@ -150,7 +150,7 @@ CREATE OR REPLACE JAVA SET SCRIPT KAFKA_METADATA(
 )
 EMITS (partition_index DECIMAL(18, 0), max_offset DECIMAL(36,0)) AS
   %scriptclass com.exasol.cloudetl.kafka.KafkaTopicMetadataReader;
-  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-1.7.2.jar;
+  %jar /buckets/bfsdefault/<BUCKET>/exasol-kafka-connector-extension-1.7.3.jar;
 /
 ```
 
@@ -489,6 +489,8 @@ keyTab="/buckets/bfsdefault/bucket1/kafka.keytab"
 principal="principal@DOMAIN.COM";
 ```
 
+In some complex setups, you might need to provide a custom ``krb5.conf`` file. Thes could be done by uploading it to the BucketFS and providing the path in ``SASL_KRB5CONF_LOCATION`` parameter, similar to ``SASL_JAAS_LOCATION``.
+
 ## Importing Data From Azure Event Hubs
 
 To import data from [Azure Event Hubs][azure-event-hubs], we are going to create
@@ -689,6 +691,10 @@ not in import statement itself.
 * ``SASL_JAAS_LOCATION`` - It is the location of the JAAS configuration file for
   more complex configuration of SASL authentication. It should refer to the file
   stored inside a bucket in Exasol BucketFS.
+
+* ``SASL_KRB5CONF_LOCATION`` - It is the location of the custom ``krb5.conf`` file. 
+  It should refer to the file stored inside a bucket in Exasol BucketFS. In default 
+  configuration, the path starts with ``/buckets/bfsdefault/<bucket_name>/``
 
 [gh-releases]: https://github.com/exasol/kafka-connector-extension/releases
 [schema-registry]: https://docs.confluent.io/current/schema-registry/index.html
