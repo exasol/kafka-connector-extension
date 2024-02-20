@@ -693,7 +693,8 @@ not in import statement itself.
   stored inside a bucket in Exasol BucketFS.
 
 * ``SASL_KRB5CONF_LOCATION`` - It is the location of the custom ``krb5.conf`` file. 
-  It should refer to the file stored inside a bucket in Exasol BucketFS. 
+  It should refer to the file stored inside a bucket in Exasol BucketFS. In default 
+  configuration, the path starts with ``/buckets/bfsdefault/<bucket_name>/``
 
 [gh-releases]: https://github.com/exasol/kafka-connector-extension/releases
 [schema-registry]: https://docs.confluent.io/current/schema-registry/index.html

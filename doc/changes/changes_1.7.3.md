@@ -1,6 +1,6 @@
-# Exasol Kafka Connector Extension 1.7.3, released 2024-02-15
+# Exasol Kafka Connector Extension 1.7.3, released 2024-02-20
 
-Code name: 
+Code name: Custom `krb5.conf` files support.
 
 ## Summary
 
