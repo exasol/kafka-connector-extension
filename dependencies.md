@@ -14,7 +14,7 @@
 | [kafka-avro-serializer][10]                 | [Apache License 2.0][11]                      |
 | [scala-collection-compat][12]               | [Apache-2.0][1]                               |
 | [Guava: Google Core Libraries for Java][13] | [Apache License, Version 2.0][14]             |
-| [Confluent Server][15]                      | [The Apache License, Version 2.0][14]         |
+| [Apache Kafka][15]                          | [The Apache License, Version 2.0][14]         |
 | [snappy-java][16]                           | [Apache-2.0][17]                              |
 
 ## Test Dependencies

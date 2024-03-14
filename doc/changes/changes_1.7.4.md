@@ -25,7 +25,7 @@ This release fixes the following vulnerabilities in dependencies:
 * Updated `io.confluent:kafka-avro-serializer:7.5.2` to `7.6.0`
 * Added `org.apache.avro:avro:1.11.3`
 * Updated `org.apache.commons:commons-compress:1.26.0` to `1.26.1`
-* Updated `org.apache.kafka:kafka-clients:3.5.1` to `7.6.0-ce`
+* Updated `org.apache.kafka:kafka-clients:3.5.1` to `3.6.0`
 * Updated `org.scala-lang:scala-library:2.13.3` to `2.13.12`
 
 ### Test Dependency Updates
