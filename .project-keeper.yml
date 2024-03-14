@@ -11,4 +11,6 @@ build:
     - "8.24.0"
     - "7.1.25"
 excludes:
+  # Custom extension artifact
+  - "W-PK-CORE-153: Project-keeper version 4.1.0 is outdated. Please update project-keeper to latest version 4.2.0."
   - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_upload_github_release_assets.yml'"
