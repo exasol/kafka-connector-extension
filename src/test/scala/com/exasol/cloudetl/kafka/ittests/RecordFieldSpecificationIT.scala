@@ -23,7 +23,7 @@ import org.mockito.stubbing.Answer
 class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
 
   private[this] val customRecord = AvroRecord("abc", 3, 13)
-  implicit val stringSerializer = new StringSerializer
+  implicit val stringSerializer: StringSerializer = new StringSerializer
 
   test("default must be 'value.*': All fields from the record") {
     createCustomTopic(topic)

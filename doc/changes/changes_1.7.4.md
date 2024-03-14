@@ -20,11 +20,13 @@ This release fixes the following vulnerabilities in dependencies:
 ### Compile Dependency Updates
 
 * Updated `com.exasol:import-export-udf-common-scala_2.13:1.1.1` to `2.0.0`
+* Added `com.fasterxml.jackson.core:jackson-core:2.17.0`
 * Updated `com.google.guava:guava:33.0.0-jre` to `33.1.0-jre`
 * Updated `io.confluent:kafka-avro-serializer:7.5.2` to `7.6.0`
 * Added `org.apache.avro:avro:1.11.3`
 * Updated `org.apache.commons:commons-compress:1.26.0` to `1.26.1`
 * Updated `org.apache.kafka:kafka-clients:3.5.1` to `7.6.0-ce`
+* Updated `org.scala-lang:scala-library:2.13.3` to `2.13.12`
 
 ### Test Dependency Updates
 
