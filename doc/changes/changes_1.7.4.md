@@ -1,12 +1,19 @@
-# Exasol Kafka Connector Extension 1.7.4, released 2024-??-??
+# Exasol Kafka Connector Extension 1.7.4, released 2024-03-14
 
-Code name:
+Code name: Fix CVE-2024-25710 in compile dependency
 
 ## Summary
 
-## Features
+This release fixes the following vulnerabilities in dependencies:
+* CVE-2024-25710 in `org.apache.commons:commons-compress:jar:1.21:compile`
+* CVE-2024-22201 in `org.eclipse.jetty.http2:http2-common:jar:9.4.53.v20231009:test`
+* CVE-2023-51775 in `org.bitbucket.b_c:jose4j:jar:0.9.3:test`
 
-* ISSUE_NUMBER: description
+## Security
+
+* #88: Fixed CVE-2024-25710 in `org.apache.commons:commons-compress:jar:1.21:compile`
+* #89: Fixed CVE-2024-22201 in `org.eclipse.jetty.http2:http2-common:jar:9.4.53.v20231009:test`
+* #90: Fixed CVE-2023-51775 in `org.bitbucket.b_c:jose4j:jar:0.9.3:test`
 
 ## Dependency Updates
 
