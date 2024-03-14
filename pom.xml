@@ -529,7 +529,7 @@
                     <dependency>
                         <groupId>com.geirsson</groupId>
                         <artifactId>metaconfig-pprint_${scala.compat.version}</artifactId>
-                        <version>0.11.1</version>
+                        <version>0.12.0</version>
                     </dependency>
                     <dependency>
                         <groupId>com.github.vovapolu</groupId>
