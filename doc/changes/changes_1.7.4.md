@@ -1,4 +1,4 @@
-# Exasol Kafka Connector Extension 1.7.4, released 2024-03-14
+# Exasol Kafka Connector Extension 1.7.4, released 2024-03-15
 
 Code name: Fix CVE-2024-25710 in compile dependency
 
