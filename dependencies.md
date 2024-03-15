@@ -1,7 +1,9 @@
 <!-- @formatter:off -->
 # Dependencies
 
-## Compile Dependencies
+## Exasol Kafka Connector Extension
+
+### Compile Dependencies
 
 | Dependency                                  | License                                       |
 | ------------------------------------------- | --------------------------------------------- |
@@ -17,7 +19,7 @@
 | [Apache Kafka][15]                          | [The Apache License, Version 2.0][14]         |
 | [snappy-java][16]                           | [Apache-2.0][17]                              |
 
-## Test Dependencies
+### Test Dependencies
 
 | Dependency                                 | License                                                                                 |
 | ------------------------------------------ | --------------------------------------------------------------------------------------- |
@@ -39,7 +41,7 @@
 | [avro4s-core][43]                          | [MIT][22]                                                                               |
 | [Testcontainers :: Kafka][44]              | [MIT][45]                                                                               |
 
-## Plugin Dependencies
+### Plugin Dependencies
 
 | Dependency                                              | License                                       |
 | ------------------------------------------------------- | --------------------------------------------- |
@@ -68,6 +70,14 @@
 | [spotless-maven-plugin][75]                             | [The Apache Software License, Version 2.0][5] |
 | [scalafix-maven-plugin][76]                             | [BSD-3-Clause][77]                            |
 | [Exec Maven Plugin][78]                                 | [Apache License 2][5]                         |
+
+## Extension
+
+### Compile Dependencies
+
+| Dependency                                | License |
+| ----------------------------------------- | ------- |
+| [@exasol/extension-manager-interface][79] | MIT     |
 
 [0]: https://www.scala-lang.org/
 [1]: https://www.apache.org/licenses/LICENSE-2.0
@@ -148,3 +158,4 @@
 [76]: https://github.com/evis/scalafix-maven-plugin
 [77]: https://opensource.org/licenses/BSD-3-Clause
 [78]: https://www.mojohaus.org/exec-maven-plugin
+[79]: https://registry.npmjs.org/@exasol/extension-manager-interface/-/extension-manager-interface-0.4.1.tgz

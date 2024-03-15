@@ -17,7 +17,9 @@ This release fixes the following vulnerabilities in dependencies:
 
 ## Dependency Updates
 
-### Compile Dependency Updates
+### Exasol Kafka Connector Extension
+
+#### Compile Dependency Updates
 
 * Updated `com.exasol:import-export-udf-common-scala_2.13:1.1.1` to `2.0.0`
 * Added `com.fasterxml.jackson.core:jackson-core:2.17.0`
@@ -28,7 +30,7 @@ This release fixes the following vulnerabilities in dependencies:
 * Updated `org.apache.kafka:kafka-clients:3.5.1` to `3.6.0`
 * Updated `org.scala-lang:scala-library:2.13.3` to `2.13.12`
 
-### Test Dependency Updates
+#### Test Dependency Updates
 
 * Updated `ch.qos.logback:logback-classic:1.4.14` to `1.5.3`
 * Updated `ch.qos.logback:logback-core:1.4.14` to `1.5.3`
@@ -47,7 +49,7 @@ This release fixes the following vulnerabilities in dependencies:
 * Updated `org.mockito:mockito-core:5.8.0` to `5.11.0`
 * Updated `org.testcontainers:kafka:1.19.3` to `1.19.7`
 
-### Plugin Dependency Updates
+#### Plugin Dependency Updates
 
 * Updated `com.diffplug.spotless:spotless-maven-plugin:2.40.0` to `2.43.0`
 * Updated `com.exasol:error-code-crawler-maven-plugin:1.3.1` to `2.0.0`
@@ -59,3 +61,16 @@ This release fixes the following vulnerabilities in dependencies:
 * Updated `org.codehaus.mojo:exec-maven-plugin:3.1.0` to `3.2.0`
 * Updated `org.codehaus.mojo:flatten-maven-plugin:1.5.0` to `1.6.0`
 * Updated `org.itsallcode:openfasttrace-maven-plugin:1.6.2` to `1.8.0`
+
+### Extension
+
+#### Development Dependency Updates
+
+* Updated `eslint:^8.53.0` to `^8.57.0`
+* Updated `@types/node:^20.9.0` to `^20.11.28`
+* Updated `@typescript-eslint/parser:^6.10.0` to `^7.2.0`
+* Updated `ts-jest:^29.1.1` to `^29.1.2`
+* Updated `typescript:^5.2.2` to `^5.4.2`
+* Updated `@typescript-eslint/eslint-plugin:^6.10.0` to `^7.2.0`
+* Updated `ts-node:^10.9.1` to `^10.9.2`
+* Updated `esbuild:^0.19.5` to `^0.20.2`
