@@ -11,8 +11,9 @@ import org.apache.kafka.common.KafkaFuture;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
-class KafkaTestSetup implements AutoCloseable {
+public class KafkaTestSetup implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(KafkaTestSetup.class.getName());
+    public static final String DEFAULT_CONFLUENT_PLATFORM_VERSION = "7.6.0";
     private final KafkaContainer container;
 
     private KafkaTestSetup(final KafkaContainer container) {
@@ -27,7 +28,7 @@ class KafkaTestSetup implements AutoCloseable {
     static KafkaTestSetup create() throws ExecutionException, InterruptedException {
         @SuppressWarnings("resource")
         final KafkaContainer kafkaContainer = new KafkaContainerTweaked(
-                DockerImageName.parse("confluentinc/cp-kafka:7.4.1"))//
+                DockerImageName.parse("confluentinc/cp-kafka:" + DEFAULT_CONFLUENT_PLATFORM_VERSION))//
                 .withEmbeddedZookeeper()//
                 .withReuse(true);
         kafkaContainer.start();
