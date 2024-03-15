@@ -199,10 +199,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-22201 -->
+            <!-- Upgrade transitive dependency org.eclipse.jetty.http2:http2-common of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-22201 -->
             <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>http2-common</artifactId>
-            <version>11.0.20</version>
+            <artifactId>http2-server</artifactId>
+            <version>9.4.54.v20240208</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -423,10 +423,6 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-                        <!-- Vulnerabilities from org.scala-lang:scala-library:2.13.3 -->
-                        <!-- At the moment we cannot update to the latest scala-library version since avro4s-core_2.13:4.1.1 dependency is not compatible with it -->
-                        <!-- CWE-502: Deserialization of Untrusted Data (9.8); https://ossindex.sonatype.org/vulnerability/CVE-2022-36944 -->
-                        <exclude>CVE-2022-36944</exclude>
                         <!-- org.eclipse.jetty:jetty-servlets:jar:9.4.51.v20230217:test -->
                         <exclude>CVE-2023-36479</exclude>
                     </excludeVulnerabilityIds>

@@ -42,7 +42,7 @@ This release fixes the following vulnerabilities in dependencies:
 * Removed `org.apache.avro:avro:1.11.3`
 * Updated `org.apache.zookeeper:zookeeper:3.9.1` to `3.9.2`
 * Added `org.bitbucket.b_c:jose4j:0.9.6`
-* Added `org.eclipse.jetty.http2:http2-common:11.0.20`
+* Added `org.eclipse.jetty.http2:http2-server:9.4.54.v20240208`
 * Updated `org.json:json:20231013` to `20240303`
 * Updated `org.mockito:mockito-core:5.8.0` to `5.11.0`
 * Updated `org.testcontainers:kafka:1.19.3` to `1.19.7`

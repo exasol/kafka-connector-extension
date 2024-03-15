@@ -19,25 +19,25 @@
 
 ## Test Dependencies
 
-| Dependency                                 | License                                                                                |
-| ------------------------------------------ | -------------------------------------------------------------------------------------- |
-| [scalatest][18]                            | [the Apache License, ASL Version 2.0][19]                                              |
-| [scalatestplus-mockito][20]                | [Apache-2.0][19]                                                                       |
-| [mockito-core][21]                         | [MIT][22]                                                                              |
-| [Test containers for Exasol on Docker][23] | [MIT License][24]                                                                      |
-| [Test Database Builder for Java][25]       | [MIT License][26]                                                                      |
-| [Matcher for SQL Result Sets][27]          | [MIT License][28]                                                                      |
-| [Extension integration tests library][29]  | [MIT License][30]                                                                      |
-| [embedded-kafka-schema-registry][31]       | [MIT][22]                                                                              |
-| [JSON in Java][32]                         | [Public Domain][33]                                                                    |
-| [Apache ZooKeeper - Server][34]            | [Apache License, Version 2.0][5]                                                       |
-| [jose4j][35]                               | [The Apache Software License, Version 2.0][14]                                         |
-| [Jetty :: HTTP2 :: Common][36]             | [Eclipse Public License - Version 2.0][37]; [Apache Software License - Version 2.0][1] |
-| [Logback Core Module][38]                  | [Eclipse Public License - v 1.0][39]; [GNU Lesser General Public License][40]          |
-| [Logback Classic Module][41]               | [Eclipse Public License - v 1.0][39]; [GNU Lesser General Public License][40]          |
-| [kafka-streams-avro-serde][42]             | [Apache License 2.0][11]                                                               |
-| [avro4s-core][43]                          | [MIT][22]                                                                              |
-| [Testcontainers :: Kafka][44]              | [MIT][45]                                                                              |
+| Dependency                                 | License                                                                                 |
+| ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| [scalatest][18]                            | [the Apache License, ASL Version 2.0][19]                                               |
+| [scalatestplus-mockito][20]                | [Apache-2.0][19]                                                                        |
+| [mockito-core][21]                         | [MIT][22]                                                                               |
+| [Test containers for Exasol on Docker][23] | [MIT License][24]                                                                       |
+| [Test Database Builder for Java][25]       | [MIT License][26]                                                                       |
+| [Matcher for SQL Result Sets][27]          | [MIT License][28]                                                                       |
+| [Extension integration tests library][29]  | [MIT License][30]                                                                       |
+| [embedded-kafka-schema-registry][31]       | [MIT][22]                                                                               |
+| [JSON in Java][32]                         | [Public Domain][33]                                                                     |
+| [Apache ZooKeeper - Server][34]            | [Apache License, Version 2.0][5]                                                        |
+| [jose4j][35]                               | [The Apache Software License, Version 2.0][14]                                          |
+| [Jetty :: HTTP2 :: Server][36]             | [Apache Software License - Version 2.0][19]; [Eclipse Public License - Version 1.0][37] |
+| [Logback Core Module][38]                  | [Eclipse Public License - v 1.0][39]; [GNU Lesser General Public License][40]           |
+| [Logback Classic Module][41]               | [Eclipse Public License - v 1.0][39]; [GNU Lesser General Public License][40]           |
+| [kafka-streams-avro-serde][42]             | [Apache License 2.0][11]                                                                |
+| [avro4s-core][43]                          | [MIT][22]                                                                               |
+| [Testcontainers :: Kafka][44]              | [MIT][45]                                                                               |
 
 ## Plugin Dependencies
 
@@ -59,15 +59,15 @@
 | [Apache Maven JAR Plugin][61]                           | [Apache License, Version 2.0][5]              |
 | [Artifact reference checker and unifier][62]            | [MIT License][63]                             |
 | [Maven Failsafe Plugin][64]                             | [Apache-2.0][5]                               |
-| [JaCoCo :: Maven Plugin][65]                            | [Eclipse Public License 2.0][37]              |
-| [error-code-crawler-maven-plugin][66]                   | [MIT License][67]                             |
-| [Reproducible Build Maven Plugin][68]                   | [Apache 2.0][14]                              |
-| [Project Keeper Maven plugin][69]                       | [The MIT License][70]                         |
-| [OpenFastTrace Maven Plugin][71]                        | [GNU General Public License v3.0][72]         |
-| [Scalastyle Maven Plugin][73]                           | [Apache 2.0][11]                              |
-| [spotless-maven-plugin][74]                             | [The Apache Software License, Version 2.0][5] |
-| [scalafix-maven-plugin][75]                             | [BSD-3-Clause][76]                            |
-| [Exec Maven Plugin][77]                                 | [Apache License 2][5]                         |
+| [JaCoCo :: Maven Plugin][65]                            | [Eclipse Public License 2.0][66]              |
+| [error-code-crawler-maven-plugin][67]                   | [MIT License][68]                             |
+| [Reproducible Build Maven Plugin][69]                   | [Apache 2.0][14]                              |
+| [Project Keeper Maven plugin][70]                       | [The MIT License][71]                         |
+| [OpenFastTrace Maven Plugin][72]                        | [GNU General Public License v3.0][73]         |
+| [Scalastyle Maven Plugin][74]                           | [Apache 2.0][11]                              |
+| [spotless-maven-plugin][75]                             | [The Apache Software License, Version 2.0][5] |
+| [scalafix-maven-plugin][76]                             | [BSD-3-Clause][77]                            |
+| [Exec Maven Plugin][78]                                 | [Apache License 2][5]                         |
 
 [0]: https://www.scala-lang.org/
 [1]: https://www.apache.org/licenses/LICENSE-2.0
@@ -105,8 +105,8 @@
 [33]: https://github.com/stleary/JSON-java/blob/master/LICENSE
 [34]: http://zookeeper.apache.org/zookeeper
 [35]: https://bitbucket.org/b_c/jose4j/
-[36]: https://eclipse.dev/jetty/http2-parent/http2-common
-[37]: https://www.eclipse.org/legal/epl-2.0/
+[36]: https://eclipse.org/jetty/http2-parent/http2-server
+[37]: https://www.eclipse.org/org/documents/epl-v10.php
 [38]: http://logback.qos.ch/logback-core
 [39]: http://www.eclipse.org/legal/epl-v10.html
 [40]: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
@@ -135,15 +135,16 @@
 [63]: https://github.com/exasol/artifact-reference-checker-maven-plugin/blob/main/LICENSE
 [64]: https://maven.apache.org/surefire/maven-failsafe-plugin/
 [65]: https://www.jacoco.org/jacoco/trunk/doc/maven.html
-[66]: https://github.com/exasol/error-code-crawler-maven-plugin/
-[67]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
-[68]: http://zlika.github.io/reproducible-build-maven-plugin
-[69]: https://github.com/exasol/project-keeper/
-[70]: https://github.com/exasol/project-keeper/blob/main/LICENSE
-[71]: https://github.com/itsallcode/openfasttrace-maven-plugin
-[72]: https://www.gnu.org/licenses/gpl-3.0.html
-[73]: http://www.scalastyle.org
-[74]: https://github.com/diffplug/spotless
-[75]: https://github.com/evis/scalafix-maven-plugin
-[76]: https://opensource.org/licenses/BSD-3-Clause
-[77]: https://www.mojohaus.org/exec-maven-plugin
+[66]: https://www.eclipse.org/legal/epl-2.0/
+[67]: https://github.com/exasol/error-code-crawler-maven-plugin/
+[68]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
+[69]: http://zlika.github.io/reproducible-build-maven-plugin
+[70]: https://github.com/exasol/project-keeper/
+[71]: https://github.com/exasol/project-keeper/blob/main/LICENSE
+[72]: https://github.com/itsallcode/openfasttrace-maven-plugin
+[73]: https://www.gnu.org/licenses/gpl-3.0.html
+[74]: http://www.scalastyle.org
+[75]: https://github.com/diffplug/spotless
+[76]: https://github.com/evis/scalafix-maven-plugin
+[77]: https://opensource.org/licenses/BSD-3-Clause
+[78]: https://www.mojohaus.org/exec-maven-plugin
