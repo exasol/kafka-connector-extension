@@ -462,7 +462,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.1.0</version>
+                <version>4.3.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -620,7 +620,7 @@
     <parent>
         <artifactId>kafka-connector-extension-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.7.4</version>
+        <version>1.7.5</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
