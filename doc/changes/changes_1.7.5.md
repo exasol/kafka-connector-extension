@@ -15,7 +15,6 @@ Code name:
 #### Test Dependency Updates
 
 * Updated `com.exasol:extension-manager-integration-test-java:0.5.8` to `0.5.10`
-* Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.6.0` to `7.6.1.1`
 * Added `io.github.embeddedkafka:embedded-kafka_2.13:3.6.1`
 * Added `joda-time:joda-time:2.12.7`
 * Added `org.apache.kafka:kafka-metadata:3.6.2`
