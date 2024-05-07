@@ -1,12 +1,20 @@
-# Kafka Connector Extension 1.7.5, released 2024-??-??
+# Kafka Connector Extension 1.7.5, released 2024-05-07
 
-Code name:
+Code name: Fix CVEs in test dependency
 
 ## Summary
+This release fixes the following vulnerabilities in dependencies:
+* CVE-2024-27309 in `org.apache.kafka:kafka-server-common:jar:3.6.0:test`
+* CVE-2024-27309 in `org.apache.kafka:kafka-clients:jar:3.6.0:compile`
+* CVE-2024-23080 in `joda-time:joda-time:jar:2.10.8:test`
+* CVE-2024-29025 in `io.netty:netty-codec-http:jar:4.1.107.Final:test`
 
 ## Features
 
-* ISSUE_NUMBER: description
+* #92: CVE-2024-29025
+* #93: CVE-2024-23080
+* #94: CVE-2024-27309
+* #95: CVE-2024-27309
 
 ## Dependency Updates
 
