@@ -180,7 +180,7 @@
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
             <artifactId>embedded-kafka_${scala.compat.version}</artifactId>
-            <version>3.7.0</version>
+            <version>3.6.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
