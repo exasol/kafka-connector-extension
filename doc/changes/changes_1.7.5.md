@@ -1,6 +1,6 @@
 # Kafka Connector Extension 1.7.5, released 2024-05-07
 
-Code name: Fix CVEs in test dependency
+Code name: Fix CVEs in compile and test dependencies
 
 ## Summary
 This release fixes the following vulnerabilities in dependencies:
