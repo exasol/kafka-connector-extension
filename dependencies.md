@@ -32,6 +32,7 @@
 | [Extension integration tests library][29]  | [MIT License][30]                                                                       |
 | [embedded-kafka-schema-registry][31]       | [MIT][22]                                                                               |
 | [embedded-kafka][32]                       | [MIT][22]                                                                               |
+| [Apache Kafka][15]                         | [The Apache License, Version 2.0][14]                                                   |
 | [JSON in Java][33]                         | [Public Domain][34]                                                                     |
 | [Apache ZooKeeper - Server][35]            | [Apache License, Version 2.0][5]                                                        |
 | [jose4j][36]                               | [The Apache Software License, Version 2.0][14]                                          |
