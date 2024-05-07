@@ -9,12 +9,12 @@ This release fixes the following vulnerabilities in dependencies:
 * CVE-2024-23080 in `joda-time:joda-time:jar:2.10.8:test`
 * CVE-2024-29025 in `io.netty:netty-codec-http:jar:4.1.107.Final:test`
 
-## Features
+## Security
 
-* #92: CVE-2024-29025
-* #93: CVE-2024-23080
-* #94: CVE-2024-27309
-* #95: CVE-2024-27309
+* #92: Fixed CVE-2024-29025
+* #93: Fixed CVE-2024-23080
+* #94: Fixed CVE-2024-27309
+* #95: Fixed CVE-2024-27309
 
 ## Dependency Updates
 
