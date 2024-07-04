@@ -4,7 +4,7 @@ Code name: Fix CVE-2021-47621 and update dependencies
 
 ## Summary
 
-Fixes CVE-2021-47621 and update dependencies
+Fixes CVE-2021-47621 and updates dependencies.
 
 ## Security
 
