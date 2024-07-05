@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>kafka-connector-extension</artifactId>
-    <version>1.7.5</version>
+    <version>1.7.6</version>
     <name>Exasol Kafka Connector Extension</name>
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
@@ -268,6 +268,13 @@
             <version>2.12.7</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2021-47621 -->
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.174</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -476,7 +483,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.3.0</version>
+                <version>4.3.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -634,7 +641,7 @@
     <parent>
         <artifactId>kafka-connector-extension-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.7.5</version>
+        <version>1.7.6</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
