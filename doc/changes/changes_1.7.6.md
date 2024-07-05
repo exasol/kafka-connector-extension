@@ -1,10 +1,10 @@
-# Kafka Connector Extension 1.7.6, released 2024-07-04
+# Kafka Connector Extension 1.7.6, released 2024-07-05
 
-Code name: Fix CVE-2021-47621 and update dependencies
+Code name: Fix CVE-2021-47621
 
 ## Summary
 
-Fixes CVE-2021-47621 and updates dependencies.
+Fixes CVE-2021-47621.
 
 ## Security
 
