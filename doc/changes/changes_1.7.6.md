@@ -14,23 +14,9 @@ Fixes CVE-2021-47621 and updates dependencies.
 
 ### Exasol Kafka Connector Extension
 
-#### Compile Dependency Updates
-
-* Updated `com.fasterxml.jackson.core:jackson-core:2.17.0` to `2.17.1`
-* Updated `com.google.guava:guava:33.1.0-jre` to `33.2.1-jre`
-* Updated `io.confluent:kafka-avro-serializer:7.6.0` to `7.6.1`
-* Updated `org.apache.commons:commons-compress:1.26.1` to `1.26.2`
-
 #### Test Dependency Updates
 
-* Updated `ch.qos.logback:logback-classic:1.5.3` to `1.5.6`
-* Updated `ch.qos.logback:logback-core:1.5.3` to `1.5.6`
-* Updated `com.exasol:exasol-testcontainers:7.0.1` to `7.1.0`
-* Updated `com.exasol:extension-manager-integration-test-java:0.5.10` to `0.5.12`
-* Updated `io.confluent:kafka-streams-avro-serde:7.6.0` to `7.6.1`
 * Added `io.github.classgraph:classgraph:4.8.174`
-* Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.6.0` to `7.6.1.1`
-* Updated `org.testcontainers:kafka:1.19.7` to `1.19.8`
 
 #### Plugin Dependency Updates
 
