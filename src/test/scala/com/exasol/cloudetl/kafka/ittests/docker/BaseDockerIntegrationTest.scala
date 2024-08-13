@@ -15,7 +15,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 trait BaseDockerIntegrationTest extends AnyFunSuite with BeforeAndAfterAll {
   private[this] val JAR_NAME_PATTERN = "exasol-kafka-connector-extension-"
-  private[this] val DEFAULT_EXASOL_DOCKER_IMAGE = "8.24.0"
+  private[this] val DEFAULT_EXASOL_DOCKER_IMAGE = "8.29.1"
 
   val network = DockerNamedNetwork("kafka-it-tests", true)
   val exasolContainer = {
@@ -120,7 +120,7 @@ trait BaseDockerIntegrationTest extends AnyFunSuite with BeforeAndAfterAll {
   }
 
   private[this] def getExasolDockerImageVersion(): String = {
-    val dockerVersion = System.getenv("EXASOL_DOCKER_VERSION")
+    val dockerVersion = System.getenv("EXASOL_DB_VERSION")
     if (dockerVersion == null) {
       DEFAULT_EXASOL_DOCKER_IMAGE
     } else {
