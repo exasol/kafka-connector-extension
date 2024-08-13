@@ -24,3 +24,7 @@ This release fixes logging of the UDF by adding required libraries. The log leve
 * Removed `ch.qos.logback:logback-classic:1.5.3`
 * Removed `ch.qos.logback:logback-core:1.5.3`
 * Updated `com.exasol:exasol-testcontainers:7.0.1` to `7.1.1`
+
+#### Plugin Dependency Updates
+
+* Updated `org.itsallcode:openfasttrace-maven-plugin:1.8.0` to `2.0.0`
