@@ -1,25 +1,25 @@
 {
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit",
-    "source.generate.finalModifiers": "explicit",
-    "source.fixAll": "explicit"
-  },
-  "java.codeGeneration.useBlocks": true,
-  "java.saveActions.organizeImports": true,
-  "java.sources.organizeImports.starThreshold": 3,
-  "java.sources.organizeImports.staticStarThreshold": 3,
-  "java.test.config": {
-    "vmArgs": [
-      "-Djava.util.logging.config.file=src/test/resources/logging.properties"
-    ]
-  },
-  "java.configuration.updateBuildConfiguration": "automatic",
-  "files.watcherExclude": {
-    "**/target": true
-  },
-  "sonarlint.connectedMode.project": {
-    "connectionId": "exasol",
-    "projectKey": "com.exasol:kafka-connector-extension"
-  }
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+        "source.generate.finalModifiers": "explicit",
+        "source.fixAll": "explicit"
+    },
+    "java.codeGeneration.useBlocks": true,
+    "java.saveActions.organizeImports": true,
+    "java.sources.organizeImports.starThreshold": 3,
+    "java.sources.organizeImports.staticStarThreshold": 3,
+    "java.test.config": {
+        "vmArgs": [
+            "-Djava.util.logging.config.file=src/test/resources/logging.properties"
+        ]
+    },
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "files.watcherExclude": {
+        "**/target": true
+    },
+    "sonarlint.connectedMode.project": {
+        "connectionId": "exasol",
+        "projectKey": "com.exasol:kafka-connector-extension"
+    }
 }
