@@ -16,6 +16,6 @@
     <appender-ref ref="STDOUT"/>
   </root>
 
-  <logger name="com.exasol" additivity="false" level="trace">
-  </logger>
+  <logger name="com.exasol" additivity="false" level="trace" />
+  <logger name="org.testcontainers" additivity="false" level="debug" />
 </configuration>
