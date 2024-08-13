@@ -461,23 +461,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.basepom.maven</groupId>
-                <artifactId>duplicate-finder-maven-plugin</artifactId>
-                <configuration>
-                    <skip>${duplicate-finder.skip}</skip>
-                    <printEqualFiles>false</printEqualFiles>
-                    <failBuildInCaseOfEqualContentConflict>false</failBuildInCaseOfEqualContentConflict>
-                    <failBuildInCaseOfConflict>false</failBuildInCaseOfConflict>
-                    <ignoredDependencies>
-                        <dependency>
-                            <groupId>com.exasol</groupId>
-                            <artifactId>import-export-udf-common-scala_${scala.compat.version}</artifactId>
-                            <version>1.1.1</version>
-                        </dependency>
-                    </ignoredDependencies>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
                 <version>4.3.3</version>
