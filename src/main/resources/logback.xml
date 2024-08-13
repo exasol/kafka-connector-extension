@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- Commented out to fix OFT tracing -->
+<!-- Commented out to fix OFT tracing, see https://github.com/itsallcode/openfasttrace/issues/429 -->
 <!-- <!DOCTYPE configuration> -->
 
 <configuration>
