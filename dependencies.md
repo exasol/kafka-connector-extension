@@ -33,7 +33,7 @@
 | [Matcher for SQL Result Sets][32]          | [MIT License][33]                                                                       |
 | [Extension integration tests library][34]  | [MIT License][35]                                                                       |
 | [embedded-kafka-schema-registry][36]       | [MIT][27]                                                                               |
-| [Apache Kafka][20]                         | [The Apache License, Version 2.0][14]                                                   |
+| [Confluent Server][20]                     |                                                                                         |
 | [JSON in Java][37]                         | [Public Domain][38]                                                                     |
 | [Apache ZooKeeper - Server][39]            | [Apache License, Version 2.0][5]                                                        |
 | [jose4j][40]                               | [The Apache Software License, Version 2.0][14]                                          |
