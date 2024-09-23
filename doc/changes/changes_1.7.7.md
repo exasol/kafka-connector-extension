@@ -42,6 +42,7 @@ Any project that parses untrusted Protocol Buffers dataÂ containing an arbitra
 * Updated `com.exasol:exasol-testcontainers:7.0.1` to `7.1.1`
 * Updated `com.exasol:extension-manager-integration-test-java:0.5.10` to `0.5.12`
 * Updated `com.exasol:hamcrest-resultset-matcher:1.6.5` to `1.7.0`
+* Added `com.google.protobuf:protobuf-java:3.25.5`
 * Updated `io.confluent:kafka-streams-avro-serde:7.6.0` to `7.7.1`
 * Updated `io.github.classgraph:classgraph:4.8.174` to `4.8.176`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.6.0` to `7.7.1`
