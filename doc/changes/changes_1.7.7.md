@@ -1,4 +1,4 @@
-# Kafka Connector Extension 1.7.7, released 2024-09-24
+# Kafka Connector Extension 1.7.7, released 2024-09-25
 
 Code name: Fix logging, fixed vulnerability CVE-2024-7254 in com.google.protobuf:protobuf-java:jar:3.19.6:test
 
