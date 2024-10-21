@@ -218,10 +218,24 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Upgrade transitive dependency org.eclipse.jetty.http2:http2-common of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-22201 -->
+            <!-- Upgrade transitive dependency org.eclipse.jetty.http2:http2-common of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-22201, CVE-2023-36479, CVE-2024-9823, CVE-2024-6762 and CVE-2024-8184  -->
             <groupId>org.eclipse.jetty.http2</groupId>
             <artifactId>http2-server</artifactId>
-            <version>9.4.54.v20240208</version>
+            <version>11.0.24</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Upgrade to fix CVE-2024-6763 -->
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-http</artifactId>
+            <version>12.0.14</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Upgrade to fix CVE-2024-6762 and CVE-2024-9823 -->
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>11.0.24</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -463,8 +477,6 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-                        <!-- org.eclipse.jetty:jetty-servlets:jar:9.4.51.v20230217:test -->
-                        <exclude>CVE-2023-36479</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
