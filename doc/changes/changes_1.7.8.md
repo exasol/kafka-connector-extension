@@ -19,5 +19,4 @@ Code name:
 #### Test Dependency Updates
 
 * Updated `org.eclipse.jetty.http2:http2-server:9.4.54.v20240208` to `11.0.24`
-* Added `org.eclipse.jetty:jetty-http:12.0.14`
 * Added `org.eclipse.jetty:jetty-servlets:11.0.24`
