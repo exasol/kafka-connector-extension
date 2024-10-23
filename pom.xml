@@ -224,13 +224,13 @@
 <!--            <version>11.0.24</version>-->
 <!--            <scope>test</scope>-->
 <!--        </dependency>-->
-<!--        <dependency>-->
-<!--            &lt;!&ndash; Upgrade to fix CVE-2024-6763 &ndash;&gt;-->
-<!--            <groupId>org.eclipse.jetty</groupId>-->
-<!--            <artifactId>jetty-http</artifactId>-->
-<!--            <version>12.0.14</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <!-- Upgrade to fix CVE-2024-6763 -->
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-http</artifactId>
+            <version>12.0.14</version>
+            <scope>test</scope>
+        </dependency>
 <!--        <dependency>-->
 <!--            &lt;!&ndash; Upgrade to fix CVE-2024-6762 and CVE-2024-9823 &ndash;&gt;-->
 <!--            <groupId>org.eclipse.jetty</groupId>-->
@@ -477,7 +477,7 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-                        <exclude>CVE-2024-6763</exclude>
+<!--                        <exclude>CVE-2024-6763</exclude>-->
                         <exclude>CVE-2023-36479</exclude>
                         <exclude>CVE-2024-8184</exclude>
                     </excludeVulnerabilityIds>
