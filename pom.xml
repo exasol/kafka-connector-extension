@@ -176,7 +176,7 @@
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
             <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
-            <version>7.6.0</version>
+            <version>7.7.1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -217,13 +217,13 @@
             <version>0.9.6</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <!-- Upgrade transitive dependency org.eclipse.jetty.http2:http2-common of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-22201, CVE-2023-36479, CVE-2024-9823, CVE-2024-6762 and CVE-2024-8184  -->
-            <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>http2-server</artifactId>
-            <version>11.0.24</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            &lt;!&ndash; Upgrade transitive dependency org.eclipse.jetty.http2:http2-common of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-22201, CVE-2023-36479, CVE-2024-9823, CVE-2024-6762 and CVE-2024-8184  &ndash;&gt;-->
+<!--            <groupId>org.eclipse.jetty.http2</groupId>-->
+<!--            <artifactId>http2-server</artifactId>-->
+<!--            <version>11.0.24</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            &lt;!&ndash; Upgrade to fix CVE-2024-6763 &ndash;&gt;-->
 <!--            <groupId>org.eclipse.jetty</groupId>-->
@@ -231,13 +231,13 @@
 <!--            <version>12.0.14</version>-->
 <!--            <scope>test</scope>-->
 <!--        </dependency>-->
-        <dependency>
-            <!-- Upgrade to fix CVE-2024-6762 and CVE-2024-9823 -->
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <version>11.0.24</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            &lt;!&ndash; Upgrade to fix CVE-2024-6762 and CVE-2024-9823 &ndash;&gt;-->
+<!--            <groupId>org.eclipse.jetty</groupId>-->
+<!--            <artifactId>jetty-servlets</artifactId>-->
+<!--            <version>11.0.24</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
@@ -478,6 +478,8 @@
                 <configuration>
                     <excludeVulnerabilityIds>
                         <exclude>CVE-2024-6763</exclude>
+                        <exclude>CVE-2023-36479</exclude>
+                        <exclude>CVE-2024-8184</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>

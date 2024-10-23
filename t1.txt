@@ -1,0 +1,321 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< com.exasol:kafka-connector-extension >----------------
+[INFO] Building Exasol Kafka Connector Extension 1.7.8
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ kafka-connector-extension ---
+[INFO] com.exasol:kafka-connector-extension:jar:1.7.8
+[INFO] +- org.scala-lang:scala-library:jar:2.13.12:compile
+[INFO] +- com.exasol:import-export-udf-common-scala_2.13:jar:2.0.0:compile
+[INFO] |  +- com.exasol:udf-api-java:jar:1.0.2:compile
+[INFO] |  |  \- com.exasol:maven-project-version-getter:jar:1.2.0:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.15.0:compile
+[INFO] |  |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.15.0:compile
+[INFO] |  +- com.fasterxml.jackson.module:jackson-module-scala_2.13:jar:2.15.0:compile
+[INFO] |  |  \- com.thoughtworks.paranamer:paranamer:jar:2.8:compile
+[INFO] |  \- com.typesafe.scala-logging:scala-logging_2.13:jar:3.9.5:compile
+[INFO] +- org.apache.avro:avro:jar:1.11.4:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-core:jar:2.17.0:compile
+[INFO] +- com.exasol:error-reporting-java:jar:1.0.1:compile
+[INFO] +- org.apache.commons:commons-compress:jar:1.26.1:compile
+[INFO] |  +- commons-codec:commons-codec:jar:1.16.1:compile
+[INFO] |  +- commons-io:commons-io:jar:2.15.1:compile
+[INFO] |  \- org.apache.commons:commons-lang3:jar:3.14.0:compile
+[INFO] +- io.confluent:kafka-avro-serializer:jar:7.6.0:compile
+[INFO] |  +- io.confluent:kafka-schema-serializer:jar:7.6.0:compile
+[INFO] |  |  \- com.fasterxml.jackson.dataformat:jackson-dataformat-csv:jar:2.14.2:compile
+[INFO] |  +- io.confluent:kafka-schema-registry-client:jar:7.6.0:compile
+[INFO] |  |  +- org.yaml:snakeyaml:jar:2.0:compile
+[INFO] |  |  \- io.swagger.core.v3:swagger-annotations:jar:2.1.10:compile
+[INFO] |  +- io.confluent:logredactor:jar:1.0.12:compile
+[INFO] |  |  +- com.google.re2j:re2j:jar:1.6:compile
+[INFO] |  |  +- io.confluent:logredactor-metrics:jar:1.0.12:compile
+[INFO] |  |  \- com.eclipsesource.minimal-json:minimal-json:jar:0.9.5:compile
+[INFO] |  \- io.confluent:common-utils:jar:7.6.0:compile
+[INFO] +- org.scala-lang.modules:scala-collection-compat_2.13:jar:2.11.0:compile
+[INFO] +- com.google.guava:guava:jar:33.1.0-jre:compile
+[INFO] |  +- com.google.guava:failureaccess:jar:1.0.2:compile
+[INFO] |  +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |  +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.42.0:compile
+[INFO] |  +- com.google.errorprone:error_prone_annotations:jar:2.26.1:compile
+[INFO] |  \- com.google.j2objc:j2objc-annotations:jar:3.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.16:compile
+[INFO] +- ch.qos.logback:logback-classic:jar:1.5.6:compile
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.5.6:compile
+[INFO] +- org.scalatest:scalatest_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-core_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  |  +- org.scalatest:scalatest-compatible:jar:3.3.0-SNAP4:test
+[INFO] |  |  +- org.scalactic:scalactic_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  |  \- org.scala-lang.modules:scala-xml_2.13:jar:2.1.0:test
+[INFO] |  +- org.scalatest:scalatest-featurespec_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-flatspec_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-freespec_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-funsuite_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-funspec_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-propspec_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-refspec_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-wordspec_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-diagrams_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-matchers-core_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-shouldmatchers_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  +- org.scalatest:scalatest-mustmatchers_2.13:jar:3.3.0-SNAP4:test
+[INFO] |  \- org.scala-lang:scala-reflect:jar:2.13.10:test
+[INFO] +- org.scalatestplus:scalatestplus-mockito_2.13:jar:1.0.0-SNAP5:test
+[INFO] +- org.mockito:mockito-core:jar:5.11.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.14.12:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.14.12:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.3:test
+[INFO] +- com.exasol:exasol-testcontainers:jar:7.1.1:test
+[INFO] |  +- org.testcontainers:testcontainers:jar:1.20.1:test
+[INFO] |  |  +- junit:junit:jar:4.13.2:test
+[INFO] |  |  |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] |  |  +- org.rnorth.duct-tape:duct-tape:jar:1.0.8:test
+[INFO] |  |  |  \- org.jetbrains:annotations:jar:17.0.0:test
+[INFO] |  |  +- com.github.docker-java:docker-java-api:jar:3.4.0:test
+[INFO] |  |  \- com.github.docker-java:docker-java-transport-zerodep:jar:3.4.0:test
+[INFO] |  |     +- com.github.docker-java:docker-java-transport:jar:3.4.0:test
+[INFO] |  |     \- net.java.dev.jna:jna:jar:5.13.0:test
+[INFO] |  +- org.testcontainers:jdbc:jar:1.20.1:test
+[INFO] |  |  \- org.testcontainers:database-commons:jar:1.20.1:test
+[INFO] |  +- com.github.mwiede:jsch:jar:0.2.18:test
+[INFO] |  +- com.exasol:database-cleaner:jar:1.1.3:test
+[INFO] |  +- com.exasol:bucketfs-java:jar:3.2.0:test
+[INFO] |  |  +- jakarta.json:jakarta.json-api:jar:2.1.3:test
+[INFO] |  |  +- org.eclipse.parsson:parsson:jar:1.1.7:test
+[INFO] |  |  +- jakarta.json.bind:jakarta.json.bind-api:jar:3.0.1:test
+[INFO] |  |  \- org.eclipse:yasson:jar:3.0.3:test
+[INFO] |  \- com.exasol:exasol-jdbc:jar:24.1.1:test
+[INFO] +- com.exasol:test-db-builder-java:jar:3.5.4:test
+[INFO] |  \- com.exasol:db-fundamentals-java:jar:0.1.3:test
+[INFO] +- com.exasol:hamcrest-resultset-matcher:jar:1.6.5:test
+[INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
+[INFO] +- com.exasol:extension-manager-integration-test-java:jar:0.5.10:test
+[INFO] |  +- com.exasol:extension-manager-client-java:jar:0.5.10:test
+[INFO] |  |  +- org.glassfish.jersey.core:jersey-client:jar:2.41:test
+[INFO] |  |  |  +- jakarta.ws.rs:jakarta.ws.rs-api:jar:2.1.6:test
+[INFO] |  |  |  +- org.glassfish.jersey.core:jersey-common:jar:2.41:test
+[INFO] |  |  |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:test
+[INFO] |  |  |  |  \- org.glassfish.hk2:osgi-resource-locator:jar:1.0.3:test
+[INFO] |  |  |  \- org.glassfish.hk2.external:jakarta.inject:jar:2.6.1:test
+[INFO] |  |  +- org.glassfish.jersey.media:jersey-media-multipart:jar:2.41:test
+[INFO] |  |  |  \- org.jvnet.mimepull:mimepull:jar:1.9.15:test
+[INFO] |  |  +- org.glassfish.jersey.media:jersey-media-json-jackson:jar:2.41:test
+[INFO] |  |  |  +- org.glassfish.jersey.ext:jersey-entity-filtering:jar:2.41:test
+[INFO] |  |  |  \- com.fasterxml.jackson.module:jackson-module-jaxb-annotations:jar:2.15.2:test
+[INFO] |  |  +- org.glassfish.jersey.inject:jersey-hk2:jar:2.41:test
+[INFO] |  |  |  +- org.glassfish.hk2:hk2-locator:jar:2.6.1:test
+[INFO] |  |  |  |  +- org.glassfish.hk2.external:aopalliance-repackaged:jar:2.6.1:test
+[INFO] |  |  |  |  +- org.glassfish.hk2:hk2-api:jar:2.6.1:test
+[INFO] |  |  |  |  \- org.glassfish.hk2:hk2-utils:jar:2.6.1:test
+[INFO] |  |  |  \- org.javassist:javassist:jar:3.29.2-GA:test
+[INFO] |  |  \- com.brsanthu:migbase64:jar:2.2:test
+[INFO] |  +- com.exasol:exasol-test-setup-abstraction-java:jar:2.1.3:test
+[INFO] |  |  +- software.amazon.awssdk:cloudformation:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:aws-query-protocol:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:protocol-core:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:http-auth-aws:jar:2.25.31:test
+[INFO] |  |  |  |  +- software.amazon.awssdk:checksums-spi:jar:2.25.31:test
+[INFO] |  |  |  |  \- software.amazon.awssdk:checksums:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:sdk-core:jar:2.25.31:test
+[INFO] |  |  |  |  +- software.amazon.awssdk:profiles:jar:2.25.31:test
+[INFO] |  |  |  |  \- org.reactivestreams:reactive-streams:jar:1.0.4:test
+[INFO] |  |  |  +- software.amazon.awssdk:auth:jar:2.25.31:test
+[INFO] |  |  |  |  \- software.amazon.eventstream:eventstream:jar:1.0.1:test
+[INFO] |  |  |  +- software.amazon.awssdk:http-auth-spi:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:http-auth:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:identity-spi:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:http-client-spi:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:regions:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:annotations:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:utils:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:aws-core:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:metrics-spi:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:json-utils:jar:2.25.31:test
+[INFO] |  |  |  |  \- software.amazon.awssdk:third-party-jackson-core:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:endpoints-spi:jar:2.25.31:test
+[INFO] |  |  |  +- software.amazon.awssdk:apache-client:jar:2.25.31:test
+[INFO] |  |  |  |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:test
+[INFO] |  |  |  |  \- org.apache.httpcomponents:httpcore:jar:4.4.13:test
+[INFO] |  |  |  \- software.amazon.awssdk:netty-nio-client:jar:2.25.31:test
+[INFO] |  |  |     +- io.netty:netty-codec-http:jar:4.1.108.Final:test
+[INFO] |  |  |     \- io.netty:netty-codec-http2:jar:4.1.108.Final:test
+[INFO] |  |  \- software.amazon.awssdk:ec2:jar:2.25.31:test
+[INFO] |  \- org.junit.jupiter:junit-jupiter-api:jar:5.10.1:test
+[INFO] |     +- org.opentest4j:opentest4j:jar:1.3.0:test
+[INFO] |     +- org.junit.platform:junit-platform-commons:jar:1.10.1:test
+[INFO] |     \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:jar:7.6.0:test
+[INFO] |  +- io.confluent:kafka-schema-registry:jar:7.6.0:test
+[INFO] |  |  +- io.confluent:kafka-json-schema-provider:jar:7.6.0:test
+[INFO] |  |  |  +- com.github.erosb:everit-json-schema:jar:1.14.3:test
+[INFO] |  |  |  |  \- com.damnhandy:handy-uri-templates:jar:2.1.8:test
+[INFO] |  |  |  +- com.github.erosb:json-sKema:jar:0.10.0:test
+[INFO] |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-guava:jar:2.14.2:test
+[INFO] |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-joda:jar:2.14.2:test
+[INFO] |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.14.2:test
+[INFO] |  |  |  +- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.14.2:test
+[INFO] |  |  |  +- com.kjetland:mbknor-jackson-jsonschema_2.13:jar:1.0.39:test
+[INFO] |  |  |  |  \- javax.validation:validation-api:jar:2.0.1.Final:test
+[INFO] |  |  |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.9.10:test
+[INFO] |  |  |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.9.10:test
+[INFO] |  |  |  +- org.jetbrains.kotlin:kotlin-scripting-jvm:jar:1.9.10:test
+[INFO] |  |  |  |  +- org.jetbrains.kotlin:kotlin-script-runtime:jar:1.9.10:test
+[INFO] |  |  |  |  \- org.jetbrains.kotlin:kotlin-scripting-common:jar:1.9.10:test
+[INFO] |  |  |  \- org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:jar:1.9.10:test
+[INFO] |  |  |     \- org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:jar:1.9.10:test
+[INFO] |  |  +- io.confluent:kafka-protobuf-provider:jar:7.6.0:test
+[INFO] |  |  |  +- com.squareup.wire:wire-schema-jvm:jar:4.9.0:test
+[INFO] |  |  |  |  +- com.squareup:javapoet:jar:1.13.0:test
+[INFO] |  |  |  |  +- com.squareup:kotlinpoet:jar:1.14.2:test
+[INFO] |  |  |  |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.9.10:test
+[INFO] |  |  |  |     \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.9.10:test
+[INFO] |  |  |  +- com.squareup.wire:wire-runtime-jvm:jar:4.9.0:test
+[INFO] |  |  |  +- com.squareup.okio:okio-jvm:jar:3.4.0:test
+[INFO] |  |  |  +- com.google.protobuf:protobuf-java-util:jar:3.19.6:test
+[INFO] |  |  |  +- com.google.api.grpc:proto-google-common-protos:jar:2.22.1:test
+[INFO] |  |  |  \- io.confluent:kafka-protobuf-types:jar:7.6.0:test
+[INFO] |  |  +- org.glassfish.jersey.ext:jersey-bean-validation:jar:2.36:test
+[INFO] |  |  |  +- org.glassfish.jersey.core:jersey-server:jar:2.36:test
+[INFO] |  |  |  +- jakarta.validation:jakarta.validation-api:jar:2.0.2:test
+[INFO] |  |  |  +- jakarta.el:jakarta.el-api:jar:3.0.3:test
+[INFO] |  |  |  \- org.glassfish:jakarta.el:jar:3.0.4:test
+[INFO] |  |  +- org.hibernate.validator:hibernate-validator:jar:6.1.7.Final:test
+[INFO] |  |  |  +- org.jboss.logging:jboss-logging:jar:3.3.2.Final:test
+[INFO] |  |  |  \- com.fasterxml:classmate:jar:1.3.4:test
+[INFO] |  |  +- io.confluent:rest-utils:jar:7.6.0:test
+[INFO] |  |  |  +- org.eclipse.jetty.websocket:javax-websocket-server-impl:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  +- org.eclipse.jetty:jetty-annotations:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  +- org.eclipse.jetty:jetty-plus:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  |  \- org.eclipse.jetty:jetty-jndi:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  +- org.eclipse.jetty:jetty-webapp:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  |  \- org.eclipse.jetty:jetty-xml:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  +- javax.annotation:javax.annotation-api:jar:1.3.2:test
+[INFO] |  |  |  |  |  +- org.ow2.asm:asm:jar:9.6:test
+[INFO] |  |  |  |  |  \- org.ow2.asm:asm-commons:jar:9.6:test
+[INFO] |  |  |  |  |     \- org.ow2.asm:asm-tree:jar:9.6:test
+[INFO] |  |  |  |  +- org.eclipse.jetty.websocket:javax-websocket-client-impl:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  +- org.eclipse.jetty.websocket:websocket-client:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  |  \- org.eclipse.jetty:jetty-client:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  \- javax.websocket:javax.websocket-client-api:jar:1.0:test
+[INFO] |  |  |  |  +- org.eclipse.jetty.websocket:websocket-server:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  +- org.eclipse.jetty.websocket:websocket-common:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  |  \- org.eclipse.jetty.websocket:websocket-api:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |  \- org.eclipse.jetty.websocket:websocket-servlet:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  |     \- javax.servlet:javax.servlet-api:jar:3.1.0:test
+[INFO] |  |  |  |  \- javax.websocket:javax.websocket-api:jar:1.0:test
+[INFO] |  |  |  +- org.glassfish.jersey.containers:jersey-container-servlet:jar:2.36:test
+[INFO] |  |  |  |  \- org.glassfish.jersey.containers:jersey-container-servlet-core:jar:2.36:test
+[INFO] |  |  |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |  |  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  |  |  +- javax.activation:activation:jar:1.1.1:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-jmx:jar:9.4.53.v20231009:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-alpn-server:jar:9.4.53.v20231009:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-alpn-java-server:jar:9.4.53.v20231009:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-alpn-conscrypt-server:jar:9.4.53.v20231009:test
+[INFO] |  |  |  +- org.conscrypt:conscrypt-openjdk-uber:jar:2.5.2:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-servlet:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  +- org.eclipse.jetty:jetty-security:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  \- org.eclipse.jetty:jetty-util-ajax:jar:9.4.53.v20231009:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-jaas:jar:9.4.53.v20231009:test
+[INFO] |  |  |  |  +- org.apache.directory.api:api-ldap-model:jar:2.1.4:test
+[INFO] |  |  |  |  |  +- org.apache.directory.api:api-asn1-ber:jar:2.1.4:test
+[INFO] |  |  |  |  |  +- org.apache.directory.api:api-i18n:jar:2.1.4:test
+[INFO] |  |  |  |  |  +- org.apache.mina:mina-core:jar:2.2.2:test
+[INFO] |  |  |  |  |  +- org.apache.servicemix.bundles:org.apache.servicemix.bundles.antlr:jar:2.7.7_5:test
+[INFO] |  |  |  |  |  \- org.apache.commons:commons-collections4:jar:4.4:test
+[INFO] |  |  |  |  +- org.apache.directory.api:api-util:jar:2.1.4:test
+[INFO] |  |  |  |  \- org.apache.directory.api:api-asn1-api:jar:2.1.4:test
+[INFO] |  |  |  +- com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:jar:2.14.2:test
+[INFO] |  |  |  +- com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:jar:2.14.2:test
+[INFO] |  |  |  \- io.github.resilience4j:resilience4j-ratelimiter:jar:1.7.1:test
+[INFO] |  |  |     +- io.vavr:vavr:jar:0.10.2:test
+[INFO] |  |  |     |  \- io.vavr:vavr-match:jar:0.10.2:test
+[INFO] |  |  |     \- io.github.resilience4j:resilience4j-core:jar:1.7.1:test
+[INFO] |  |  +- org.slf4j:slf4j-reload4j:jar:1.7.36:test
+[INFO] |  |  |  \- ch.qos.reload4j:reload4j:jar:1.2.19:test
+[INFO] |  |  +- io.kcache:kcache:jar:4.0.11:test
+[INFO] |  |  +- com.github.ben-manes.caffeine:caffeine:jar:2.9.3:test
+[INFO] |  |  +- com.google.crypto.tink:tink:jar:1.12.0:test
+[INFO] |  |  |  \- com.google.code.gson:gson:jar:2.10.1:test
+[INFO] |  |  +- io.netty:netty-codec:jar:4.1.100.Final:test
+[INFO] |  |  \- io.swagger.core.v3:swagger-core:jar:2.1.10:test
+[INFO] |  |     +- com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:jar:2.12.1:test
+[INFO] |  |     \- io.swagger.core.v3:swagger-models:jar:2.1.10:test
+[INFO] |  \- io.github.embeddedkafka:embedded-kafka_2.13:jar:3.6.0:test
+[INFO] |     \- org.apache.kafka:kafka_2.13:jar:3.6.0:test
+[INFO] |        +- org.apache.kafka:kafka-group-coordinator:jar:3.6.0:test
+[INFO] |        +- org.apache.kafka:kafka-storage-api:jar:3.6.0:test
+[INFO] |        +- org.apache.kafka:kafka-tools-api:jar:3.6.0:test
+[INFO] |        +- org.apache.kafka:kafka-storage:jar:3.6.0:test
+[INFO] |        +- net.sourceforge.argparse4j:argparse4j:jar:0.7.0:test
+[INFO] |        +- commons-validator:commons-validator:jar:1.7:test
+[INFO] |        |  +- commons-beanutils:commons-beanutils:jar:1.9.4:test
+[INFO] |        |  +- commons-digester:commons-digester:jar:2.1:test
+[INFO] |        |  +- commons-logging:commons-logging:jar:1.2:test
+[INFO] |        |  \- commons-collections:commons-collections:jar:3.2.2:test
+[INFO] |        +- org.scala-lang.modules:scala-java8-compat_2.13:jar:1.0.2:test
+[INFO] |        +- io.dropwizard.metrics:metrics-core:jar:4.1.12.1:test
+[INFO] |        \- commons-cli:commons-cli:jar:1.4:test
+[INFO] +- org.apache.kafka:kafka-metadata:jar:3.6.2:test
+[INFO] |  +- org.apache.kafka:kafka-server-common:jar:3.6.2:test
+[INFO] |  |  +- net.sf.jopt-simple:jopt-simple:jar:5.0.4:test
+[INFO] |  |  \- org.pcollections:pcollections:jar:4.0.1:test
+[INFO] |  +- org.apache.kafka:kafka-raft:jar:3.6.2:test
+[INFO] |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.5:test
+[INFO] |  \- com.yammer.metrics:metrics-core:jar:2.2.0:test
+[INFO] +- org.json:json:jar:20240303:test
+[INFO] +- org.apache.zookeeper:zookeeper:jar:3.9.2:test
+[INFO] |  +- org.apache.zookeeper:zookeeper-jute:jar:3.9.2:test
+[INFO] |  +- org.apache.yetus:audience-annotations:jar:0.12.0:test
+[INFO] |  +- io.netty:netty-handler:jar:4.1.105.Final:test
+[INFO] |  |  +- io.netty:netty-common:jar:4.1.105.Final:test
+[INFO] |  |  +- io.netty:netty-resolver:jar:4.1.105.Final:test
+[INFO] |  |  +- io.netty:netty-buffer:jar:4.1.105.Final:test
+[INFO] |  |  +- io.netty:netty-transport:jar:4.1.105.Final:test
+[INFO] |  |  \- io.netty:netty-transport-native-unix-common:jar:4.1.105.Final:test
+[INFO] |  +- io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.105.Final:test
+[INFO] |  |  \- io.netty:netty-transport-classes-epoll:jar:4.1.105.Final:test
+[INFO] |  \- io.netty:netty-tcnative-boringssl-static:jar:2.0.61.Final:test
+[INFO] |     +- io.netty:netty-tcnative-classes:jar:2.0.61.Final:test
+[INFO] |     +- io.netty:netty-tcnative-boringssl-static:jar:linux-x86_64:2.0.61.Final:test
+[INFO] |     +- io.netty:netty-tcnative-boringssl-static:jar:linux-aarch_64:2.0.61.Final:test
+[INFO] |     +- io.netty:netty-tcnative-boringssl-static:jar:osx-x86_64:2.0.61.Final:test
+[INFO] |     +- io.netty:netty-tcnative-boringssl-static:jar:osx-aarch_64:2.0.61.Final:test
+[INFO] |     \- io.netty:netty-tcnative-boringssl-static:jar:windows-x86_64:2.0.61.Final:test
+[INFO] +- org.bitbucket.b_c:jose4j:jar:0.9.6:test
+[INFO] +- org.eclipse.jetty.http2:http2-server:jar:11.0.24:test
+[INFO] |  +- org.eclipse.jetty:jetty-server:jar:11.0.24:test
+[INFO] |  |  \- org.eclipse.jetty.toolchain:jetty-jakarta-servlet-api:jar:5.0.2:test
+[INFO] |  \- org.eclipse.jetty.http2:http2-common:jar:11.0.24:test
+[INFO] |     \- org.eclipse.jetty.http2:http2-hpack:jar:11.0.24:test
+[INFO] +- org.eclipse.jetty:jetty-servlets:jar:11.0.24:test
+[INFO] |  +- org.eclipse.jetty:jetty-http:jar:11.0.24:test
+[INFO] |  +- org.eclipse.jetty:jetty-io:jar:11.0.24:test
+[INFO] |  \- org.eclipse.jetty:jetty-util:jar:11.0.24:test
+[INFO] +- io.confluent:kafka-streams-avro-serde:jar:7.6.0:test
+[INFO] +- com.sksamuel.avro4s:avro4s-core_2.13:jar:4.1.2:test
+[INFO] |  +- com.propensive:magnolia_2.13:jar:0.17.0:test
+[INFO] |  |  \- com.propensive:mercator_2.13:jar:0.2.1:test
+[INFO] |  +- com.chuusai:shapeless_2.13:jar:2.3.9:test
+[INFO] |  \- org.json4s:json4s-native_2.13:jar:4.0.5:test
+[INFO] |     +- org.json4s:json4s-core_2.13:jar:4.0.5:test
+[INFO] |     |  +- org.json4s:json4s-ast_2.13:jar:4.0.5:test
+[INFO] |     |  \- org.json4s:json4s-scalap_2.13:jar:4.0.5:test
+[INFO] |     \- org.json4s:json4s-native-core_2.13:jar:4.0.5:test
+[INFO] +- org.testcontainers:kafka:jar:1.19.7:test
+[INFO] +- org.apache.kafka:kafka-clients:jar:3.6.0:compile
+[INFO] |  +- com.github.luben:zstd-jni:jar:1.5.5-1:runtime
+[INFO] |  \- org.lz4:lz4-java:jar:1.8.0:runtime
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.10.5:compile
+[INFO] +- joda-time:joda-time:jar:2.12.7:test
+[INFO] +- io.github.classgraph:classgraph:jar:4.8.174:test
+[INFO] \- com.google.protobuf:protobuf-java:jar:3.25.5:test
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.775 s
+[INFO] Finished at: 2024-10-23T11:52:00+02:00
+[INFO] ------------------------------------------------------------------------

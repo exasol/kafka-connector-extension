@@ -18,5 +18,5 @@ Code name:
 
 #### Test Dependency Updates
 
-* Updated `org.eclipse.jetty.http2:http2-server:9.4.54.v20240208` to `11.0.24`
-* Added `org.eclipse.jetty:jetty-servlets:11.0.24`
+* Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.6.0` to `7.7.1`
+* Removed `org.eclipse.jetty.http2:http2-server:9.4.54.v20240208`
