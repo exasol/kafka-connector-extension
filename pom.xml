@@ -225,10 +225,10 @@
 <!--            <scope>test</scope>-->
 <!--        </dependency>-->
         <dependency>
-            <!-- Upgrade to fix CVE-2024-6763 -->
+            <!-- Upgrade waiting for the fix of CVE-2024-6763 (but it is not here yet) -->
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
-            <version>12.0.14</version>
+            <version>11.0.24</version>
             <scope>test</scope>
         </dependency>
 <!--        <dependency>-->
@@ -477,7 +477,7 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-<!--                        <exclude>CVE-2024-6763</exclude>-->
+                        <exclude>CVE-2024-6763</exclude>
                         <exclude>CVE-2023-36479</exclude>
                         <exclude>CVE-2024-8184</exclude>
                     </excludeVulnerabilityIds>

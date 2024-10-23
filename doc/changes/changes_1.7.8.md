@@ -28,5 +28,5 @@ Code name:
 * Removed `org.apache.zookeeper:zookeeper:3.9.2`
 * Removed `org.bitbucket.b_c:jose4j:0.9.6`
 * Removed `org.eclipse.jetty.http2:http2-server:9.4.54.v20240208`
-* Added `org.eclipse.jetty:jetty-http:12.0.14`
+* Added `org.eclipse.jetty:jetty-http:11.0.24`
 * Removed `org.json:json:20240303`
