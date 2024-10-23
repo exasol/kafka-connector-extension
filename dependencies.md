@@ -32,8 +32,8 @@
 | [Matcher for SQL Result Sets][30]          | [MIT License][31]                                                                      |
 | [Extension integration tests library][32]  | [MIT License][33]                                                                      |
 | [embedded-kafka-schema-registry][34]       | [MIT][25]                                                                              |
-| [Core :: HTTP][35]                         | [Eclipse Public License - Version 2.0][36]; [Apache Software License - Version 2.0][1] |
-| [Core :: Server][37]                       | [Eclipse Public License - Version 2.0][36]; [Apache Software License - Version 2.0][1] |
+| [Jetty :: Http Utility][35]                | [Eclipse Public License - Version 2.0][36]; [Apache Software License - Version 2.0][1] |
+| [Jetty :: Server Core][37]                 | [Eclipse Public License - Version 2.0][36]; [Apache Software License - Version 2.0][1] |
 | [kafka-streams-avro-serde][38]             | [Apache License 2.0][11]                                                               |
 | [avro4s-core][39]                          | [MIT][25]                                                                              |
 | [Testcontainers :: Kafka][40]              | [MIT][41]                                                                              |
@@ -118,9 +118,9 @@
 [32]: https://github.com/exasol/extension-manager/
 [33]: https://github.com/exasol/extension-manager/blob/main/LICENSE
 [34]: https://github.com/embeddedkafka/embedded-kafka-schema-registry
-[35]: https://jetty.org/jetty-core/jetty-http
+[35]: https://jetty.org/jetty-http
 [36]: https://www.eclipse.org/legal/epl-2.0/
-[37]: https://jetty.org/jetty-core/jetty-server
+[37]: https://jetty.org/jetty-server
 [38]: http://confluent.io/kafka-streams-avro-serde
 [39]: https://github.com/sksamuel/avro4s
 [40]: https://java.testcontainers.org

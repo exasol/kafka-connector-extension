@@ -228,13 +228,13 @@
             <!-- Upgrade while we're waiting for the fix of CVE-2024-6763 (but it is not here yet) -->
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
-            <version>12.0.14</version>
+            <version>11.0.24</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>12.0.14</version>
+            <version>11.0.24</version>
             <scope>test</scope>
         </dependency>
         <!--        <dependency>-->
