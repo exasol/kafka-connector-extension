@@ -189,55 +189,61 @@
                 </exclusion>
             </exclusions>
         </dependency>
-<!--        <dependency>-->
-<!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-27309 &ndash;&gt;-->
-<!--            <groupId>org.apache.kafka</groupId>-->
-<!--            <artifactId>kafka-metadata</artifactId>-->
-<!--            <version>3.6.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-5072 &ndash;&gt;-->
-<!--            <groupId>org.json</groupId>-->
-<!--            <artifactId>json</artifactId>-->
-<!--            <version>20240303</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-44981 &ndash;&gt;-->
-<!--            <groupId>org.apache.zookeeper</groupId>-->
-<!--            <artifactId>zookeeper</artifactId>-->
-<!--            <version>3.9.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-51775 &ndash;&gt;-->
-<!--            <groupId>org.bitbucket.b_c</groupId>-->
-<!--            <artifactId>jose4j</artifactId>-->
-<!--            <version>0.9.6</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            &lt;!&ndash; Upgrade transitive dependency org.eclipse.jetty.http2:http2-common of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-22201, CVE-2023-36479, CVE-2024-9823, CVE-2024-6762 and CVE-2024-8184  &ndash;&gt;-->
-<!--            <groupId>org.eclipse.jetty.http2</groupId>-->
-<!--            <artifactId>http2-server</artifactId>-->
-<!--            <version>11.0.24</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-27309 &ndash;&gt;-->
+        <!--            <groupId>org.apache.kafka</groupId>-->
+        <!--            <artifactId>kafka-metadata</artifactId>-->
+        <!--            <version>3.6.2</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-5072 &ndash;&gt;-->
+        <!--            <groupId>org.json</groupId>-->
+        <!--            <artifactId>json</artifactId>-->
+        <!--            <version>20240303</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-44981 &ndash;&gt;-->
+        <!--            <groupId>org.apache.zookeeper</groupId>-->
+        <!--            <artifactId>zookeeper</artifactId>-->
+        <!--            <version>3.9.2</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-51775 &ndash;&gt;-->
+        <!--            <groupId>org.bitbucket.b_c</groupId>-->
+        <!--            <artifactId>jose4j</artifactId>-->
+        <!--            <version>0.9.6</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            &lt;!&ndash; Upgrade transitive dependency org.eclipse.jetty.http2:http2-common of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-22201, CVE-2023-36479, CVE-2024-9823, CVE-2024-6762 and CVE-2024-8184  &ndash;&gt;-->
+        <!--            <groupId>org.eclipse.jetty.http2</groupId>-->
+        <!--            <artifactId>http2-server</artifactId>-->
+        <!--            <version>11.0.24</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <dependency>
-            <!-- Upgrade waiting for the fix of CVE-2024-6763 (but it is not here yet) -->
+            <!-- Upgrade while we're waiting for the fix of CVE-2024-6763 (but it is not here yet) -->
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
-            <version>11.0.24</version>
+            <version>12.0.14</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            &lt;!&ndash; Upgrade to fix CVE-2024-6762 and CVE-2024-9823 &ndash;&gt;-->
-<!--            <groupId>org.eclipse.jetty</groupId>-->
-<!--            <artifactId>jetty-servlets</artifactId>-->
-<!--            <version>11.0.24</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>12.0.14</version>
+            <scope>test</scope>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            &lt;!&ndash; Upgrade to fix CVE-2024-6762 and CVE-2024-9823 &ndash;&gt;-->
+        <!--            <groupId>org.eclipse.jetty</groupId>-->
+        <!--            <artifactId>jetty-servlets</artifactId>-->
+        <!--            <version>11.0.24</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
@@ -267,19 +273,19 @@
             <artifactId>kafka-clients</artifactId>
             <version>3.7.1</version>
         </dependency>
-<!--        <dependency>-->
-<!--            &lt;!&ndash; Upgrade transitive dependency of org.apache.kafka:kafka-clients to fix CVE-2023-43642 &ndash;&gt;-->
-<!--            <groupId>org.xerial.snappy</groupId>-->
-<!--            <artifactId>snappy-java</artifactId>-->
-<!--            <version>1.1.10.5</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-23080 &ndash;&gt;-->
-<!--            <groupId>joda-time</groupId>-->
-<!--            <artifactId>joda-time</artifactId>-->
-<!--            <version>2.12.7</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            &lt;!&ndash; Upgrade transitive dependency of org.apache.kafka:kafka-clients to fix CVE-2023-43642 &ndash;&gt;-->
+        <!--            <groupId>org.xerial.snappy</groupId>-->
+        <!--            <artifactId>snappy-java</artifactId>-->
+        <!--            <version>1.1.10.5</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            &lt;!&ndash; Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-23080 &ndash;&gt;-->
+        <!--            <groupId>joda-time</groupId>-->
+        <!--            <artifactId>joda-time</artifactId>-->
+        <!--            <version>2.12.7</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2021-47621 -->
             <groupId>io.github.classgraph</groupId>
@@ -486,7 +492,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.3.3</version>
+                <version>4.4.0</version>
                 <executions>
                     <execution>
                         <goals>
