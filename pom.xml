@@ -228,22 +228,22 @@
             <!-- Upgrade while we're waiting for the fix of CVE-2024-6763 (but it is not here yet) -->
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
-            <version>11.0.24</version>
+            <version>9.4.56.v20240826</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>11.0.24</version>
+            <version>9.4.56.v20240826</version>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            &lt;!&ndash; Upgrade to fix CVE-2024-6762 and CVE-2024-9823 &ndash;&gt;-->
-        <!--            <groupId>org.eclipse.jetty</groupId>-->
-        <!--            <artifactId>jetty-servlets</artifactId>-->
-        <!--            <version>11.0.24</version>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
+        <dependency>
+            <!-- Upgrade to fix CVE-2024-6762 and CVE-2024-9823 -->
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>9.4.56.v20240826</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>

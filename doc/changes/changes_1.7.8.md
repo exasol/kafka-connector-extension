@@ -28,8 +28,9 @@ Code name:
 * Removed `org.apache.zookeeper:zookeeper:3.9.2`
 * Removed `org.bitbucket.b_c:jose4j:0.9.6`
 * Removed `org.eclipse.jetty.http2:http2-server:9.4.54.v20240208`
-* Added `org.eclipse.jetty:jetty-http:11.0.24`
-* Added `org.eclipse.jetty:jetty-server:11.0.24`
+* Added `org.eclipse.jetty:jetty-http:9.4.56.v20240826`
+* Added `org.eclipse.jetty:jetty-server:9.4.56.v20240826`
+* Added `org.eclipse.jetty:jetty-servlets:9.4.56.v20240826`
 * Removed `org.json:json:20240303`
 
 #### Plugin Dependency Updates
