@@ -16,8 +16,14 @@ Code name:
 
 * Updated `org.apache.avro:avro:1.11.3` to `1.11.4`
 * Updated `org.apache.kafka:kafka-clients:3.6.0` to `3.7.1`
+* Removed `org.xerial.snappy:snappy-java:1.1.10.5`
 
 #### Test Dependency Updates
 
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.6.0` to `7.7.1`
+* Removed `joda-time:joda-time:2.12.7`
+* Removed `org.apache.kafka:kafka-metadata:3.6.2`
+* Removed `org.apache.zookeeper:zookeeper:3.9.2`
+* Removed `org.bitbucket.b_c:jose4j:0.9.6`
 * Removed `org.eclipse.jetty.http2:http2-server:9.4.54.v20240208`
+* Removed `org.json:json:20240303`
