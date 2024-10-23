@@ -15,6 +15,7 @@ Code name:
 #### Compile Dependency Updates
 
 * Updated `org.apache.avro:avro:1.11.3` to `1.11.4`
+* Updated `org.apache.kafka:kafka-clients:3.6.0` to `3.7.1`
 
 #### Test Dependency Updates
 
