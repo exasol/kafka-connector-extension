@@ -1,12 +1,21 @@
-# Kafka Connector Extension 1.7.8, released 2024-??-??
+# Kafka Connector Extension 1.7.8, released 2024-10-24
 
-Code name:
+Code name: Fix several CVEs in transitive dependencies, upgrade version of Kafka libs
 
 ## Summary
+
+This release upgrades kafka client dependency (to 7.7.1) and fixes several CVEs in transitive dependencies:
+
+* CVE-2024-47561 in org.apache.avro:avro:jar:1.11.3:compile
+* CVE-2024-9823 and CVE-2024-6762 in org.eclipse.jetty:jetty-servlets:jar:9.4.53.v20231009:test
+* CVE-2024-8184 in org.eclipse.jetty:jetty-server:jar:9.4.54.v20240208:test
 
 ## Security
 
 * #106: CVE-2024-47561: org.apache.avro:avro:jar:1.11.3:compile
+* #109: CVE-2024-9823: org.eclipse.jetty:jetty-servlets:jar:9.4.53.v20231009:test
+* #112: CVE-2024-6762: org.eclipse.jetty:jetty-servlets:jar:9.4.53.v20231009:test
+* #113: CVE-2024-8184: org.eclipse.jetty:jetty-server:jar:9.4.54.v20240208:test
 
 ## Dependency Updates
 
