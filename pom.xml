@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>kafka-connector-extension</artifactId>
-    <version>1.7.7</version>
+    <version>1.7.8</version>
     <name>Exasol Kafka Connector Extension</name>
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
@@ -48,9 +48,10 @@
             </exclusions>
         </dependency>
         <dependency>
+            <!-- Upgrade transitive dependency to fix CVE-2024-47561 -->
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>1.11.3</version>
+            <version>1.11.4</version>
         </dependency>
         <dependency>
             <!-- Fix java.lang.ClassNotFoundException: com.fasterxml.jackson.core.exc.StreamConstraintsException
@@ -73,7 +74,7 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>7.6.0</version>
+            <version>7.7.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -175,7 +176,7 @@
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
             <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
-            <version>7.6.0</version>
+            <version>7.7.1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -189,44 +190,30 @@
             </exclusions>
         </dependency>
         <dependency>
-            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-27309 -->
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-metadata</artifactId>
-            <version>3.6.2</version>
+            <!-- Upgrade while we're waiting for the fix of CVE-2024-6763 (but it is not here yet) -->
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-http</artifactId>
+            <version>9.4.56.v20240826</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-5072 -->
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20240303</version>
+            <!-- Upgrade to fix CVE-2024-8184 in dependency io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.4.56.v20240826</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-44981 -->
-            <groupId>org.apache.zookeeper</groupId>
-            <artifactId>zookeeper</artifactId>
-            <version>3.9.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2023-51775 -->
-            <groupId>org.bitbucket.b_c</groupId>
-            <artifactId>jose4j</artifactId>
-            <version>0.9.6</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- Upgrade transitive dependency org.eclipse.jetty.http2:http2-common of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-22201 -->
-            <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>http2-server</artifactId>
-            <version>9.4.54.v20240208</version>
+            <!-- Upgrade while we're waiting for the fix of CVE-2023-36479 (but it is not there yet) -->
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>9.4.56.v20240826</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
-            <version>7.6.0</version>
+            <version>7.7.1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -250,20 +237,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>3.6.0</version>
-        </dependency>
-        <dependency>
-            <!-- Upgrade transitive dependency of org.apache.kafka:kafka-clients to fix CVE-2023-43642 -->
-            <groupId>org.xerial.snappy</groupId>
-            <artifactId>snappy-java</artifactId>
-            <version>1.1.10.5</version>
-        </dependency>
-        <dependency>
-            <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2024-23080 -->
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.12.7</version>
-            <scope>test</scope>
+            <version>3.7.1</version>
         </dependency>
         <dependency>
             <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2021-47621 -->
@@ -462,7 +436,7 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-                        <!-- org.eclipse.jetty:jetty-servlets:jar:9.4.51.v20230217:test -->
+                        <exclude>CVE-2024-6763</exclude>
                         <exclude>CVE-2023-36479</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
@@ -470,7 +444,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.3.3</version>
+                <version>4.4.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -628,7 +602,7 @@
     <parent>
         <artifactId>kafka-connector-extension-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.7.7</version>
+        <version>1.7.8</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
