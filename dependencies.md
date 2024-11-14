@@ -22,24 +22,24 @@
 
 ### Test Dependencies
 
-| Dependency                                  | License                                                                                 |
-| ------------------------------------------- | --------------------------------------------------------------------------------------- |
-| [scalatest][21]                             | [the Apache License, ASL Version 2.0][22]                                               |
-| [scalatestplus-mockito][23]                 | [Apache-2.0][22]                                                                        |
-| [mockito-core][24]                          | [MIT][25]                                                                               |
-| [Test containers for Exasol on Docker][26]  | [MIT License][27]                                                                       |
-| [Test Database Builder for Java][28]        | [MIT License][29]                                                                       |
-| [Matcher for SQL Result Sets][30]           | [MIT License][31]                                                                       |
-| [Extension integration tests library][32]   | [MIT License][33]                                                                       |
-| [embedded-kafka-schema-registry][34]        | [MIT][25]                                                                               |
-| [Jetty :: Http Utility][35]                 | [Apache Software License - Version 2.0][22]; [Eclipse Public License - Version 1.0][36] |
-| [Jetty :: Server Core][37]                  | [Apache Software License - Version 2.0][22]; [Eclipse Public License - Version 1.0][36] |
-| [Jetty :: Utility Servlets and Filters][38] | [Apache Software License - Version 2.0][22]; [Eclipse Public License - Version 1.0][36] |
-| [kafka-streams-avro-serde][39]              | [Apache License 2.0][11]                                                                |
-| [avro4s-core][40]                           | [MIT][25]                                                                               |
-| [Testcontainers :: Kafka][41]               | [MIT][42]                                                                               |
-| [ClassGraph][43]                            | [The MIT License (MIT)][42]                                                             |
-| [Protocol Buffers [Core]][44]               | [BSD-3-Clause][45]                                                                      |
+| Dependency                                  | License                                                                                |
+| ------------------------------------------- | -------------------------------------------------------------------------------------- |
+| [scalatest][21]                             | [the Apache License, ASL Version 2.0][22]                                              |
+| [scalatestplus-mockito][23]                 | [Apache-2.0][22]                                                                       |
+| [mockito-core][24]                          | [MIT][25]                                                                              |
+| [Test containers for Exasol on Docker][26]  | [MIT License][27]                                                                      |
+| [Test Database Builder for Java][28]        | [MIT License][29]                                                                      |
+| [Matcher for SQL Result Sets][30]           | [MIT License][31]                                                                      |
+| [Extension integration tests library][32]   | [MIT License][33]                                                                      |
+| [embedded-kafka-schema-registry][34]        | [MIT][25]                                                                              |
+| [Core :: HTTP][35]                          | [Eclipse Public License - Version 2.0][36]; [Apache Software License - Version 2.0][1] |
+| [Core :: Server][37]                        | [Eclipse Public License - Version 2.0][36]; [Apache Software License - Version 2.0][1] |
+| [Jetty :: Utility Servlets and Filters][38] | [Eclipse Public License - Version 2.0][36]; [Apache Software License - Version 2.0][1] |
+| [kafka-streams-avro-serde][39]              | [Apache License 2.0][11]                                                               |
+| [avro4s-core][40]                           | [MIT][25]                                                                              |
+| [Testcontainers :: Kafka][41]               | [MIT][42]                                                                              |
+| [ClassGraph][43]                            | [The MIT License (MIT)][42]                                                            |
+| [Protocol Buffers [Core]][44]               | [BSD-3-Clause][45]                                                                     |
 
 ### Plugin Dependencies
 
@@ -65,16 +65,16 @@
 | [Apache Maven JAR Plugin][65]                           | [Apache-2.0][5]                               |
 | [Artifact reference checker and unifier][66]            | [MIT License][67]                             |
 | [Maven Failsafe Plugin][68]                             | [Apache-2.0][5]                               |
-| [JaCoCo :: Maven Plugin][69]                            | [EPL-2.0][70]                                 |
-| [Quality Summarizer Maven Plugin][71]                   | [MIT License][72]                             |
-| [error-code-crawler-maven-plugin][73]                   | [MIT License][74]                             |
-| [Reproducible Build Maven Plugin][75]                   | [Apache 2.0][14]                              |
-| [Project Keeper Maven plugin][76]                       | [The MIT License][77]                         |
-| [OpenFastTrace Maven Plugin][78]                        | [GNU General Public License v3.0][79]         |
-| [Scalastyle Maven Plugin][80]                           | [Apache 2.0][11]                              |
-| [spotless-maven-plugin][81]                             | [The Apache Software License, Version 2.0][5] |
-| [scalafix-maven-plugin][82]                             | [BSD-3-Clause][45]                            |
-| [Exec Maven Plugin][83]                                 | [Apache License 2][5]                         |
+| [JaCoCo :: Maven Plugin][69]                            | [EPL-2.0][36]                                 |
+| [Quality Summarizer Maven Plugin][70]                   | [MIT License][71]                             |
+| [error-code-crawler-maven-plugin][72]                   | [MIT License][73]                             |
+| [Reproducible Build Maven Plugin][74]                   | [Apache 2.0][14]                              |
+| [Project Keeper Maven plugin][75]                       | [The MIT License][76]                         |
+| [OpenFastTrace Maven Plugin][77]                        | [GNU General Public License v3.0][78]         |
+| [Scalastyle Maven Plugin][79]                           | [Apache 2.0][11]                              |
+| [spotless-maven-plugin][80]                             | [The Apache Software License, Version 2.0][5] |
+| [scalafix-maven-plugin][81]                             | [BSD-3-Clause][45]                            |
+| [Exec Maven Plugin][82]                                 | [Apache License 2][5]                         |
 
 ## Extension
 
@@ -82,7 +82,7 @@
 
 | Dependency                                | License |
 | ----------------------------------------- | ------- |
-| [@exasol/extension-manager-interface][84] | MIT     |
+| [@exasol/extension-manager-interface][83] | MIT     |
 
 [0]: https://www.scala-lang.org/
 [1]: https://www.apache.org/licenses/LICENSE-2.0
@@ -119,10 +119,10 @@
 [32]: https://github.com/exasol/extension-manager/
 [33]: https://github.com/exasol/extension-manager/blob/main/LICENSE
 [34]: https://github.com/embeddedkafka/embedded-kafka-schema-registry
-[35]: https://jetty.org/jetty-http/
-[36]: https://www.eclipse.org/org/documents/epl-v10.php
-[37]: https://jetty.org/jetty-server/
-[38]: https://jetty.org/jetty-servlets/
+[35]: https://jetty.org/jetty-core/jetty-http
+[36]: https://www.eclipse.org/legal/epl-2.0/
+[37]: https://jetty.org/jetty-core/jetty-server
+[38]: https://jetty.org/jetty-servlets
 [39]: http://confluent.io/kafka-streams-avro-serde
 [40]: https://github.com/sksamuel/avro4s
 [41]: https://java.testcontainers.org
@@ -154,18 +154,17 @@
 [67]: https://github.com/exasol/artifact-reference-checker-maven-plugin/blob/main/LICENSE
 [68]: https://maven.apache.org/surefire/maven-failsafe-plugin/
 [69]: https://www.jacoco.org/jacoco/trunk/doc/maven.html
-[70]: https://www.eclipse.org/legal/epl-2.0/
-[71]: https://github.com/exasol/quality-summarizer-maven-plugin/
-[72]: https://github.com/exasol/quality-summarizer-maven-plugin/blob/main/LICENSE
-[73]: https://github.com/exasol/error-code-crawler-maven-plugin/
-[74]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
-[75]: http://zlika.github.io/reproducible-build-maven-plugin
-[76]: https://github.com/exasol/project-keeper/
-[77]: https://github.com/exasol/project-keeper/blob/main/LICENSE
-[78]: https://github.com/itsallcode/openfasttrace-maven-plugin
-[79]: https://www.gnu.org/licenses/gpl-3.0.html
-[80]: http://www.scalastyle.org
-[81]: https://github.com/diffplug/spotless
-[82]: https://github.com/evis/scalafix-maven-plugin
-[83]: https://www.mojohaus.org/exec-maven-plugin
-[84]: https://registry.npmjs.org/@exasol/extension-manager-interface/-/extension-manager-interface-0.4.1.tgz
+[70]: https://github.com/exasol/quality-summarizer-maven-plugin/
+[71]: https://github.com/exasol/quality-summarizer-maven-plugin/blob/main/LICENSE
+[72]: https://github.com/exasol/error-code-crawler-maven-plugin/
+[73]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
+[74]: http://zlika.github.io/reproducible-build-maven-plugin
+[75]: https://github.com/exasol/project-keeper/
+[76]: https://github.com/exasol/project-keeper/blob/main/LICENSE
+[77]: https://github.com/itsallcode/openfasttrace-maven-plugin
+[78]: https://www.gnu.org/licenses/gpl-3.0.html
+[79]: http://www.scalastyle.org
+[80]: https://github.com/diffplug/spotless
+[81]: https://github.com/evis/scalafix-maven-plugin
+[82]: https://www.mojohaus.org/exec-maven-plugin
+[83]: https://registry.npmjs.org/@exasol/extension-manager-interface/-/extension-manager-interface-0.4.1.tgz
