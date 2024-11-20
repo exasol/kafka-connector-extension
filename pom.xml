@@ -194,10 +194,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Upgrade to fix CVE-2023-1932 in transitive dependency org.hibernate.validator:hibernate-validator of embedded-kafka-schema-registry_2.13 -->
+            <!-- Upgrade to fix CVE-2023-1932 in transitive dependency org.hibernate.validator:hibernate-validator of embedded-kafka-schema-registry_2.13
+                 Version > 6.2.5 cause error javax.validation.NoProviderFoundException: Unable to create a Configuration, because no Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath. -->
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>8.0.1.Final</version>
+            <version>6.2.5.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>

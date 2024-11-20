@@ -53,7 +53,7 @@ A flaw was found in hibernate-validator's 'isValid' method in the org.hibernate.
 * Removed `org.eclipse.jetty:jetty-http:9.4.56.v20240826`
 * Removed `org.eclipse.jetty:jetty-server:9.4.56.v20240826`
 * Removed `org.eclipse.jetty:jetty-servlets:9.4.56.v20240826`
-* Added `org.hibernate.validator:hibernate-validator:8.0.1.Final`
+* Added `org.hibernate.validator:hibernate-validator:6.2.5.Final`
 * Updated `org.mockito:mockito-core:5.11.0` to `5.14.2`
 * Updated `org.testcontainers:kafka:1.19.7` to `1.20.3`
 
