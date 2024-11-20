@@ -101,10 +101,14 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest with BeforeAndAfterEa
     val brokerIpAddress = getContainerNetworkAddress(kafkaBrokerContainer)
     val schemaRegistryIpAddress = getContainerNetworkAddress(schemaRegistryContainer)
     val commands = Seq(
-      s"sed -i '/kafka01/d' /etc/hosts",
-      s"sed -i '/schema-registry/d' /etc/hosts",
-      s"echo '$brokerIpAddress kafka01' >> /etc/hosts",
-      s"echo '$schemaRegistryIpAddress schema-registry' >> /etc/hosts"
+      // Workaround for sed failing on 8.32.0 with
+      // sed: cannot rename /etc/sedipVlut: Device or resource busy
+      s"cp /etc/hosts /tmp/hosts",
+      s"sed --in-place '/kafka01/d' /tmp/hosts",
+      s"sed --in-place '/schema-registry/d' /tmp/hosts",
+      s"echo '$brokerIpAddress kafka01' >> /tmp/hosts",
+      s"echo '$schemaRegistryIpAddress schema-registry' >> /tmp/hosts",
+      s"cp /tmp/hosts /etc/hosts"
     )
     commands.foreach { case cmd =>
       val exitCode = exasolContainer.execInContainer("/bin/sh", "-c", cmd)

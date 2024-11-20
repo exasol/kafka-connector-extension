@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>kafka-connector-extension</artifactId>
-    <version>1.7.8</version>
+    <version>1.7.9</version>
     <name>Exasol Kafka Connector Extension</name>
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
@@ -11,7 +11,7 @@
         <!-- Update this once the Avro4s version is updated -->
         <!-- com.sksamuel.avro4s:avro4s-core_2.13:4.1.1 requires scala version: 2.13.3 -->
         <java.version>11</java.version>
-        <scala.version>2.13.12</scala.version>
+        <scala.version>2.13.15</scala.version>
         <scala.compat.version>2.13</scala.compat.version>
         <sonar.sources>.</sonar.sources>
         <sonar.inclusions>src/main/**</sonar.inclusions>
@@ -34,24 +34,14 @@
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
-            <artifactId>import-export-udf-common-scala_${scala.compat.version}</artifactId>
-            <version>2.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-compress</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>import-export-udf-common-scala</artifactId>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <!-- Upgrade transitive dependency to fix CVE-2024-47561 -->
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>1.11.4</version>
+            <version>1.12.0</version>
         </dependency>
         <dependency>
             <!-- Fix java.lang.ClassNotFoundException: com.fasterxml.jackson.core.exc.StreamConstraintsException
@@ -59,7 +49,7 @@
                      at org.apache.avro.SchemaBuilder$FieldBuilder.completeField(SchemaBuilder.java:2249) -->
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.17.0</version>
+            <version>2.18.1</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
@@ -69,7 +59,14 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.26.1</version>
+            <version>1.27.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <!-- embedded-kafka-schema-registry_2.13 fails with NoSuchMethodError: 'java.lang.String org.apache.kafka.common.utils.Utils.join(java.util.Collection, java.lang.String)
+             when using a version > 3.7.1 -->
+            <version>3.7.1</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
@@ -105,12 +102,12 @@
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
             <artifactId>scala-collection-compat_${scala.compat.version}</artifactId>
-            <version>2.11.0</version>
+            <version>2.12.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.1.0-jre</version>
+            <version>33.3.1-jre</version>
         </dependency>
         <!-- Upgrade slf4j-api to allow using the latest logback version -->
         <dependency>
@@ -121,7 +118,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.6</version>
+            <version>1.5.12</version>
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
@@ -139,7 +136,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.11.0</version>
+            <version>5.14.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -151,19 +148,19 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>3.5.4</version>
+            <version>3.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.6.5</version>
+            <version>1.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.10</version>
+            <version>0.5.13</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -190,24 +187,18 @@
             </exclusions>
         </dependency>
         <dependency>
-            <!-- Upgrade while we're waiting for the fix of CVE-2024-6763 (but it is not here yet) -->
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-http</artifactId>
-            <version>9.4.56.v20240826</version>
+            <!-- Upgrade to fix CVE-2024-47535 in transitive dependency io.netty:netty-common of embedded-kafka-schema-registry_2.13 -->
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.1.115.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Upgrade to fix CVE-2024-8184 in dependency io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>9.4.56.v20240826</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- Upgrade while we're waiting for the fix of CVE-2023-36479 (but it is not there yet) -->
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <version>9.4.56.v20240826</version>
+            <!-- Upgrade to fix CVE-2023-1932 in transitive dependency org.hibernate.validator:hibernate-validator of embedded-kafka-schema-registry_2.13
+                 Version > 6.2.5 cause error javax.validation.NoProviderFoundException: Unable to create a Configuration, because no Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath. -->
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.2.5.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -231,26 +222,27 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
-            <version>1.19.7</version>
+            <version>1.20.3</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>3.7.1</version>
         </dependency>
         <dependency>
             <!-- Upgrade transitive dependency of io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 to fix CVE-2021-47621 -->
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.174</version>
+            <version>4.8.179</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <!-- Upgrade transitive dependency of io.confluent:kafka-protobuf-provider:jar:7.7.1 to fix CVE-2024-7254 -->
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.25.5</version>
+            <version>4.28.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.exasol</groupId>
+            <artifactId>maven-project-version-getter</artifactId>
+            <version>1.2.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -269,7 +261,7 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>4.8.1</version>
+                <version>4.9.2</version>
                 <executions>
                     <execution>
                         <id>scala-compile-first</id>
@@ -322,7 +314,7 @@
                         <javacArg>${java.version}</javacArg>
                         <javacArg>-deprecation</javacArg>
                         <javacArg>-parameters</javacArg>
-                        <javacArg>-Xlint:all</javacArg>
+                        <javacArg>-Xlint:all,-path</javacArg>
                     </javacArgs>
                     <jvmArgs>
                         <jvmArg>-Xmx2048m</jvmArg>
@@ -332,7 +324,7 @@
                         <compilerPlugin>
                             <groupId>org.scalameta</groupId>
                             <artifactId>semanticdb-scalac_${scala.version}</artifactId>
-                            <version>4.9.2</version>
+                            <version>4.11.2</version>
                         </compilerPlugin>
                     </compilerPlugins>
                 </configuration>
@@ -375,7 +367,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.11.1</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -436,8 +428,11 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-                        <exclude>CVE-2024-6763</exclude>
                         <exclude>CVE-2023-36479</exclude>
+                        <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.54.v20240208 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+                        <exclude>CVE-2024-6763</exclude>
+                        <!-- Test dependency org.eclipse.jetty:jetty-server:jar:9.4.54.v20240208 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+                        <exclude>CVE-2024-8184</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
@@ -456,7 +451,7 @@
             <plugin>
                 <groupId>org.itsallcode</groupId>
                 <artifactId>openfasttrace-maven-plugin</artifactId>
-                <version>2.0.0</version>
+                <version>2.3.0</version>
                 <executions>
                     <execution>
                         <id>trace-requirements</id>
@@ -516,12 +511,12 @@
             <plugin>
                 <groupId>io.github.evis</groupId>
                 <artifactId>scalafix-maven-plugin_${scala.compat.version}</artifactId>
-                <version>0.1.8_0.11.0</version>
+                <version>0.1.10_0.11.0</version>
                 <dependencies>
                     <dependency>
-                        <groupId>com.geirsson</groupId>
+                        <groupId>org.scalameta</groupId>
                         <artifactId>metaconfig-pprint_${scala.compat.version}</artifactId>
-                        <version>0.12.0</version>
+                        <version>0.13.0</version>
                     </dependency>
                     <dependency>
                         <groupId>com.github.vovapolu</groupId>
@@ -541,7 +536,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <id>npm-ci</id>
@@ -597,12 +592,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.exasol</groupId>
+                <artifactId>artifact-reference-checker-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>/.metals/**/*</exclude>
+                     </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <parent>
         <artifactId>kafka-connector-extension-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.7.8</version>
+        <version>1.7.9</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>

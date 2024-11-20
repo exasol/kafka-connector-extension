@@ -20,6 +20,7 @@ import org.mockito.stubbing.Answer
 /**
  * A test class that tests the {@code RECORD_FIELDS} integration and not the offset and partition handling.
  */
+@annotation.nowarn("msg=a type was inferred to be `Any`; this may indicate a programming error.")
 class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
 
   private[this] val customRecord = AvroRecord("abc", 3, 13)

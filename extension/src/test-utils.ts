@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint @typescript-eslint/no-explicit-any: "off" */
 import { Context, QueryResult, SqlClient } from '@exasol/extension-manager-interface';
 import { ExaScriptsRow } from '@exasol/extension-manager-interface/dist/exasolSchema';
 import * as jestMock from "jest-mock";
@@ -6,7 +6,6 @@ import * as jestMock from "jest-mock";
 const EXTENSION_SCHEMA_NAME = "ext-schema"
 
 export function getInstalledExtension(): any {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return (global as any).installedExtension
 }
 
@@ -58,4 +57,3 @@ export function script({ schema = "schema", name = "name", inputType, resultType
 export function scriptWithVersion(name: string, version: string): ExaScriptsRow {
     return script({ name, text: `CREATE ... %jar /path/to/exasol-kafka-connector-extension-${version}.jar; more text` })
 }
-
