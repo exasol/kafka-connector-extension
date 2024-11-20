@@ -47,7 +47,7 @@ class ExtensionIT extends AbstractScriptExtensionIT {
     static void setup() throws FileNotFoundException, BucketAccessException, TimeoutException, SQLException,
             ExecutionException, InterruptedException {
         if (System.getProperty("com.exasol.dockerdb.image") == null) {
-            System.setProperty("com.exasol.dockerdb.image", "8.29.1");
+            System.setProperty("com.exasol.dockerdb.image", "8.32.0");
         }
         exasolTestSetup = new ExasolTestSetupFactory(Paths.get("no-cloud-setup")).getTestSetup();
         ExasolVersionCheck.assumeExasolVersion8(exasolTestSetup);
