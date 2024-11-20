@@ -14,7 +14,7 @@ import org.testcontainers.utility.DockerImageName;
 @SuppressWarnings("deprecation") // org.testcontainers.containers.KafkaContainer is deprecated
 public class KafkaTestSetup implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(KafkaTestSetup.class.getName());
-    public static final String DEFAULT_CONFLUENT_PLATFORM_VERSION = "7.6.0";
+    public static final String DEFAULT_CONFLUENT_PLATFORM_VERSION = "7.7.1";
     private final KafkaContainer container;
 
     private KafkaTestSetup(final KafkaContainer container) {
