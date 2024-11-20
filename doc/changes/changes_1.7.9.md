@@ -45,6 +45,7 @@ A flaw was found in hibernate-validator's 'isValid' method in the org.hibernate.
 
 * Updated `com.exasol:extension-manager-integration-test-java:0.5.10` to `0.5.13`
 * Updated `com.exasol:hamcrest-resultset-matcher:1.6.5` to `1.7.0`
+* Added `com.exasol:maven-project-version-getter:1.2.0`
 * Updated `com.exasol:test-db-builder-java:3.5.4` to `3.6.0`
 * Updated `com.google.protobuf:protobuf-java:3.25.5` to `4.28.3`
 * Updated `io.github.classgraph:classgraph:4.8.174` to `4.8.179`
@@ -61,3 +62,20 @@ A flaw was found in hibernate-validator's 'isValid' method in the org.hibernate.
 * Updated `org.apache.maven.plugins:maven-javadoc-plugin:3.6.3` to `3.11.1`
 * Updated `org.codehaus.mojo:exec-maven-plugin:3.2.0` to `3.5.0`
 * Updated `org.itsallcode:openfasttrace-maven-plugin:2.0.0` to `2.3.0`
+
+### Extension
+
+#### Compile Dependency Updates
+
+* Updated `@exasol/extension-manager-interface:0.4.1` to `0.4.3`
+
+#### Development Dependency Updates
+
+* Updated `eslint:^8.57.0` to `9.14.0`
+* Updated `@types/node:^20.11.28` to `^22.9.1`
+* Updated `ts-jest:^29.1.2` to `^29.2.5`
+* Added `typescript-eslint:^8.14.0`
+* Updated `typescript:^5.4.2` to `^5.6.3`
+* Updated `esbuild:^0.20.2` to `^0.24.0`
+* Removed `@typescript-eslint/parser:^7.2.0`
+* Removed `@typescript-eslint/eslint-plugin:^7.2.0`

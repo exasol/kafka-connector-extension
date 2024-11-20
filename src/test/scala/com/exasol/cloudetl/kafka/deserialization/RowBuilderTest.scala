@@ -9,6 +9,7 @@ import org.mockito.Mockito.when
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.mockito.MockitoSugar
 
+@annotation.nowarn("msg=a type was inferred to be `Any`; this may indicate a programming error.")
 class RowBuilderTest extends AnyFunSuite with MockitoSugar {
 
   private[this] val TIMESTAMP = Instant.now().toEpochMilli()
