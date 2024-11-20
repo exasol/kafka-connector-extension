@@ -49,9 +49,11 @@ A flaw was found in hibernate-validator's 'isValid' method in the org.hibernate.
 * Updated `com.exasol:test-db-builder-java:3.5.4` to `3.6.0`
 * Updated `com.google.protobuf:protobuf-java:3.25.5` to `4.28.3`
 * Updated `io.github.classgraph:classgraph:4.8.174` to `4.8.179`
+* Added `io.netty:netty-codec:4.1.115.Final`
 * Updated `org.eclipse.jetty:jetty-http:9.4.56.v20240826` to `12.0.15`
 * Updated `org.eclipse.jetty:jetty-server:9.4.56.v20240826` to `12.0.15`
 * Updated `org.eclipse.jetty:jetty-servlets:9.4.56.v20240826` to `11.0.24`
+* Added `org.hibernate.validator:hibernate-validator:8.0.0.Final`
 * Updated `org.mockito:mockito-core:5.11.0` to `5.14.2`
 * Updated `org.testcontainers:kafka:1.19.7` to `1.20.3`
 

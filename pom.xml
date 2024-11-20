@@ -194,6 +194,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- Upgrade to fix CVE-2024-47535 in transitive dependency io.netty:netty-common of embedded-kafka-schema-registry_2.13 -->
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.1.115.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Upgrade to fix CVE-2023-1932 in transitive dependency org.hibernate.validator:hibernate-validator of embedded-kafka-schema-registry_2.13 -->
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>8.0.0.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- Upgrade while we're waiting for the fix of CVE-2023-36479 (but it is not there yet) -->
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
