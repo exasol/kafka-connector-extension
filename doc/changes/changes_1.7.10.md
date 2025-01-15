@@ -1,4 +1,4 @@
-# Kafka Connector Extension 1.7.10, released 2025-??-??
+# Kafka Connector Extension 1.7.10, released 2025-01-15
 
 Code name: Security fixes in transitive dependencies
 
@@ -12,6 +12,7 @@ Project keeper was upgraded to the latest version.
 * #122: CVE-2024-12798: ch.qos.logback:logback-core:jar:1.5.12:compile
 * #123: CVE-2024-12801: ch.qos.logback:logback-core:jar:1.5.12:compile
 * #124: CVE-2024-52046: org.apache.mina:mina-core:jar:2.2.3:test
+* #126: Fix CVE-2024-4068 in braces
 
 ## Dependency Updates
 
