@@ -20,10 +20,15 @@ Project keeper was upgraded to the latest version.
 #### Compile Dependency Updates
 
 * Updated `ch.qos.logback:logback-classic:1.5.12` to `1.5.16`
+* Updated `com.fasterxml.jackson.core:jackson-core:2.18.1` to `2.18.2`
+* Updated `com.google.guava:guava:33.3.1-jre` to `33.4.0-jre`
 * Updated `org.apache.kafka:kafka-clients:3.7.1` to `3.7.2`
 
 #### Test Dependency Updates
 
+* Updated `com.exasol:exasol-testcontainers:7.1.1` to `7.1.2`
+* Updated `com.exasol:maven-project-version-getter:1.2.0` to `1.2.1`
+* Updated `com.google.protobuf:protobuf-java:4.28.3` to `4.29.3`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.7.1` to `7.7.2`
 * Added `org.apache.mina:mina-core:2.2.4`
 
