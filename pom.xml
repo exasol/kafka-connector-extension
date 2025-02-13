@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>kafka-connector-extension</artifactId>
-    <version>1.7.10</version>
+    <version>1.7.11</version>
     <name>Exasol Kafka Connector Extension</name>
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
@@ -26,6 +26,17 @@
             </snapshots>
         </repository>
     </repositories>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>4.1.118.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -185,13 +196,6 @@
                     <artifactId>kotlin-reflect</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <!-- Upgrade to fix CVE-2024-47535 in transitive dependency io.netty:netty-common of embedded-kafka-schema-registry_2.13 -->
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec</artifactId>
-            <version>4.1.115.Final</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <!-- Upgrade to fix CVE-2023-1932 in transitive dependency org.hibernate.validator:hibernate-validator of embedded-kafka-schema-registry_2.13
@@ -612,7 +616,7 @@
     <parent>
         <artifactId>kafka-connector-extension-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.7.10</version>
+        <version>1.7.11</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
