@@ -17,7 +17,7 @@
 | [kafka-avro-serializer][12]                 | [Apache License 2.0][13]                                                      |
 | [scala-collection-compat][14]               | [Apache-2.0][1]                                                               |
 | [Guava: Google Core Libraries for Java][15] | [Apache License, Version 2.0][11]                                             |
-| [SLF4J API Module][16]                      | [MIT License][17]                                                             |
+| [SLF4J API Module][16]                      | [MIT][17]                                                                     |
 | [Logback Classic Module][18]                | [Eclipse Public License - v 1.0][19]; [GNU Lesser General Public License][20] |
 
 ### Test Dependencies
@@ -101,7 +101,7 @@
 [14]: http://www.scala-lang.org/
 [15]: https://github.com/google/guava
 [16]: http://www.slf4j.org
-[17]: http://www.opensource.org/licenses/mit-license.php
+[17]: https://opensource.org/license/mit
 [18]: http://logback.qos.ch/logback-classic
 [19]: http://www.eclipse.org/legal/epl-v10.html
 [20]: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
@@ -168,4 +168,4 @@
 [81]: https://github.com/exasol/error-code-crawler-maven-plugin/
 [82]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
 [83]: http://zlika.github.io/reproducible-build-maven-plugin
-[84]: https://registry.npmjs.org/@exasol/extension-manager-interface/-/extension-manager-interface-0.4.3.tgz
+[84]: https://registry.npmjs.org/@exasol/extension-manager-interface/-/extension-manager-interface-0.5.0.tgz

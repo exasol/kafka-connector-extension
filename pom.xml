@@ -60,7 +60,7 @@
                      at org.apache.avro.SchemaBuilder$FieldBuilder.completeField(SchemaBuilder.java:2249) -->
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.18.2</version>
+            <version>2.18.3</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
@@ -118,18 +118,18 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.4.0-jre</version>
+            <version>33.4.6-jre</version>
         </dependency>
         <!-- Upgrade slf4j-api to allow using the latest logback version -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.16</version>
+            <version>2.0.17</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.16</version>
+            <version>1.5.18</version>
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
@@ -147,13 +147,13 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.14.2</version>
+            <version>5.17.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>7.1.2</version>
+            <version>7.1.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -171,7 +171,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.13</version>
+            <version>0.5.16</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -226,7 +226,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
-            <version>1.20.3</version>
+            <version>1.20.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -240,7 +240,7 @@
             <!-- Upgrade transitive dependency of io.confluent:kafka-protobuf-provider:jar:7.7.1 to fix CVE-2024-7254 -->
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>4.29.3</version>
+            <version>4.30.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -438,11 +438,12 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
+                        <!-- Test dependency org.eclipse.jetty:jetty-servlets:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
                         <exclude>CVE-2023-36479</exclude>
-                        <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.54.v20240208 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+                        <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
                         <exclude>CVE-2024-6763</exclude>
-                        <!-- Test dependency org.eclipse.jetty:jetty-server:jar:9.4.54.v20240208 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
-                        <exclude>CVE-2024-8184</exclude>
+                        <!-- Already fixed in JDBC driver >= 24.2.1 but not property updated in OSS Index. -->
+                        <exclude>CVE-2024-55551</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
