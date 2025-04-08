@@ -8,8 +8,6 @@
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
     <properties>
-        <!-- Update this once the Avro4s version is updated -->
-        <!-- com.sksamuel.avro4s:avro4s-core_2.13:4.1.1 requires scala version: 2.13.3 -->
         <java.version>11</java.version>
         <scala.version>2.13.16</scala.version>
         <scala.compat.version>2.13</scala.compat.version>
@@ -457,7 +455,7 @@
             <plugin>
                 <groupId>io.github.evis</groupId>
                 <artifactId>scalafix-maven-plugin_${scala.compat.version}</artifactId>
-                <version>0.1.10_0.14.2</version>
+                <version>0.1.10_0.11.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.scalameta</groupId>

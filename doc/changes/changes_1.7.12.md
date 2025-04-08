@@ -51,7 +51,6 @@ It also updates kafka client libraries to version 3.9
 * Updated `com.diffplug.spotless:spotless-maven-plugin:2.43.0` to `2.44.4`
 * Updated `com.exasol:artifact-reference-checker-maven-plugin:0.4.2` to `0.4.3`
 * Updated `com.exasol:project-keeper-maven-plugin:4.5.0` to `5.0.0`
-* Updated `io.github.evis:scalafix-maven-plugin_2.13:0.1.10_0.11.0` to `0.1.10_0.14.2`
 * Updated `net.alchim31.maven:scala-maven-plugin:4.9.2` to `4.9.5`
 * Updated `org.apache.maven.plugins:maven-clean-plugin:3.4.0` to `3.4.1`
 * Updated `org.apache.maven.plugins:maven-compiler-plugin:3.13.0` to `3.14.0`
