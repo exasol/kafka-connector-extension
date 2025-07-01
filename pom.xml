@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>kafka-connector-extension</artifactId>
-    <version>1.7.12</version>
+    <version>1.7.13</version>
     <name>Exasol Kafka Connector Extension</name>
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>3.9.0</version>
+            <version>3.9.1</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
@@ -151,6 +151,11 @@
             <version>7.9.0</version>
             <scope>test</scope>
             <exclusions>
+                <!-- [CVE-2025-48734] CWE-284: Improper Access Control (8.8); https://ossindex.sonatype.org/vulnerability/CVE-2025-48734?component-type=maven&component-name=commons-beanutils%2Fcommons-beanutils&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>ch.qos.reload4j</groupId>
                     <artifactId>reload4j</artifactId>
@@ -160,6 +165,13 @@
                     <artifactId>kotlin-reflect</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!-- [CVE-2025-1948] CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion') (8.7); https://ossindex.sonatype.org/vulnerability/CVE-2025-1948?component-type=maven&component-name=org.eclipse.jetty.http2%2Fhttp2-common&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
+        <!-- Lock down Jetty to the 9.x branch -->
+        <dependency>
+        <groupId>org.eclipse.jetty.http2</groupId>
+        <artifactId>http2-common</artifactId>
+        <version>9.4.57.v20241219</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
@@ -195,6 +207,31 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- [CVE-2025-1948] CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion') (8.7); https://ossindex.sonatype.org/vulnerability/CVE-2025-1948?component-type=maven&component-name=org.eclipse.jetty.http2%2Fhttp2-common&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
+            <plugin>
+            <groupId>org.basepom.maven</groupId>
+            <artifactId>duplicate-finder-maven-plugin</artifactId>
+            <version>2.0.1</version>
+            <configuration>
+                <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+                <failBuildInCaseOfDuplicateClasses>true</failBuildInCaseOfDuplicateClasses>
+                <ignoredResourcePatterns>
+                <ignoredResource>about\.html</ignoredResource>
+                <ignoredResource>META-INF/LICENSE</ignoredResource>
+                <ignoredResource>META-INF/NOTICE</ignoredResource>
+                <ignoredResource>META-INF/DEPENDENCIES</ignoredResource>
+                <ignoredResource>META-INF/maven/.*</ignoredResource>
+                </ignoredResourcePatterns>
+            </configuration>
+            <executions>
+                <execution>
+                <goals>
+                    <goal>check</goal>
+                </goals>
+                <phase>verify</phase>
+                </execution>
+            </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -371,6 +408,7 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
+                        <exclude>CVE-2025-1948</exclude>
                         <!-- Test dependency org.eclipse.jetty:jetty-servlets:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
                         <exclude>CVE-2023-36479</exclude>
                         <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
@@ -383,7 +421,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>5.0.0</version>
+                <version>5.2.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -550,7 +588,7 @@
     <parent>
         <artifactId>kafka-connector-extension-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.7.12</version>
+        <version>1.7.13</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>

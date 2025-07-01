@@ -9,9 +9,20 @@ sources:
 version:
   fromSource: pom.xml
 build:
-  runnerOs: ubuntu-20.04
+  runnerOs: ubuntu-24.04
   freeDiskSpace: true
   exasolDbVersions:
-    - "8.32.0"
-    - "7.1.30"
+    - "8.29.10"
+    - "8.34.0" # Added to test support for TIMESTAMP without nano precision.
+    # - "7.1.30" # Exasol 7.1.x does not yet support t Ubuntu versions later than 20.04
+  workflows:
+    - name: ci-build.yml
+      stepCustomizations:
+        - action: INSERT_AFTER
+          job: matrix-build
+          stepId: enable-testcontainer-reuse
+          content:
+            name: Fix "VM Crashed" error by allowing unprivileged user namespaces
+            id: fix-vm-crashed
+            run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 excludes:
