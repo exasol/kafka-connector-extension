@@ -7,7 +7,6 @@ Code name: Fixed vulnerabilities
 This release removes broken links from the readme.md file (start page).
 This release fixes the following vulnerabilities:
 
-
 ###  CVE-2025-1948 (CWE: CWE-400) in dependency 
 `org.eclipse.jetty.http2:http2-common:jar:9.4.57.v20241219:test`
 In Eclipse Jetty versions 12.0.0 to 12.0.16 included, an HTTP/2 client can specify a very large value for the HTTP/2 settings parameter SETTINGS_MAX_HEADER_LIST_SIZE.
@@ -60,6 +59,7 @@ GHSA-76qp-h5mr-frr4
 
 ### CVE-2025-48734 (CWE-284) in dependency `commons-beanutils:commons-beanutils:jar:1.9.4:provided`
 commons-beanutils - Improper Access Control
+
 #### References
 * https://ossindex.sonatype.org/vulnerability/CVE-2025-48734?component-type=maven&component-name=commons-beanutils%2Fcommons-beanutils&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
 * http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2025-48734
