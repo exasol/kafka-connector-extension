@@ -29,11 +29,6 @@ and importing data from a Kafka topic into an Exasol table.
 * [User Guide](doc/user_guide/user_guide.md)
 * [Changelog](doc/changes/changelog.md)
 
-Additional resources:
-
-* [Tech Blog: How to import data from Apache Kafka with Exasol](https://community.exasol.com/t5/tech-blog/how-to-import-data-from-apache-kafka-with-exasol/ba-p/1409)
-* [Tech Blog: How to import data from Apache Kafka using our user-defined functions](https://community.exasol.com/t5/tech-blog/how-to-import-data-from-apache-kafka-using-our-user-defined/ba-p/1699)
-
 ## Information for Contributors
 
 * [Developer Guide](doc/development/developer_guide.md)
