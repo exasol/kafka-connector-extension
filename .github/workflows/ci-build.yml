@@ -16,7 +16,7 @@ on:
     
 jobs:
   matrix-build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     defaults:
       run: {
         shell: bash
@@ -32,12 +32,12 @@ jobs:
       fail-fast: false
       matrix:
         exasol_db_version: [
-          8.32.0,
+          8.34.0,
           7.1.30
         ]
         
     env: {
-      DEFAULT_EXASOL_DB_VERSION: 8.32.0
+      DEFAULT_EXASOL_DB_VERSION: 8.34.0
     }
     steps:
       - name: Free Disk Space
@@ -73,6 +73,11 @@ jobs:
         name: Enable testcontainer reuse,
         id: enable-testcontainer-reuse,
         run: echo 'testcontainers.reuse.enable=true' > "$HOME/.testcontainers.properties"
+      }
+      - {
+        name: Fix "VM Crashed" error by allowing unprivileged user namespaces,
+        id: fix-vm-crashed,
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       }
       - name: Run tests and build with Maven
         id: build-pk-verify
@@ -223,5 +228,6 @@ jobs:
     }
     uses: ./.github/workflows/release.yml
     with: {
-      started-from-ci: true
+      started-from-ci: true,
+      maven-central-auto-publish: true
     }

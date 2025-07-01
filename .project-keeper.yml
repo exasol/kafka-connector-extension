@@ -9,9 +9,19 @@ sources:
 version:
   fromSource: pom.xml
 build:
-  runnerOs: ubuntu-20.04
+  runnerOs: ubuntu-24.04
   freeDiskSpace: true
   exasolDbVersions:
-    - "8.32.0"
+    - "8.34.0"
     - "7.1.30"
+  workflows:
+    - name: ci-build.yml
+      stepCustomizations:
+        - action: INSERT_AFTER
+          job: matrix-build
+          stepId: enable-testcontainer-reuse
+          content:
+            name: Fix "VM Crashed" error by allowing unprivileged user namespaces
+            id: fix-vm-crashed
+            run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 excludes:
