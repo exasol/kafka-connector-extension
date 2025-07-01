@@ -29,7 +29,7 @@ https://www.openwall.com/lists/oss-security/2025/06/09/1
 
 ### CVE-2025-27818 (CWE: CWE-502) in dependency `org.apache.kafka:kafka-clients:jar:3.9.0:compile`
 A possible security vulnerability has been identified in Apache Kafka.
-This requires access to a alterConfig to theÂ cluster resource, or Kafka Connect worker, and the ability to create/modify connectors on it with an arbitrary Kafka client SASL JAAS config
+This requires access to a alterConfig to the cluster resource, or Kafka Connect worker, and the ability to create/modify connectors on it with an arbitrary Kafka client SASL JAAS config
 and a SASL-based security protocol, which has been possible on Kafka clusters since Apache Kafka 2.0.0 (Kafka Connect 2.3.0).
 When configuring the broker via config file or AlterConfig command, or connector via the Kafka Kafka Connect REST API, an authenticated operatorÂ can set the sasl.jaas.config
 property for any of the connector's Kafka clients to "com.sun.security.auth.module.LdapLoginModule", which can be done via the
