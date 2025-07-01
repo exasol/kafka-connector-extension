@@ -76,7 +76,7 @@ commons-beanutils - Improper Access Control
 * #139: Fixed vulnerability CVE-2025-48734 in dependency `commons-beanutils:commons-beanutils:jar:1.9.4:provided`
 * #141: Fixed vulnerability CVE-2025-27817 in dependency `org.apache.kafka:kafka-clients:jar:3.9.0:compile`
 * #142: Fixed vulnerability CVE-2025-27818 in dependency `org.apache.kafka:kafka-clients:jar:3.9.0:compile`
-* #124: Fixed vulnerability CVE-2025-1948 in dependency `org.eclipse.jetty.http2:http2-common:jar:9.4.57.v20241219:test`
+* #138: Fixed vulnerability CVE-2025-1948 in dependency `org.eclipse.jetty.http2:http2-common:jar:9.4.57.v20241219:test`
 
 ## Dependency Updates
 
