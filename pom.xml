@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>kafka-connector-extension</artifactId>
-    <version>1.7.13</version>
+    <version>1.7.14</version>
     <name>Exasol Kafka Connector Extension</name>
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
@@ -29,7 +29,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.2.0.Final</version>
+                <version>4.2.3.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -111,25 +111,25 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.17.0</version>
+            <version>5.18.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>7.1.4</version>
+            <version>7.1.7</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>3.6.0</version>
+            <version>3.6.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -166,12 +166,18 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <!-- Fix CVE-2025-53864 in embedded-kafka-schema-registry transitive dependency -->
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.13.1</version>
+        </dependency>
         <!-- [CVE-2025-1948] CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion') (8.7); https://ossindex.sonatype.org/vulnerability/CVE-2025-1948?component-type=maven&component-name=org.eclipse.jetty.http2%2Fhttp2-common&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
         <!-- Lock down Jetty to the 9.x branch -->
         <dependency>
-        <groupId>org.eclipse.jetty.http2</groupId>
-        <artifactId>http2-common</artifactId>
-        <version>9.4.57.v20241219</version>
+            <groupId>org.eclipse.jetty.http2</groupId>
+            <artifactId>http2-common</artifactId>
+            <version>9.4.57.v20241219</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
@@ -188,7 +194,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
-            <version>1.20.6</version>
+            <version>1.21.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -209,28 +215,28 @@
         <plugins>
             <!-- [CVE-2025-1948] CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion') (8.7); https://ossindex.sonatype.org/vulnerability/CVE-2025-1948?component-type=maven&component-name=org.eclipse.jetty.http2%2Fhttp2-common&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
             <plugin>
-            <groupId>org.basepom.maven</groupId>
-            <artifactId>duplicate-finder-maven-plugin</artifactId>
-            <version>2.0.1</version>
-            <configuration>
-                <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
-                <failBuildInCaseOfDuplicateClasses>true</failBuildInCaseOfDuplicateClasses>
-                <ignoredResourcePatterns>
-                <ignoredResource>about\.html</ignoredResource>
-                <ignoredResource>META-INF/LICENSE</ignoredResource>
-                <ignoredResource>META-INF/NOTICE</ignoredResource>
-                <ignoredResource>META-INF/DEPENDENCIES</ignoredResource>
-                <ignoredResource>META-INF/maven/.*</ignoredResource>
-                </ignoredResourcePatterns>
-            </configuration>
-            <executions>
-                <execution>
-                <goals>
-                    <goal>check</goal>
-                </goals>
-                <phase>verify</phase>
-                </execution>
-            </executions>
+                <groupId>org.basepom.maven</groupId>
+                <artifactId>duplicate-finder-maven-plugin</artifactId>
+                <version>2.0.1</version>
+                <configuration>
+                    <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+                    <failBuildInCaseOfDuplicateClasses>true</failBuildInCaseOfDuplicateClasses>
+                    <ignoredResourcePatterns>
+                        <ignoredResource>about\.html</ignoredResource>
+                        <ignoredResource>META-INF/LICENSE</ignoredResource>
+                        <ignoredResource>META-INF/NOTICE</ignoredResource>
+                        <ignoredResource>META-INF/DEPENDENCIES</ignoredResource>
+                        <ignoredResource>META-INF/maven/.*</ignoredResource>
+                    </ignoredResourcePatterns>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -421,7 +427,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>5.2.2</version>
+                <version>5.2.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -588,7 +594,7 @@
     <parent>
         <artifactId>kafka-connector-extension-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.7.13</version>
+        <version>1.7.14</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
