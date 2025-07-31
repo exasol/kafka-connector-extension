@@ -1,12 +1,16 @@
-# Kafka Connector Extension 1.7.14, released 2025-??-??
+# Kafka Connector Extension 1.7.14, released 2025-07-31
 
-Code name:
+Code name: Fixed test dependencies 
 
 ## Summary
 
-## Features
+This release updates dependencies to fix CVE-2025-53864 and CVE-2025-48924 in transitive test dependencies 
+`com.google.code.gson:gson:jar:2.10.1:test` and `org.apache.commons:commons-lang3:jar:3.17.0:test` respectively
 
-* ISSUE_NUMBER: description
+## Security
+
+* #145 Fix CVE-2025-53864 in com.google.code.gson:gson:jar:2.10.1:test
+* #144 Fix CVE-2025-48924 in org.apache.commons:commons-lang3:jar:3.17.0:test
 
 ## Dependency Updates
 
