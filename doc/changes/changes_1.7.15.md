@@ -10,19 +10,13 @@ This release fixes the following vulnerabilities:
 
 In Eclipse Jetty, versions <=9.4.57, <=10.0.25, <=11.0.25, <=12.0.21, <=12.1.0.alpha2, an HTTP/2 client may trigger the server to send RST_STREAM frames, for example by sending frames that are malformed or that should not be sent in a particular stream state, therefore forcing the server to consume resources such as CPU and memory.
 
-
 For example, a client can open a stream and then send WINDOW_UPDATE frames with window size increment of 0, which is illegal.
 Per specification  https://www.rfc-editor.org/rfc/rfc9113.html#name-window_update , the server should send a RST_STREAM frame.
 The client can now open another stream and send another bad WINDOW_UPDATE, therefore causing the server to consume more resources than necessary, as this case does not exceed the max number of concurrent streams, yet the client is able to create an enormous amount of streams in a short period of time.
 
-
 The attack can be performed with other conditions (for example, a DATA frame for a closed stream) that cause the server to send a RST_STREAM frame.
 
-
-
 Links:
-
-
 
   *   https://github.com/jetty/jetty.project/security/advisories/GHSA-mmxm-8w33-wc4h
 
@@ -56,3 +50,10 @@ CWE: CWE-400
 * #148: Fixed vulnerability CVE-2025-5115 in dependency `org.eclipse.jetty.http2:http2-common:jar:9.4.57.v20241219:compile`
 * #147: Fixed vulnerability CVE-2025-1948 in dependency `org.eclipse.jetty.http2:http2-common:jar:9.4.57.v20241219:compile`
 
+## Dependency Updates
+
+### Exasol Kafka Connector Extension
+
+#### Compile Dependency Updates
+
+* Updated `org.eclipse.jetty.http2:http2-common:9.4.57.v20241219` to `9.4.58.v20250814`
