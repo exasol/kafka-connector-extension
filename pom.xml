@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>kafka-connector-extension</artifactId>
-    <version>1.7.14</version>
+    <version>1.7.15</version>
     <name>Exasol Kafka Connector Extension</name>
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
@@ -29,7 +29,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.2.3.Final</version>
+                <version>4.2.4.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -594,7 +594,7 @@
     <parent>
         <artifactId>kafka-connector-extension-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.7.14</version>
+        <version>1.7.15</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
