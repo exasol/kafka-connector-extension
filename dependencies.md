@@ -48,7 +48,7 @@
 | [Apache Maven Toolchains Plugin][47]                    | [Apache-2.0][17]                               |
 | [Apache Maven Compiler Plugin][48]                      | [Apache-2.0][17]                               |
 | [Apache Maven Enforcer Plugin][49]                      | [Apache-2.0][17]                               |
-| [Maven Flatten Plugin][50]                              | [Apache Software Licenese][17]                 |
+| [Maven Flatten Plugin][50]                              | [Apache Software License][17]                  |
 | [org.sonatype.ossindex.maven:ossindex-maven-plugin][51] | [ASL2][7]                                      |
 | [scala-maven-plugin][52]                                | [Public domain (Unlicense)][53]                |
 | [ScalaTest Maven Plugin][54]                            | [the Apache License, ASL Version 2.0][19]      |
