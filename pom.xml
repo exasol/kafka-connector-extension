@@ -97,12 +97,6 @@
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.14.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.compat.version}</artifactId>
             <version>3.3.0-SNAP4</version>
@@ -249,7 +243,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <compilerArgs>
-                        <arg>-Xlint:all,-path</arg>
+                        <arg>-Xlint:all,-path,-processing</arg>
                         <arg>-Werror</arg>
                     </compilerArgs>
                 </configuration>
