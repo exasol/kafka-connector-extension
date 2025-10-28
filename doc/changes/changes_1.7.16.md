@@ -17,14 +17,6 @@ This release fixes several CVEs in transient dependencies.
 #### Compile Dependency Updates
 
 * Updated `ch.qos.logback:logback-classic:1.5.18` to `1.5.20`
-* Removed `com.google.code.gson:gson:2.13.1`
-* Updated `io.confluent:kafka-avro-serializer:7.9.0` to `8.1.0`
-* Removed `org.eclipse.jetty.http2:http2-common:9.4.58.v20250814`
-
-#### Test Dependency Updates
-
-* Updated `io.confluent:kafka-streams-avro-serde:7.9.0` to `8.1.0`
-* Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.9.0` to `8.1.0`
 
 #### Plugin Dependency Updates
 
