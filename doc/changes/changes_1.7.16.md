@@ -3,15 +3,20 @@
 Code name: Netty CVE fix
 
 ## Summary
-This release fixes CVE in Netty transient dependency (test).
+This release fixes several CVEs in transient dependencies.
 
 ## Security
 
 * #151: CVE-2025-58057: io.netty:netty-codec-compression:jar:4.2.4.Final:test
+* CVE-2025-11226: CWE-20: Improper Input Validation (7.3) in ch.qos.logback:logback-core:jar:1.5.18:compile
 
 ## Dependency Updates
 
 ### Exasol Kafka Connector Extension
+
+#### Compile Dependency Updates
+
+* Updated `ch.qos.logback:logback-classic:1.5.18` to `1.5.20`
 
 #### Plugin Dependency Updates
 
