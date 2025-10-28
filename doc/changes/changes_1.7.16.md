@@ -25,6 +25,7 @@ This release fixes several CVEs in transient dependencies.
 
 * Updated `io.confluent:kafka-streams-avro-serde:7.9.0` to `8.1.0`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.9.0` to `8.1.0`
+* Added `jakarta.xml.bind:jakarta.xml.bind-api:4.0.2`
 
 #### Plugin Dependency Updates
 
