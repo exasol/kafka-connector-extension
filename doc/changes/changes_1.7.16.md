@@ -1,4 +1,4 @@
-# Kafka Connector Extension 1.7.16, released 2025-??-??
+# Kafka Connector Extension 1.7.16, released 2025-10-29
 
 Code name: Netty CVE fix
 
