@@ -1,16 +1,22 @@
 # Kafka Connector Extension 1.7.17, released 2026-??-??
 
-Code name:
+Code name: Security updates in transient components.
 
 ## Summary
 
-## Features
+This release updates dependencies to fix CVEs in transient components.
 
-* ISSUE_NUMBER: description
+## Security
+
+* #154: CVE-2025-12383: org.glassfish.jersey.core:jersey-client:jar:2.45:test
 
 ## Dependency Updates
 
 ### Exasol Kafka Connector Extension
+
+#### Compile Dependency Updates
+
+* Updated `org.apache.kafka:kafka-clients:3.9.1` to `4.2.0`
 
 #### Test Dependency Updates
 
