@@ -137,13 +137,6 @@
             <artifactId>extension-manager-integration-test-java</artifactId>
             <version>0.5.18</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <!-- Fix CVE-2017-10355 -->
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
