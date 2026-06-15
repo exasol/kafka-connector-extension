@@ -16,11 +16,11 @@ class FieldParserTest extends AnyFunSuite {
     val fields = Seq("key.field1", "timestamp", "value.*", "value.field2", "value.Field_3")
     val expectedFields =
       Seq(
-        RecordKeyField("field1"),
+        new RecordKeyField("field1"),
         TimestampField,
         RecordValueFields,
-        RecordValueField("field2"),
-        RecordValueField("Field_3")
+        new RecordValueField("field2"),
+        new RecordValueField("Field_3")
       )
     assert(FieldParser.get(fields) === expectedFields)
   }
@@ -29,10 +29,10 @@ class FieldParserTest extends AnyFunSuite {
     val fields = "key._key1, value.FirstValue, value.secondValue, value.value_3"
     val expectedFields =
       Seq[GlobalFieldSpecification](
-        RecordKeyField("_key1"),
-        RecordValueField("FirstValue"),
-        RecordValueField("secondValue"),
-        RecordValueField("value_3")
+        new RecordKeyField("_key1"),
+        new RecordValueField("FirstValue"),
+        new RecordValueField("secondValue"),
+        new RecordValueField("value_3")
       )
     assert(FieldParser.get(fields) === expectedFields)
   }

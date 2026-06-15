@@ -30,7 +30,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
       "SSL_ENDPOINT_IDENTIFICATION_ALGORITHM" -> "",
       "GROUP_ID" -> ""
     )
-    val consumer = KafkaConsumerProperties(KafkaConsumerProperties(properties).mkString())
+    val consumer = KafkaConsumerPropertiesSupport.create(KafkaConsumerPropertiesSupport.create(properties).mkString())
     assert(consumer.getSSLEndpointIdentificationAlgorithm() === "")
     assert(consumer.getGroupId() === "")
   }
@@ -176,7 +176,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   test("getProperties throws if schema registry is not set and record format is avro") {
     val properties = Map("BOOTSTRAP_SERVERS" -> "server", "RECORD_FORMAT" -> "avro")
     val thrown = intercept[IllegalArgumentException] {
-      KafkaConsumerProperties(properties).getProperties()
+      KafkaConsumerPropertiesSupport.create(properties).getProperties()
     }
     assert(thrown.getMessage().contains(errorMessage("SCHEMA_REGISTRY_URL")))
   }
@@ -445,7 +445,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
   test("apply throws if secure SSL properties are provided without connection object") {
     val properties = Map("SECURITY_PROTOCOL" -> "SSL", "SSL_KEY_PASSWORD" -> "PASSWORD")
     val thrown = intercept[KafkaConnectorException] {
-      KafkaConsumerProperties(properties, mock[ExaMetadata])
+      KafkaConsumerPropertiesSupport.create(properties, mock[ExaMetadata])
     }
     val message = thrown.getMessage()
     assert(message.contains("Please use a named Exasol connection object to provide secure properties."))
@@ -459,7 +459,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
     when(connectionInformation.getUser()).thenReturn("")
     when(connectionInformation.getPassword())
       .thenReturn("BOOTSTRAP_SERVERS=localhost:1000;SCHEMA_REGISTRY_URL=http://n11:1001")
-    val properties = KafkaConsumerProperties(params, metadata)
+    val properties = KafkaConsumerPropertiesSupport.create(params, metadata)
     assert(properties.getBootstrapServers() === "localhost:1000")
     assert(properties.getSchemaRegistryUrl() === "http://n11:1001")
   }
@@ -601,7 +601,7 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
       addSimpleSASLParameters(stringBuilder)
     }
     when(connectionInformation.getPassword()).thenReturn(stringBuilder.toString())
-    KafkaConsumerProperties(properties, metadata)
+    KafkaConsumerPropertiesSupport.create(properties, metadata)
   }
 
   private[this] def addSimpleSSLParameters(sb: StringBuilder): Unit = {

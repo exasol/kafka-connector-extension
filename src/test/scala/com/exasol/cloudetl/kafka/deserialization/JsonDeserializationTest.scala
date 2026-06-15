@@ -10,7 +10,7 @@ class JsonDeserializationTest extends AnyFunSuite {
   test("must create a JSON deserializer for concrete fields") {
     val deserializer = JsonDeserialization.getDeserializer(
       new KafkaConsumerProperties(Map.empty),
-      Seq(RecordValueField("user_id"))
+      Seq(new RecordValueField("user_id"))
     )
 
     assert(deserializer.isInstanceOf[JsonDeserializer])

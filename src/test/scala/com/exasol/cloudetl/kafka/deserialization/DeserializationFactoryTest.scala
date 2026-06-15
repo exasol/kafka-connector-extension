@@ -40,7 +40,7 @@ class DeserializationFactoryTest extends AnyFunSuite {
     val params = Map("RECORD_KEY_FORMAT" -> "json", "RECORD_VALUE_FORMAT" -> "string")
     val properties = new KafkaConsumerProperties(params)
     val deserializers = DeserializationFactory.getSerializers(
-      Seq(RecordKeyField("someField"), RecordValue),
+      Seq(new RecordKeyField("someField"), RecordValue),
       properties
     )
 
@@ -61,7 +61,7 @@ class DeserializationFactoryTest extends AnyFunSuite {
     val red =
       IgnoreKeyDeserializer.asInstanceOf[Deserializer[Map[FieldSpecification, Seq[Any]]]]
     val black = new JsonDeserializer(
-      Seq(RecordValueField("field")),
+      Seq(new RecordValueField("field")),
       new StringDeserializer
     ).asInstanceOf[Deserializer[Map[FieldSpecification, Seq[Any]]]]
 

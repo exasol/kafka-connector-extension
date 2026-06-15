@@ -10,14 +10,14 @@ class AvroDeserializationTest extends AnyFunSuite {
   test("must create a generic record deserializer when schema registry is configured") {
     val properties = new KafkaConsumerProperties(Map("SCHEMA_REGISTRY_URL" -> "http://schema-registry:8081"))
 
-    val deserializer = AvroDeserialization.getDeserializer(properties, Seq(RecordValueField("amount")))
+    val deserializer = AvroDeserialization.getDeserializer(properties, Seq(new RecordValueField("amount")))
 
     assert(deserializer.isInstanceOf[GenericRecordDeserializer])
   }
 
   test("must fail when schema registry is missing") {
     val thrown = intercept[KafkaConnectorException] {
-      AvroDeserialization.getDeserializer(new KafkaConsumerProperties(Map.empty), Seq(RecordValueField("amount")))
+      AvroDeserialization.getDeserializer(new KafkaConsumerProperties(Map.empty), Seq(new RecordValueField("amount")))
     }
 
     assert(thrown.getMessage.contains("E-KCE-17"))

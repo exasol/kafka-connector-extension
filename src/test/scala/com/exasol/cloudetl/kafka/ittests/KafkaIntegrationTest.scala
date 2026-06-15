@@ -47,7 +47,7 @@ trait KafkaIntegrationTest
 
   final def mockExasolIterator(params: Map[String, String], partitions: Seq[Int], offsets: Seq[Long]): ExaIterator = {
     val mockedIterator = mock[ExaIterator]
-    when(mockedIterator.getString(0)).thenReturn(KafkaConsumerProperties(params).mkString())
+    when(mockedIterator.getString(0)).thenReturn(KafkaConsumerPropertiesSupport.create(params).mkString())
 
     val brokers = Seq.fill(partitions.size - 1)(true) ++ Seq(false)
     when(mockedIterator.next()).thenReturn(brokers(0), brokers.tail: _*)

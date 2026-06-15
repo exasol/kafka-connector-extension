@@ -21,7 +21,7 @@ class KafkaConsumerQueryGeneratorTest extends PathTest {
 
   test("generateSqlForImportSpec returns SQL statement") {
     when(importSpec.getParameters()).thenReturn(properties.asJava)
-    val propertyPairs = KafkaConsumerProperties(properties).mkString()
+    val propertyPairs = KafkaConsumerPropertiesSupport.create(properties).mkString()
 
     val expectedSQLStatement =
       s"""SELECT

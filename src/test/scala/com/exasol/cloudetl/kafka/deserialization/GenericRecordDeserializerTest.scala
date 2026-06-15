@@ -57,12 +57,12 @@ class GenericRecordDeserializerTest extends AnyFunSuite with MockitoSugar {
         .set("field2", 11L)
         .set("complex", Array(1, 2, 3))
         .build(),
-      Seq(RecordValueField("complex"), RecordValueField("field1"))
+      Seq(new RecordValueField("complex"), new RecordValueField("field1"))
     )
 
     val expected = Map(
-      RecordValueField("complex") -> Seq("[1,2,3]"),
-      RecordValueField("field1") -> Seq("val1")
+      new RecordValueField("complex") -> Seq("[1,2,3]"),
+      new RecordValueField("field1") -> Seq("val1")
     )
     assert(row === expected)
   }
@@ -72,13 +72,13 @@ class GenericRecordDeserializerTest extends AnyFunSuite with MockitoSugar {
       new GenericRecordBuilder(schema)
         .set("field2", 11L)
         .build(),
-      Seq(RecordValueField("field1"), RecordValueField("field2"), RecordValueField("complex"))
+      Seq(new RecordValueField("field1"), new RecordValueField("field2"), new RecordValueField("complex"))
     )
 
     val expected = Map(
-      RecordValueField("field1") -> Seq(null),
-      RecordValueField("field2") -> Seq(11L),
-      RecordValueField("complex") -> Seq("[]")
+      new RecordValueField("field1") -> Seq(null),
+      new RecordValueField("field2") -> Seq(11L),
+      new RecordValueField("complex") -> Seq("[]")
     )
     assert(row === expected)
   }
@@ -88,12 +88,12 @@ class GenericRecordDeserializerTest extends AnyFunSuite with MockitoSugar {
       new GenericRecordBuilder(schema)
         .set("field2", 11L)
         .build(),
-      Seq(RecordValueField("field2"), RecordValueField("unknownField"))
+      Seq(new RecordValueField("field2"), new RecordValueField("unknownField"))
     )
 
     val expected = Map(
-      RecordValueField("field2") -> Seq(11L),
-      RecordValueField("unknownField") -> Seq(null)
+      new RecordValueField("field2") -> Seq(11L),
+      new RecordValueField("unknownField") -> Seq(null)
     )
     assert(row === expected)
   }
