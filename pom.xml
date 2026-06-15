@@ -140,8 +140,14 @@
         </dependency>
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
-            <artifactId>embedded-kafka_2.13</artifactId>
+            <artifactId>embedded-kafka_${scala.compat.version}</artifactId>
             <version>4.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.embeddedkafka</groupId>
+            <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
+            <version>8.2.0</version>
             <scope>test</scope>
         </dependency>
 <!--        <dependency>-->
