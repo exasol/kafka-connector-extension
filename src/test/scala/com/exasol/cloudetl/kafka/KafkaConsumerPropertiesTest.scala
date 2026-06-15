@@ -7,6 +7,7 @@ import com.exasol.ExaConnectionInformation
 import com.exasol.ExaMetadata
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties._
 
+import nl.jqno.equalsverifier.EqualsVerifier
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.funsuite.AnyFunSuite
@@ -23,6 +24,10 @@ class KafkaConsumerPropertiesTest extends AnyFunSuite with BeforeAndAfterEach wi
 
   private[this] def errorMessage(key: String): String =
     s"Please provide key-value pairs for '$key' property."
+
+  test("equals and hashCode of config must follow the contract") {
+    EqualsVerifier.forClass(classOf[Config[?]]).verify()
+  }
 
   test("consumer properties can encode and decode property with empty value") {
     properties = Map(

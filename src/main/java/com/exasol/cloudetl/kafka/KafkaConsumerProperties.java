@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.config.SslConfigs;
+import org.apache.kafka.common.security.auth.SecurityProtocol;
 
 import com.exasol.ExaMetadata;
 import com.exasol.common.AbstractProperties;
@@ -16,11 +18,6 @@ import com.exasol.common.PropertiesParser;
 import com.exasol.errorreporting.ExaError;
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
-import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.config.SaslConfigs;
-import org.apache.kafka.common.config.SslConfigs;
-import org.apache.kafka.common.security.auth.SecurityProtocol;
 import scala.Option;
 
 public class KafkaConsumerProperties extends AbstractProperties {
@@ -40,51 +37,33 @@ public class KafkaConsumerProperties extends AbstractProperties {
     public static final Config<Long> POLL_TIMEOUT_MS = new Config<>("POLL_TIMEOUT_MS", "", 30000L);
     public static final Config<Integer> MIN_RECORDS_PER_RUN = new Config<>("MIN_RECORDS_PER_RUN", "", 100);
     public static final Config<Integer> MAX_RECORDS_PER_RUN = new Config<>("MAX_RECORDS_PER_RUN", "", 1000000);
-    public static final Config<String> ENABLE_AUTO_COMMIT = new Config<>("ENABLE_AUTO_COMMIT",
-            ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-    public static final Config<String> BOOTSTRAP_SERVERS = new Config<>("BOOTSTRAP_SERVERS",
-            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "");
-    public static final Config<String> GROUP_ID = new Config<>("GROUP_ID", ConsumerConfig.GROUP_ID_CONFIG,
-            "EXASOL_KAFKA_UDFS_CONSUMERS");
-    public static final Config<String> AUTO_OFFSET_RESET = new Config<>("AUTO_OFFSET_RESET",
-            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-    public static final Config<String> MAX_POLL_RECORDS = new Config<>("MAX_POLL_RECORDS",
-            ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");
-    public static final Config<String> FETCH_MIN_BYTES = new Config<>("FETCH_MIN_BYTES",
-            ConsumerConfig.FETCH_MIN_BYTES_CONFIG, "1");
-    public static final Config<String> FETCH_MAX_BYTES = new Config<>("FETCH_MAX_BYTES",
-            ConsumerConfig.FETCH_MAX_BYTES_CONFIG, String.valueOf(ConsumerConfig.DEFAULT_FETCH_MAX_BYTES));
-    public static final Config<String> MAX_PARTITION_FETCH_BYTES = new Config<>("MAX_PARTITION_FETCH_BYTES",
-            ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG,
+    public static final Config<String> ENABLE_AUTO_COMMIT = new Config<>("ENABLE_AUTO_COMMIT", ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+    public static final Config<String> BOOTSTRAP_SERVERS = new Config<>("BOOTSTRAP_SERVERS", ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "");
+    public static final Config<String> GROUP_ID = new Config<>("GROUP_ID", ConsumerConfig.GROUP_ID_CONFIG, "EXASOL_KAFKA_UDFS_CONSUMERS");
+    public static final Config<String> AUTO_OFFSET_RESET = new Config<>("AUTO_OFFSET_RESET", ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    public static final Config<String> MAX_POLL_RECORDS = new Config<>("MAX_POLL_RECORDS", ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");
+    public static final Config<String> FETCH_MIN_BYTES = new Config<>("FETCH_MIN_BYTES", ConsumerConfig.FETCH_MIN_BYTES_CONFIG, "1");
+    public static final Config<String> FETCH_MAX_BYTES = new Config<>("FETCH_MAX_BYTES", ConsumerConfig.FETCH_MAX_BYTES_CONFIG,
+            String.valueOf(ConsumerConfig.DEFAULT_FETCH_MAX_BYTES));
+    public static final Config<String> MAX_PARTITION_FETCH_BYTES = new Config<>("MAX_PARTITION_FETCH_BYTES", ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG,
             String.valueOf(ConsumerConfig.DEFAULT_MAX_PARTITION_FETCH_BYTES));
-    public static final Config<String> SCHEMA_REGISTRY_URL = new Config<>("SCHEMA_REGISTRY_URL",
-            AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "");
-    public static final Config<String> SECURITY_PROTOCOL = new Config<>("SECURITY_PROTOCOL",
-            CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL);
-    public static final Config<String> SSL_KEY_PASSWORD = new Config<>("SSL_KEY_PASSWORD",
-            SslConfigs.SSL_KEY_PASSWORD_CONFIG, "");
-    public static final Config<String> SSL_KEYSTORE_PASSWORD = new Config<>("SSL_KEYSTORE_PASSWORD",
-            SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, "");
-    public static final Config<String> SSL_KEYSTORE_LOCATION = new Config<>("SSL_KEYSTORE_LOCATION",
-            SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, "");
-    public static final Config<String> SSL_TRUSTSTORE_PASSWORD = new Config<>("SSL_TRUSTSTORE_PASSWORD",
-            SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "");
-    public static final Config<String> SSL_TRUSTSTORE_LOCATION = new Config<>("SSL_TRUSTSTORE_LOCATION",
-            SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, "");
-    public static final Config<String> SSL_ENDPOINT_IDENTIFICATION_ALGORITHM = new Config<>(
-            "SSL_ENDPOINT_IDENTIFICATION_ALGORITHM", SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG,
-            SslConfigs.DEFAULT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM);
-    public static final Config<String> SASL_MECHANISM = new Config<>("SASL_MECHANISM", SaslConfigs.SASL_MECHANISM,
-            SaslConfigs.DEFAULT_SASL_MECHANISM);
+    public static final Config<String> SCHEMA_REGISTRY_URL = new Config<>("SCHEMA_REGISTRY_URL", AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "");
+    public static final Config<String> SECURITY_PROTOCOL = new Config<>("SECURITY_PROTOCOL", CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
+            CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL);
+    public static final Config<String> SSL_KEY_PASSWORD = new Config<>("SSL_KEY_PASSWORD", SslConfigs.SSL_KEY_PASSWORD_CONFIG, "");
+    public static final Config<String> SSL_KEYSTORE_PASSWORD = new Config<>("SSL_KEYSTORE_PASSWORD", SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, "");
+    public static final Config<String> SSL_KEYSTORE_LOCATION = new Config<>("SSL_KEYSTORE_LOCATION", SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, "");
+    public static final Config<String> SSL_TRUSTSTORE_PASSWORD = new Config<>("SSL_TRUSTSTORE_PASSWORD", SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "");
+    public static final Config<String> SSL_TRUSTSTORE_LOCATION = new Config<>("SSL_TRUSTSTORE_LOCATION", SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, "");
+    public static final Config<String> SSL_ENDPOINT_IDENTIFICATION_ALGORITHM = new Config<>("SSL_ENDPOINT_IDENTIFICATION_ALGORITHM",
+            SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, SslConfigs.DEFAULT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM);
+    public static final Config<String> SASL_MECHANISM = new Config<>("SASL_MECHANISM", SaslConfigs.SASL_MECHANISM, SaslConfigs.DEFAULT_SASL_MECHANISM);
     public static final Config<String> SASL_USERNAME = new Config<>("SASL_USERNAME", "", "");
     public static final Config<String> SASL_JAAS_LOCATION = new Config<>("SASL_JAAS_LOCATION", "", "");
-    public static final Config<String> SASL_KRB5CONF_LOCATION = new Config<>("SASL_KRB5CONF_LOCATION",
-            "java.security.krb5.conf", "");
+    public static final Config<String> SASL_KRB5CONF_LOCATION = new Config<>("SASL_KRB5CONF_LOCATION", "java.security.krb5.conf", "");
     public static final Config<String> SASL_PASSWORD = new Config<>("SASL_PASSWORD", "", "");
-    public static final Config<String> SASL_JAAS_CONFIG = new Config<>("SASL_JAAS_CONFIG",
-            SaslConfigs.SASL_JAAS_CONFIG, "");
-    public static final String BUCKETFS_CHECK_MITIGATION =
-            "Please make sure it is successfully uploaded to BucketFS bucket.";
+    public static final Config<String> SASL_JAAS_CONFIG = new Config<>("SASL_JAAS_CONFIG", SaslConfigs.SASL_JAAS_CONFIG, "");
+    public static final String BUCKETFS_CHECK_MITIGATION = "Please make sure it is successfully uploaded to BucketFS bucket.";
 
     private final scala.collection.immutable.Map<String, String> properties;
 
@@ -322,8 +301,8 @@ public class KafkaConsumerProperties extends AbstractProperties {
     }
 
     public KafkaConsumerProperties mergeWithConnectionObject(final ExaMetadata metadata) {
-        final scala.collection.immutable.Map<String, String> connectionParsedMap =
-                parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName(), Option.apply(metadata));
+        final scala.collection.immutable.Map<String, String> connectionParsedMap = parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName(),
+                Option.apply(metadata));
         final Map<String, String> merged = new LinkedHashMap<>(ScalaCollections.javaMap(this.properties));
         merged.putAll(ScalaCollections.javaMap(connectionParsedMap));
         return new KafkaConsumerProperties(ScalaCollections.immutableMap(merged));
