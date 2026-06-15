@@ -91,7 +91,7 @@ class ExtensionIT extends AbstractScriptExtensionIT {
 
     @Override
     protected ExtensionITConfig createConfig() {
-        final String previousVersion = "1.7.1";
+        final String previousVersion = "1.7.16";
         final String previousVersionJarFile = "exasol-kafka-connector-extension-" + previousVersion + ".jar";
         return ExtensionITConfig.builder().projectName("kafka-connector-extension")
                 .currentVersion(IntegrationTestConstants.PROJECT_VERSION).extensionId(EXTENSION_ID)
