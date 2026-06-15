@@ -3,6 +3,9 @@ package com.exasol.cloudetl.kafka.deserialization
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties
 import com.exasol.cloudetl.kafka.KafkaConnectorException
 
+import nl.jqno.equalsverifier.EqualsVerifier
+import org.apache.kafka.common.serialization.Deserializer
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.scalatest.funsuite.AnyFunSuite
 
 class DeserializationFactoryTest extends AnyFunSuite {
@@ -52,5 +55,19 @@ class DeserializationFactoryTest extends AnyFunSuite {
 
     assert(thrown.getMessage.contains("E-KCE-19"))
     assert(thrown.getMessage.contains("not supported"))
+  }
+
+  test("equals and hashCode of record deserializers must follow the contract") {
+    val red =
+      IgnoreKeyDeserializer.asInstanceOf[Deserializer[Map[FieldSpecification, Seq[Any]]]]
+    val black = new JsonDeserializer(
+      Seq(RecordValueField("field")),
+      new StringDeserializer
+    ).asInstanceOf[Deserializer[Map[FieldSpecification, Seq[Any]]]]
+
+    EqualsVerifier
+      .forClass(classOf[DeserializationFactory.RecordDeserializers])
+      .withPrefabValues(classOf[Deserializer[?]], red, black)
+      .verify()
   }
 }

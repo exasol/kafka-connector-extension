@@ -14,6 +14,10 @@ This release includes internal refactoring. It migrates the source code from Sca
 
 ### Exasol Kafka Connector Extension
 
+#### Test Dependency Updates
+
+* Added `nl.jqno.equalsverifier:equalsverifier:3.19.4`
+
 #### Plugin Dependency Updates
 
 * Updated `com.exasol:error-code-crawler-maven-plugin:2.0.5` to `2.0.7`
