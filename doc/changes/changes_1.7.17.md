@@ -24,6 +24,7 @@ This release updates dependencies to fix CVEs in transient components.
 * Updated `com.exasol:extension-manager-integration-test-java:0.5.16` to `0.5.18`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.9.0` to `8.2.0`
 * Added `io.github.embeddedkafka:embedded-kafka_2.13:4.1.0`
+* Added `jakarta.xml.bind:jakarta.xml.bind-api:4.0.5`
 
 #### Plugin Dependency Updates
 
