@@ -27,6 +27,9 @@ This release updates dependencies to fix CVEs in transient components.
 * Added `jakarta.xml.bind:jakarta.xml.bind-api:4.0.5`
 * Added `javax.ws.rs:javax.ws.rs-api:2.1.1`
 * Added `org.glassfish.jersey.core:jersey-client:3.1.11`
+* Added `org.glassfish.jersey.inject:jersey-hk2:3.1.11`
+* Added `org.glassfish.jersey.media:jersey-media-json-jackson:3.1.11`
+* Added `org.glassfish.jersey.media:jersey-media-multipart:3.1.11`
 
 #### Plugin Dependency Updates
 
