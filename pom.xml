@@ -141,7 +141,7 @@
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
             <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
-            <version>7.9.0</version>
+            <version>8.2.0</version>
             <scope>test</scope>
             <exclusions>
                 <!-- [CVE-2025-48734] CWE-284: Improper Access Control (8.8); https://ossindex.sonatype.org/vulnerability/CVE-2025-48734?component-type=maven&component-name=commons-beanutils%2Fcommons-beanutils&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
