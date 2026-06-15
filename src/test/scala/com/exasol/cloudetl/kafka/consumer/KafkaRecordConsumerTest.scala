@@ -42,7 +42,9 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
   )
   private[this] val defaultTimeout = Duration.ofMillis(30000)
   private[this] val defaultEndOffset = 4L
-  private[this] val emptyConsumerRecords = new ConsumerRecords[FieldType, FieldType](Collections.emptyMap())
+  private[this] val emptyConsumerRecords = new ConsumerRecords[FieldType, FieldType](
+    Collections.emptyMap(), Collections.emptyMap()
+  )
 
   type FieldType = Map[FieldSpecification, Seq[Any]]
   private[this] var iterator: ExaIterator = _
@@ -179,7 +181,10 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
         )
       )
     }
-    new ConsumerRecords[FieldType, FieldType](JMap.of(topicPartition, records))
+    new ConsumerRecords[FieldType, FieldType](
+      JMap.of(topicPartition, records),
+      JMap.of(topicPartition, new OffsetAndMetadata(offsets[0]))
+    )
   }
 
   // It is alright to use default arguments in tests.
