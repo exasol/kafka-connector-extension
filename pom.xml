@@ -154,7 +154,7 @@
             <groupId>io.confluent</groupId>
             <artifactId>kafka-schema-registry-client</artifactId>
             <version>8.2.0</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>io.github.embeddedkafka</groupId>-->
