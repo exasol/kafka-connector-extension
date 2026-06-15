@@ -1,7 +1,7 @@
 package com.exasol.cloudetl.kafka.deserialization
 
-import com.exasol.cloudetl.kafka.KafkaConsumerProperties
 import com.exasol.cloudetl.kafka.KafkaConnectorException
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties
 
 import nl.jqno.equalsverifier.EqualsVerifier
 import org.apache.kafka.common.serialization.Deserializer
