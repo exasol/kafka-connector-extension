@@ -30,6 +30,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 * Updated `org.apache.maven.plugins:maven-compiler-plugin:3.14.1` to `3.15.0`
 * Updated `org.apache.maven.plugins:maven-failsafe-plugin:3.5.4` to `3.5.5`
 * Updated `org.apache.maven.plugins:maven-jar-plugin:3.4.2` to `3.5.0`
+* Removed `org.apache.maven.plugins:maven-javadoc-plugin:3.11.2`
 * Updated `org.apache.maven.plugins:maven-resources-plugin:3.3.1` to `3.5.0`
 * Updated `org.apache.maven.plugins:maven-surefire-plugin:3.5.4` to `3.5.5`
 * Updated `org.codehaus.mojo:versions-maven-plugin:2.19.1` to `2.21.0`
