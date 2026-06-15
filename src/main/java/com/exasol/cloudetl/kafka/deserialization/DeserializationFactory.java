@@ -33,7 +33,7 @@ public final class DeserializationFactory {
             }
         }
         final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> keyDeserializer =
-                keyFieldSpecs.isEmpty() ? IgnoreKeyDeserializer$.MODULE$
+                keyFieldSpecs.isEmpty() ? FieldSpecificationSingletons.ignoreKeyDeserializer()
                         : getDeserialization(kafkaProperties.getRecordKeyFormat())
                                 .getDeserializer(kafkaProperties, ScalaCollections.seq(keyFieldSpecs));
         final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> valueDeserializer =

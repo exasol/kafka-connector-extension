@@ -58,7 +58,7 @@ public final class KafkaTopicMetadataReader {
         final List<Object> partitions = new ArrayList<>();
         try {
             consumer.partitionsFor(topic).forEach(partitionInfo -> partitions.add(partitionInfo.partition()));
-            return ScalaCollections.seq(partitions).toList();
+            return ScalaCollections.list(partitions);
         } catch (final TimeoutException exception) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-24")
                     .message(KafkaConnectorConstants.ERROR_READING_TOPIC_PARTITION, topic)
@@ -69,13 +69,15 @@ public final class KafkaTopicMetadataReader {
         } catch (final AuthorizationException exception) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-25")
                     .message(KafkaConnectorConstants.ERROR_READING_TOPIC_PARTITION, topic)
-                    .message(KafkaConnectorConstants.AUTHORIZATION_ERROR_MESSAGE + exception.getMessage())
+                    .message(KafkaConnectorConstants.AUTHORIZATION_ERROR_MESSAGE)
+                    .parameter("CAUSE", exception.getMessage())
                     .mitigation(KafkaConnectorConstants.AUTHORIZATION_ERROR_MITIGATION)
                     .toString(), exception);
         } catch (final AuthenticationException exception) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-26")
                     .message(KafkaConnectorConstants.ERROR_READING_TOPIC_PARTITION, topic)
-                    .message(KafkaConnectorConstants.AUTHENTICATION_ERROR_MESSAGE + exception.getMessage())
+                    .message(KafkaConnectorConstants.AUTHENTICATION_ERROR_MESSAGE)
+                    .parameter("CAUSE", exception.getMessage())
                     .mitigation(KafkaConnectorConstants.AUTHENTICATION_ERROR_MITIGATION)
                     .toString(), exception);
         } catch (final Throwable exception) {

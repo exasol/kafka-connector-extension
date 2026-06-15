@@ -16,6 +16,10 @@ public final class ScalaCollections {
         return scala.collection.immutable.Seq.from(CollectionConverters.asScala(values));
     }
 
+    public static <T> scala.collection.immutable.List<T> list(final List<T> values) {
+        return scala.collection.immutable.List.from(CollectionConverters.asScala(values));
+    }
+
     @SafeVarargs
     public static <T> Seq<T> seqOf(final T... values) {
         final List<T> list = new ArrayList<>();

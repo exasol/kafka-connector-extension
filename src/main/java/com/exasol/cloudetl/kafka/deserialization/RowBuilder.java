@@ -2,14 +2,13 @@ package com.exasol.cloudetl.kafka.deserialization;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
 import com.exasol.cloudetl.kafka.ScalaCollections;
 import com.exasol.errorreporting.ExaError;
-
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-
-import scala.Option;
 
 public final class RowBuilder {
     private RowBuilder() {
@@ -17,8 +16,7 @@ public final class RowBuilder {
 
     public static scala.collection.immutable.Seq<Object> buildRow(
             final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
-            final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>,
-                    scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> record,
+            final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> record,
             final int outputColumnCount) {
         final List<scala.collection.immutable.Seq<Object>> rowValues = new ArrayList<>();
         final List<Boolean> present = new ArrayList<>();
@@ -39,7 +37,7 @@ public final class RowBuilder {
             int presentColumnCount = 0;
             for (int index = 0; index < rowValues.size(); index++) {
                 if (present.get(index)) {
-                    presentColumnCount += rowValues.get(index).size();
+                    presentColumnCount += ScalaCollections.javaList(rowValues.get(index)).size();
                 }
             }
             final int valuesMissing = outputColumnCount - presentColumnCount;
@@ -63,13 +61,12 @@ public final class RowBuilder {
     }
 
     private static scala.collection.immutable.Seq<Object> getValue(final GlobalFieldSpecification spec,
-            final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>,
-                    scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> record) {
+            final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> record) {
         if (spec instanceof KeySpecification) {
             return getFromRecord(record.key(), (FieldSpecification) spec);
         } else if (spec instanceof ValueSpecification) {
             return getFromRecord(record.value(), (FieldSpecification) spec);
-        } else if (spec == TimestampField$.MODULE$) {
+        } else if (spec == FieldSpecificationSingletons.timestampField()) {
             return ScalaCollections.seqOf(record.timestamp());
         }
         throw new KafkaConnectorException(ExaError.messageBuilder("F-KCE-11")
@@ -82,9 +79,9 @@ public final class RowBuilder {
             final scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> recordPart,
             final FieldSpecification spec) {
         if (recordPart != null) {
-            final Option<scala.collection.immutable.Seq<Object>> value = recordPart.get(spec);
-            if (value.isDefined()) {
-                return value.get();
+            final Map<FieldSpecification, scala.collection.immutable.Seq<Object>> values = ScalaCollections.javaMap(recordPart);
+            if (values.containsKey(spec)) {
+                return values.get(spec);
             }
         }
         return defaultFor(spec);

@@ -157,13 +157,15 @@ public class KafkaRecordConsumer implements RecordConsumer {
         } else if (throwable instanceof AuthorizationException) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-22")
                     .message(KafkaConnectorConstants.ERROR_POLLING_TOPIC_DATA, this.topic)
-                    .message(KafkaConnectorConstants.AUTHORIZATION_ERROR_MESSAGE + throwable.getMessage())
+                    .message(KafkaConnectorConstants.AUTHORIZATION_ERROR_MESSAGE)
+                    .parameter("CAUSE", throwable.getMessage())
                     .mitigation(KafkaConnectorConstants.AUTHORIZATION_ERROR_MITIGATION)
                     .toString(), throwable);
         } else if (throwable instanceof AuthenticationException) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-23")
                     .message(KafkaConnectorConstants.ERROR_POLLING_TOPIC_DATA, this.topic)
-                    .message(KafkaConnectorConstants.AUTHENTICATION_ERROR_MESSAGE + throwable.getMessage())
+                    .message(KafkaConnectorConstants.AUTHENTICATION_ERROR_MESSAGE)
+                    .parameter("CAUSE", throwable.getMessage())
                     .mitigation(KafkaConnectorConstants.AUTHENTICATION_ERROR_MITIGATION)
                     .toString(), throwable);
         }

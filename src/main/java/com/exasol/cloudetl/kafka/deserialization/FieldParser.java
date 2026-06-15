@@ -35,15 +35,15 @@ public final class FieldParser {
     private static GlobalFieldSpecification parse(final String field) {
         switch (field) {
         case "key.*":
-            return RecordKeyFields$.MODULE$;
+            return FieldSpecificationSingletons.recordKeyFields();
         case "value.*":
-            return RecordValueFields$.MODULE$;
+            return FieldSpecificationSingletons.recordValueFields();
         case "timestamp":
-            return TimestampField$.MODULE$;
+            return FieldSpecificationSingletons.timestampField();
         case "key":
-            return RecordKey$.MODULE$;
+            return FieldSpecificationSingletons.recordKey();
         case "value":
-            return RecordValue$.MODULE$;
+            return FieldSpecificationSingletons.recordValue();
         default:
             return parseConcreteField(field);
         }
