@@ -26,22 +26,22 @@ public class GenericRecordDeserializer
     @Override
     public scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> deserialize(
             final String topic, final byte[] data) {
-        final GenericRecord record = this.deserializer.deserialize(topic, data);
-        final Schema recordSchema = record.getSchema();
+        final GenericRecord genericRecord = this.deserializer.deserialize(topic, data);
+        final Schema recordSchema = genericRecord.getSchema();
         final Map<FieldSpecification, scala.collection.immutable.Seq<Object>> result = new LinkedHashMap<>();
         for (final FieldSpecification fieldSpec : ScalaCollections.javaList(this.fieldSpecs)) {
             if (fieldSpec instanceof AllFieldsSpecification) {
                 final ArrayList<Object> values = new ArrayList<>();
                 for (final Schema.Field recordField : recordSchema.getFields()) {
-                    values.add(this.converter.convert(record.get(recordField.name()), recordField.schema()));
+                    values.add(this.converter.convert(genericRecord.get(recordField.name()), recordField.schema()));
                 }
                 result.put(fieldSpec, ScalaCollections.seq(values));
             } else if (fieldSpec instanceof ConcreteField) {
                 final Schema.Field field = recordSchema.getField(((ConcreteField) fieldSpec).fieldName());
                 result.put(fieldSpec, ScalaCollections.seqOf(field == null ? null
-                        : this.converter.convert(record.get(field.name()), field.schema())));
+                        : this.converter.convert(genericRecord.get(field.name()), field.schema())));
             } else if (fieldSpec instanceof FullRecord) {
-                result.put(fieldSpec, ScalaCollections.seqOf(this.converter.convert(record, record.getSchema())));
+                result.put(fieldSpec, ScalaCollections.seqOf(this.converter.convert(genericRecord, genericRecord.getSchema())));
             }
         }
         return ScalaCollections.immutableMap(result);

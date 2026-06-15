@@ -11,6 +11,7 @@ public final class StringDeserializationImpl {
     private StringDeserializationImpl() {
     }
 
+    @SuppressWarnings("java:S1172")
     public static Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> getDeserializer(
             final KafkaConsumerProperties properties, final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
         for (final FieldSpecification fieldSpec : ScalaCollections.javaList(fieldSpecs)) {

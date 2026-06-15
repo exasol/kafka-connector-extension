@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.exasol.ExaDataTypeException;
 import com.exasol.ExaIterator;
+import com.exasol.ExaIterationException;
 import com.exasol.cloudetl.kafka.KafkaConnectorConstants;
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
 import com.exasol.cloudetl.kafka.KafkaConsumerFactory;
@@ -80,7 +82,7 @@ public class KafkaRecordConsumer implements RecordConsumer {
                 LOGGER.info("Polled '{}' records, total '{}' records for partition '{}' in node '{}' and vm '{}'.",
                         recordCount, totalRecordCount, this.partitionId, this.nodeId, this.vmId);
             } while (shouldContinue(recordOffset, recordCount, totalRecordCount));
-        } catch (final Throwable exception) {
+        } catch (final Exception exception) {
             handleExceptions(exception);
         } finally {
             this.consumer.close();
@@ -98,22 +100,22 @@ public class KafkaRecordConsumer implements RecordConsumer {
         final DeserializationFactory.RecordDeserializers recordDeserializers =
                 DeserializationFactory.getSerializers(recordFields, this.properties);
         final KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> newConsumer = KafkaConsumerFactory.apply(this.properties,
-                recordDeserializers.keyDeserializer(), recordDeserializers.valueDeserializer());
+                recordDeserializers.getKeyDeserializer(), recordDeserializers.getValueDeserializer());
         newConsumer.assign(Arrays.asList(topicPartition));
         newConsumer.seek(topicPartition, this.partitionStartOffset);
         return newConsumer;
     }
 
     private long emitRecords(final ExaIterator iterator, final ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> records)
-            throws Exception {
+            throws ExaIterationException, ExaDataTypeException {
         long lastRecordOffset = -1L;
         final FieldConverter fieldConverter = new FieldConverter(this.outputColumnTypes);
-        for (final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> record : records) {
-            lastRecordOffset = record.offset();
-            final List<Object> metadata = List.of(record.partition(), record.offset());
+        for (final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumerRecord : records) {
+            lastRecordOffset = consumerRecord.offset();
+            final List<Object> metadata = List.of(consumerRecord.partition(), consumerRecord.offset());
             final int columnsCount = this.tableColumnCount - metadata.size();
             final List<Object> row = new ArrayList<>(
-                    ScalaCollections.javaList(RowBuilder.buildRow(this.recordFieldSpecifications, record, columnsCount)));
+                    ScalaCollections.javaList(RowBuilder.buildRow(this.recordFieldSpecifications, consumerRecord, columnsCount)));
             row.addAll(metadata);
             final scala.collection.immutable.Seq<Object> convertedRow =
                     fieldConverter.convertRow(ScalaCollections.seq(row));
@@ -141,33 +143,33 @@ public class KafkaRecordConsumer implements RecordConsumer {
         return endOffset;
     }
 
-    private void handleExceptions(final Throwable throwable) {
-        if (throwable instanceof IllegalStateException) {
+    private void handleExceptions(final Exception exception) {
+        if (exception instanceof IllegalStateException) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-20")
                     .message(KafkaConnectorConstants.ERROR_POLLING_TOPIC_DATA, this.topic)
                     .message("Consumer is not subscribed to the given topic or it is not assigned any partition of the topic.")
                     .mitigation("Please check that the Kafka topic is available and valid.")
-                    .toString(), throwable);
-        } else if (throwable instanceof InvalidTopicException) {
+                    .toString(), exception);
+        } else if (exception instanceof InvalidTopicException) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-21")
                     .message(KafkaConnectorConstants.ERROR_POLLING_TOPIC_DATA, this.topic)
                     .message("Provided topic is not valid.")
                     .mitigation("Please make sure that the Kafka topic is valid.")
-                    .toString(), throwable);
-        } else if (throwable instanceof AuthorizationException) {
+                    .toString(), exception);
+        } else if (exception instanceof AuthorizationException) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-22")
                     .message(KafkaConnectorConstants.ERROR_POLLING_TOPIC_DATA, this.topic)
                     .message(KafkaConnectorConstants.AUTHORIZATION_ERROR_MESSAGE)
-                    .parameter("CAUSE", throwable.getMessage())
+                    .parameter("CAUSE", exception.getMessage())
                     .mitigation(KafkaConnectorConstants.AUTHORIZATION_ERROR_MITIGATION)
-                    .toString(), throwable);
-        } else if (throwable instanceof AuthenticationException) {
+                    .toString(), exception);
+        } else if (exception instanceof AuthenticationException) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-23")
                     .message(KafkaConnectorConstants.ERROR_POLLING_TOPIC_DATA, this.topic)
                     .message(KafkaConnectorConstants.AUTHENTICATION_ERROR_MESSAGE)
-                    .parameter("CAUSE", throwable.getMessage())
+                    .parameter("CAUSE", exception.getMessage())
                     .mitigation(KafkaConnectorConstants.AUTHENTICATION_ERROR_MITIGATION)
-                    .toString(), throwable);
+                    .toString(), exception);
         }
         throw new KafkaConnectorException(ExaError.messageBuilder("F-KCE-4")
                 .message(KafkaConnectorConstants.ERROR_POLLING_TOPIC_DATA, this.topic)
@@ -176,7 +178,7 @@ public class KafkaRecordConsumer implements RecordConsumer {
                 .parameter("NODE_ID", String.valueOf(this.nodeId))
                 .parameter("VM_ID", this.vmId)
                 .ticketMitigation()
-                .toString(), throwable);
+                .toString(), exception);
     }
 
 }

@@ -2,16 +2,12 @@ package com.exasol.cloudetl.kafka.deserialization;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
 import com.exasol.cloudetl.kafka.ScalaCollections;
 import com.exasol.errorreporting.ExaError;
 
 public final class FieldParser {
-    private static final Pattern FIELD_REFERENCE = Pattern.compile("(key|value)\\.([\\S]+)+");
-
     private FieldParser() {
     }
 
@@ -34,35 +30,48 @@ public final class FieldParser {
 
     private static GlobalFieldSpecification parse(final String field) {
         switch (field) {
-        case "key.*":
-            return FieldSpecificationSingletons.recordKeyFields();
-        case "value.*":
-            return FieldSpecificationSingletons.recordValueFields();
-        case "timestamp":
-            return FieldSpecificationSingletons.timestampField();
-        case "key":
-            return FieldSpecificationSingletons.recordKey();
-        case "value":
-            return FieldSpecificationSingletons.recordValue();
-        default:
-            return parseConcreteField(field);
+            case "key.*":
+                return FieldSpecificationSingletons.recordKeyFields();
+            case "value.*":
+                return FieldSpecificationSingletons.recordValueFields();
+            case "timestamp":
+                return FieldSpecificationSingletons.timestampField();
+            case "key":
+                return FieldSpecificationSingletons.recordKey();
+            case "value":
+                return FieldSpecificationSingletons.recordValue();
+            default:
+                return parseConcreteField(field);
         }
     }
 
     private static GlobalFieldSpecification parseConcreteField(final String field) {
-        final Matcher matcher = FIELD_REFERENCE.matcher(field);
-        if (matcher.matches()) {
-            if ("key".equals(matcher.group(1))) {
-                return new RecordKeyField(matcher.group(2));
-            } else if ("value".equals(matcher.group(1))) {
-                return new RecordValueField(matcher.group(2));
-            }
-            throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-13")
-                    .message("Field reference can only contain 'key' or 'value' fields.")
-                    .mitigation("Please check that the provided field reference is correct.")
-                    .toString());
+        final int separator = field.indexOf('.');
+        if (separator <= 0 || separator == field.length() - 1 || hasWhitespace(field)) {
+            throw invalidFormat(field);
         }
-        throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-14")
+        final String recordPart = field.substring(0, separator);
+        final String fieldName = field.substring(separator + 1);
+        if ("key".equals(recordPart)) {
+            return new RecordKeyField(fieldName);
+        } else if ("value".equals(recordPart)) {
+            return new RecordValueField(fieldName);
+        } else {
+            throw invalidFormat(field);
+        }
+    }
+
+    private static boolean hasWhitespace(final String value) {
+        for (int index = 0; index < value.length(); index++) {
+            if (Character.isWhitespace(value.charAt(index))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static KafkaConnectorException invalidFormat(final String field) {
+        return new KafkaConnectorException(ExaError.messageBuilder("E-KCE-14")
                 .message("Field reference {{REFERENCE}} does not have the correct format.", field)
                 .mitigation("It must be one of [key, value, key.*, value.*, key.fieldName, value.fieldName, timestamp] values.")
                 .toString());

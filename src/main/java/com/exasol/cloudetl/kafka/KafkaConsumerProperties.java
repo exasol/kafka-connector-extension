@@ -131,8 +131,14 @@ public class KafkaConsumerProperties extends AbstractProperties {
     }
 
     private scala.collection.immutable.Seq<String> defaultRecordFields() {
-        final String recordField = isSingleColumnJsonEnabled() ? "value"
-                : ("avro".equals(getRecordValueFormat()) ? "value.*" : "value");
+        final String recordField;
+        if (isSingleColumnJsonEnabled()) {
+            recordField = "value";
+        } else if ("avro".equals(getRecordValueFormat())) {
+            recordField = "value.*";
+        } else {
+            recordField = "value";
+        }
         return ScalaCollections.seqOf(recordField);
     }
 

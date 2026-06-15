@@ -3,7 +3,9 @@ package com.exasol.cloudetl.kafka;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.exasol.ExaDataTypeException;
 import com.exasol.ExaIterator;
+import com.exasol.ExaIterationException;
 import com.exasol.ExaMetadata;
 import com.exasol.cloudetl.kafka.consumer.KafkaRecordConsumer;
 
@@ -18,7 +20,8 @@ public final class KafkaTopicDataImporter {
     private KafkaTopicDataImporter() {
     }
 
-    public static void run(final ExaMetadata metadata, final ExaIterator iterator) throws Exception {
+    public static void run(final ExaMetadata metadata, final ExaIterator iterator)
+            throws ExaIterationException, ExaDataTypeException {
         final KafkaConsumerProperties kafkaProperties = KafkaConsumerProperties.apply(
                 iterator.getString(KafkaConnectorConstants.KEY_VALUE_PROPERTIES_INDEX), metadata);
         final int partitionId = iterator.getInteger(PARTITION_ID_INDEX);

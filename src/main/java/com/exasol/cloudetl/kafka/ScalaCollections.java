@@ -1,8 +1,6 @@
 package com.exasol.cloudetl.kafka;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import scala.Tuple2;
 import scala.collection.immutable.Seq;
@@ -21,12 +19,9 @@ public final class ScalaCollections {
     }
 
     @SafeVarargs
+    @SuppressWarnings("varargs") // Varargs are required for this method.
     public static <T> Seq<T> seqOf(final T... values) {
-        final List<T> list = new ArrayList<>();
-        for (final T value : values) {
-            list.add(value);
-        }
-        return seq(list);
+        return seq(Arrays.asList(values));
     }
 
     public static <K, V> scala.collection.immutable.Map<K, V> immutableMap(final Map<K, V> values) {

@@ -26,7 +26,8 @@ public final class KafkaTopicMetadataReader {
     private KafkaTopicMetadataReader() {
     }
 
-    public static void run(final ExaMetadata metadata, final ExaIterator iterator) throws Exception {
+    public static void run(final ExaMetadata metadata, final ExaIterator iterator)
+            throws ExaIterationException, ExaDataTypeException {
         final KafkaConsumerProperties kafkaProperties = KafkaConsumerProperties.apply(
                 iterator.getString(KafkaConnectorConstants.KEY_VALUE_PROPERTIES_INDEX), metadata);
         final KafkaConsumer<Void, Void> kafkaConsumer = KafkaConsumerFactory.apply(kafkaProperties,
@@ -35,7 +36,7 @@ public final class KafkaTopicMetadataReader {
     }
 
     private static <K, V> void emitMetadata(final ExaIterator iterator, final KafkaConsumer<K, V> consumer,
-            final String topic) throws Exception {
+            final String topic) throws ExaIterationException, ExaDataTypeException {
         final HashMap<Integer, Long> seenPartitionOffsets = getPreviousPartitionOffsets(iterator);
         final List<Integer> topicPartitionIds = new ArrayList<>();
         for (final Object partitionId : ScalaCollections.javaList(getTopicPartitions(consumer, topic))) {
@@ -44,7 +45,8 @@ public final class KafkaTopicMetadataReader {
         emitTopicPartitionOffsets(iterator, consumer, topic, topicPartitionIds, seenPartitionOffsets);
     }
 
-    private static HashMap<Integer, Long> getPreviousPartitionOffsets(final ExaIterator iterator) throws Exception {
+    private static HashMap<Integer, Long> getPreviousPartitionOffsets(final ExaIterator iterator)
+            throws ExaIterationException, ExaDataTypeException {
         final HashMap<Integer, Long> partitionOffsets = new HashMap<>();
         do {
             partitionOffsets.put(iterator.getInteger(PREVIOUS_PARTITION_ID_INDEX),
@@ -80,7 +82,7 @@ public final class KafkaTopicMetadataReader {
                     .parameter("CAUSE", exception.getMessage())
                     .mitigation(KafkaConnectorConstants.AUTHENTICATION_ERROR_MITIGATION)
                     .toString(), exception);
-        } catch (final Throwable exception) {
+        } catch (final Exception exception) {
             throw new KafkaConnectorException(ExaError.messageBuilder("F-KCE-27")
                     .message(KafkaConnectorConstants.ERROR_READING_TOPIC_PARTITION, topic)
                     .ticketMitigation()

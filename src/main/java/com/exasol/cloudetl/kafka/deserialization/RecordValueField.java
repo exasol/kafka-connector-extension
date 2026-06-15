@@ -11,6 +11,7 @@ public final class RecordValueField extends ConcreteField implements ValueSpecif
         return new RecordValueField(fieldName);
     }
 
+    @SuppressWarnings("java:S100") // Name required for Scala compatibility. Will be removed once tests are migrated to Java.
     public String copy$default$1() {
         return fieldName();
     }

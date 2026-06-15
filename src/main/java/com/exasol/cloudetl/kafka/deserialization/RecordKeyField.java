@@ -11,6 +11,7 @@ public final class RecordKeyField extends ConcreteField implements KeySpecificat
         return new RecordKeyField(fieldName);
     }
 
+    @SuppressWarnings("java:S100") // Name required for Scala compatibility. Will be removed once tests are migrated to Java.
     public String copy$default$1() {
         return fieldName();
     }

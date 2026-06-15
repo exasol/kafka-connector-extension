@@ -32,8 +32,9 @@ final class FieldSpecificationSingletons {
 
     @SuppressWarnings("unchecked")
     static Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> ignoreKeyDeserializer() {
-        return (Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>>) loadSingleton(
-                "IgnoreKeyDeserializer$", Deserializer.class);
+        final Class<Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>>> expectedType =
+                (Class<Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>>>) (Class<?>) Deserializer.class;
+        return loadSingleton("IgnoreKeyDeserializer$", expectedType);
     }
 
     private static GlobalFieldSpecification singleton(final String className) {
