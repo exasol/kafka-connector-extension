@@ -16,6 +16,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 
 #### Test Dependency Updates
 
+* Updated `com.exasol:extension-manager-integration-test-java:0.5.16` to `0.5.20`
 * Added `nl.jqno.equalsverifier:equalsverifier:3.19.4`
 
 #### Plugin Dependency Updates

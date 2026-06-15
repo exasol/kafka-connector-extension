@@ -141,7 +141,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.16</version>
+            <version>0.5.20</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
