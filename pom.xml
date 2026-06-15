@@ -140,25 +140,31 @@
         </dependency>
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
-            <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
-            <version>8.2.0</version>
+            <artifactId>embedded-kafka_2.13</artifactId>
+            <version>4.1.0</version>
             <scope>test</scope>
-            <exclusions>
-                <!-- [CVE-2025-48734] CWE-284: Improper Access Control (8.8); https://ossindex.sonatype.org/vulnerability/CVE-2025-48734?component-type=maven&component-name=commons-beanutils%2Fcommons-beanutils&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
-                <exclusion>
-                    <groupId>commons-beanutils</groupId>
-                    <artifactId>commons-beanutils</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>ch.qos.reload4j</groupId>
-                    <artifactId>reload4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                    <artifactId>kotlin-reflect</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.github.embeddedkafka</groupId>-->
+<!--            <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>-->
+<!--            <version>8.2.0</version>-->
+<!--            <scope>test</scope>-->
+<!--            <exclusions>-->
+<!--                &lt;!&ndash; [CVE-2025-48734] CWE-284: Improper Access Control (8.8); https://ossindex.sonatype.org/vulnerability/CVE-2025-48734?component-type=maven&component-name=commons-beanutils%2Fcommons-beanutils&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 &ndash;&gt;-->
+<!--                <exclusion>-->
+<!--                    <groupId>commons-beanutils</groupId>-->
+<!--                    <artifactId>commons-beanutils</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>ch.qos.reload4j</groupId>-->
+<!--                    <artifactId>reload4j</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.jetbrains.kotlin</groupId>-->
+<!--                    <artifactId>kotlin-reflect</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
         <dependency>
             <!-- Fix CVE-2025-53864 in embedded-kafka-schema-registry transitive dependency -->
             <groupId>com.google.code.gson</groupId>
@@ -203,18 +209,18 @@
             <version>2.2.4</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.1.1</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>jakarta.xml.bind</groupId>-->
+<!--            <artifactId>jakarta.xml.bind-api</artifactId>-->
+<!--            <version>4.0.5</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>javax.ws.rs</groupId>-->
+<!--            <artifactId>javax.ws.rs-api</artifactId>-->
+<!--            <version>2.1.1</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>org.eclipse.jetty</groupId>-->
 <!--            <artifactId>jetty-server</artifactId>-->
