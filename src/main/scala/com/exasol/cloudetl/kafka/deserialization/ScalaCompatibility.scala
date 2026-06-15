@@ -1,6 +1,7 @@
 package com.exasol.cloudetl.kafka.deserialization
 
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties
+
 import org.apache.kafka.common.serialization.Deserializer
 
 object RecordKey extends KeySpecification with FullRecord
