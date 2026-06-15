@@ -33,3 +33,4 @@ and importing data from a Kafka topic into an Exasol table.
 
 * [Developer Guide](doc/development/developer_guide.md)
 * [Dependencies](dependencies.md)
+
