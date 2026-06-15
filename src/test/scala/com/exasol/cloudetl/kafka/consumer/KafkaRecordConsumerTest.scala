@@ -184,7 +184,7 @@ class KafkaRecordConsumerTest extends AnyFunSuite with BeforeAndAfterEach with M
     }
     new ConsumerRecords[FieldType, FieldType](
       JMap.of(topicPartition, records),
-      JMap.of(topicPartition, new OffsetAndMetadata(offsets[0]))
+      JMap.of(topicPartition, new OffsetAndMetadata(offsets(0)))
     )
   }
 
