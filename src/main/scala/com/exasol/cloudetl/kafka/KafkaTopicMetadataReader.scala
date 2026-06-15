@@ -51,7 +51,7 @@ object KafkaTopicMetadataReader extends LazyLogging {
     partitionOffsets
   }
 
-  private[this] def getTopicPartitions[K, V](consumer: KafkaConsumer[K, V], topic: String): List[Int] =
+  private[kafka] def getTopicPartitions[K, V](consumer: KafkaConsumer[K, V], topic: String): List[Int] =
     try {
       consumer.partitionsFor(topic).asScala.toList.map(_.partition())
     } catch {

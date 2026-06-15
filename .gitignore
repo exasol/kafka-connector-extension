@@ -83,3 +83,4 @@ pom.xml.versionsBackup
 /.testcontainers-tmp-*
 
 .settings
+/.serena/

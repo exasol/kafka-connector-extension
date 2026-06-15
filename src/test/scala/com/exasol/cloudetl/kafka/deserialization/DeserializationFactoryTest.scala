@@ -1,6 +1,7 @@
 package com.exasol.cloudetl.kafka.deserialization
 
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties
+import com.exasol.cloudetl.kafka.KafkaConnectorException
 
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -42,5 +43,14 @@ class DeserializationFactoryTest extends AnyFunSuite {
 
     assert(deserializers.keyDeserializer.isInstanceOf[JsonDeserializer])
     assert(deserializers.valueDeserializer.isInstanceOf[AsStringDeserializer])
+  }
+
+  test("must fail for unsupported record formats") {
+    val thrown = intercept[KafkaConnectorException] {
+      DeserializationFactory.getDeserialization("protobuf")
+    }
+
+    assert(thrown.getMessage.contains("E-KCE-19"))
+    assert(thrown.getMessage.contains("not supported"))
   }
 }

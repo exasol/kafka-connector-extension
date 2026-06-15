@@ -36,4 +36,12 @@ class FieldParserTest extends AnyFunSuite {
       )
     assert(FieldParser.get(fields) === expectedFields)
   }
+
+  test("must fail for invalid field references") {
+    val thrown = intercept[Exception] {
+      FieldParser.get(Seq("metadata.partition"))
+    }
+    assert(thrown.getMessage.contains("E-KCE-14"))
+    assert(thrown.getMessage.contains("does not have the correct format"))
+  }
 }
