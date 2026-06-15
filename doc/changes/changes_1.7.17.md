@@ -18,6 +18,7 @@ This release updates dependencies to fix CVEs in transient components.
 
 * Added `jakarta.xml.bind:jakarta.xml.bind-api:4.0.5`
 * Updated `org.apache.kafka:kafka-clients:3.9.1` to `4.2.0`
+* Added `org.eclipse.jetty:jetty-server:12.1.10`
 
 #### Test Dependency Updates
 

@@ -208,6 +208,11 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>4.0.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>12.1.10</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
