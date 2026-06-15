@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.opentest4j.AssertionFailedError;
 
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.dbbuilder.dialects.Table;
@@ -28,8 +29,6 @@ import com.exasol.extensionmanager.itest.base.AbstractScriptExtensionIT;
 import com.exasol.extensionmanager.itest.base.ExtensionITConfig;
 import com.exasol.extensionmanager.itest.builder.ExtensionBuilder;
 import com.exasol.matcher.TypeMatchMode;
-
-import junit.framework.AssertionFailedError;
 
 class ExtensionIT extends AbstractScriptExtensionIT {
     private static final Logger LOGGER = Logger.getLogger(ExtensionIT.class.getName());
