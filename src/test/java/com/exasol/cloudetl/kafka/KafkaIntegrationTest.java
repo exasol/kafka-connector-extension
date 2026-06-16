@@ -1,6 +1,5 @@
 package com.exasol.cloudetl.kafka;
 
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -110,7 +109,7 @@ abstract class KafkaIntegrationTest {
         return mockedIterator;
     }
 
-    String jsonMatcher(final String json) {
-        return argThat(new JsonArgumentMatcher(json));
+    JsonArgumentMatcher matchesJson(final String json) {
+        return new JsonArgumentMatcher(json);
     }
 }

@@ -78,7 +78,7 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
 
     private void verifyJson(final com.exasol.ExaIterator iterator, final String colStr, final int colInt,
             final long colLong, final long offset) throws Exception {
-        verify(iterator).emit(jsonMatcher("{\"col_str\":\"" + colStr + "\",\"col_int\":" + colInt
-                + ",\"col_long\":" + colLong + "}"), 0, offset);
+        final String expectedJson = "{\"col_str\":\"" + colStr + "\",\"col_int\":" + colInt + ",\"col_long\":" + colLong + "}";
+        verify(iterator).emit(argThat(matchesJson(expectedJson)), eq(0), eq(offset));
     }
 }
