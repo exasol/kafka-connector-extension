@@ -33,6 +33,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.9.0` to `7.9.2`
 * Added `nl.jqno.equalsverifier:equalsverifier:3.19.4`
 * Added `org.apache.kafka:kafka_2.13:3.9.2`
+* Updated `org.apache.mina:mina-core:2.2.4` to `2.2.8`
 * Added `org.apache.zookeeper:zookeeper:3.9.5`
 * Removed `org.mockito:mockito-core:5.18.0`
 * Added `org.mockito:mockito-junit-jupiter:5.18.0`
