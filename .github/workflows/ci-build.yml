@@ -34,7 +34,6 @@ jobs:
       matrix:
         exasol_db_version: [
           8.29.13
-#          8.34.0
         ]
         
     env: {
