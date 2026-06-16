@@ -2,7 +2,8 @@ package com.exasol.cloudetl.kafka;
 
 import static com.exasol.cloudetl.kafka.TestCollections.assertSeqEquals;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
@@ -10,20 +11,25 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.errors.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class KafkaTopicMetadataReaderTest {
     private static final String TOPIC = "orders";
+    @Mock
+    KafkaConsumer<Void, Void> consumerMock;
 
     @Test
     void readsTopicPartitionsAndClosesConsumer() {
-        final KafkaConsumer<Void, Void> consumer = consumer();
-        when(consumer.partitionsFor(TOPIC)).thenReturn(Arrays.asList(new PartitionInfo(TOPIC, 0, null, null, null),
+        when(consumerMock.partitionsFor(TOPIC)).thenReturn(Arrays.asList(new PartitionInfo(TOPIC, 0, null, null, null),
                 new PartitionInfo(TOPIC, 2, null, null, null)));
 
-        final var partitions = KafkaTopicMetadataReader.getTopicPartitions(consumer, TOPIC);
+        final var partitions = KafkaTopicMetadataReader.getTopicPartitions(consumerMock, TOPIC);
 
-        assertSeqEquals(Arrays.asList(0, 2), partitions);
-        verify(consumer).close();
+        assertAll(() -> assertSeqEquals(Arrays.asList(0, 2), partitions),
+                () -> verify(consumerMock).close());
     }
 
     @Test
@@ -46,32 +52,25 @@ class KafkaTopicMetadataReaderTest {
 
     @Test
     void mapsUnexpectedErrorsToConnectorException() {
-        final KafkaConsumer<Void, Void> consumer = consumer();
-        when(consumer.partitionsFor(TOPIC)).thenThrow(new IllegalStateException("boom"));
+        when(consumerMock.partitionsFor(TOPIC)).thenThrow(new IllegalStateException("boom"));
 
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
-                () -> KafkaTopicMetadataReader.getTopicPartitions(consumer, TOPIC));
+                () -> KafkaTopicMetadataReader.getTopicPartitions(consumerMock, TOPIC));
 
         assertAll(() -> assertTrue(thrown.getMessage().contains("F-KCE-27")),
-                () -> assertInstanceOf(IllegalStateException.class, thrown.getCause()));
-        verify(consumer).close();
+                () -> assertInstanceOf(IllegalStateException.class, thrown.getCause()),
+                () -> verify(consumerMock).close());
     }
 
     private void assertMappedException(final RuntimeException exception, final String errorCode,
             final String messagePart) {
-        final KafkaConsumer<Void, Void> consumer = consumer();
-        when(consumer.partitionsFor(TOPIC)).thenThrow(exception);
+        when(consumerMock.partitionsFor(TOPIC)).thenThrow(exception);
 
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
-                () -> KafkaTopicMetadataReader.getTopicPartitions(consumer, TOPIC));
+                () -> KafkaTopicMetadataReader.getTopicPartitions(consumerMock, TOPIC));
 
         assertAll(() -> assertTrue(thrown.getMessage().contains(errorCode)),
-                () -> assertTrue(thrown.getMessage().contains(messagePart)));
-        verify(consumer).close();
-    }
-
-    @SuppressWarnings("unchecked")
-    private KafkaConsumer<Void, Void> consumer() {
-        return mock(KafkaConsumer.class);
+                () -> assertTrue(thrown.getMessage().contains(messagePart)),
+                () -> verify(consumerMock).close());
     }
 }

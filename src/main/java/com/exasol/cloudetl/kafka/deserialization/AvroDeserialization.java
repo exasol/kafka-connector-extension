@@ -2,14 +2,15 @@ package com.exasol.cloudetl.kafka.deserialization;
 
 import java.util.Map;
 
+import org.apache.avro.generic.GenericRecord;
+import org.apache.kafka.common.serialization.Deserializer;
+
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
 import com.exasol.errorreporting.ExaError;
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.common.serialization.Deserializer;
 
 public final class AvroDeserialization {
     private AvroDeserialization() {

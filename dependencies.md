@@ -22,7 +22,7 @@
 
 | Dependency                                 | License                           |
 | ------------------------------------------ | --------------------------------- |
-| [mockito-core][21]                         | [MIT][22]                         |
+| [mockito-junit-jupiter][21]                | [MIT][22]                         |
 | [EqualsVerifier \| release normal jar][23] | [Apache License, Version 2.0][17] |
 | [Test containers for Exasol on Docker][24] | [MIT License][25]                 |
 | [Test Database Builder for Java][26]       | [MIT License][27]                 |

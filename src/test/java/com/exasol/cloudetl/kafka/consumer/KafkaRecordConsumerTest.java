@@ -1,7 +1,10 @@
 package com.exasol.cloudetl.kafka.consumer;
 
 import static com.exasol.cloudetl.kafka.TestCollections.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -11,13 +14,18 @@ import java.util.*;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.*;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exasol.ExaIterator;
 import com.exasol.cloudetl.kafka.*;
 import com.exasol.cloudetl.kafka.deserialization.*;
 
 @SuppressWarnings("unchecked")
+@ExtendWith(MockitoExtension.class)
 class KafkaRecordConsumerTest {
     private static final String TOPIC_NAME = "topicName";
     private static final TopicPartition TOPIC_PARTITION = new TopicPartition(TOPIC_NAME, 0);
@@ -29,88 +37,88 @@ class KafkaRecordConsumerTest {
             entry("CONSUME_ALL_OFFSETS", "true"));
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMillis(30000);
     private static final long DEFAULT_END_OFFSET = 4L;
-    private static final ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> EMPTY_CONSUMER_RECORDS =
-            new ConsumerRecords<>(Collections.emptyMap());
+    private static final ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> EMPTY_CONSUMER_RECORDS = new ConsumerRecords<>(
+            Collections.emptyMap());
 
-    private ExaIterator iterator;
-    private KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumer;
+    @Mock
+    ExaIterator iteratorMock;
+    @Mock
+    private KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumerMock;
 
     @BeforeEach
     void beforeEach() {
-        this.iterator = mock(ExaIterator.class);
-        this.consumer = mock(StubConsumer.class);
-        when(this.consumer.endOffsets(List.of(TOPIC_PARTITION))).thenReturn(Map.of(TOPIC_PARTITION, DEFAULT_END_OFFSET));
+        when(this.consumerMock.endOffsets(List.of(TOPIC_PARTITION))).thenReturn(Map.of(TOPIC_PARTITION, DEFAULT_END_OFFSET));
     }
 
     @Test
     void emitsAllRecordsUsingMinAndMaxRecordCounts() throws Exception {
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), recordBatch(2, 3));
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), recordBatch(2, 3));
         checker(MIN_MAX_THRESHOLD_PROPERTIES).assertEmitCount(4);
     }
 
     @Test
     void emitsAllRecordsUsingMinAndMaxRecordCountsWithEmptyRecords() throws Exception {
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), EMPTY_CONSUMER_RECORDS, recordBatch(2, 3));
-        when(this.consumer.position(TOPIC_PARTITION)).thenReturn(2L);
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), EMPTY_CONSUMER_RECORDS, recordBatch(2, 3));
+        when(this.consumerMock.position(TOPIC_PARTITION)).thenReturn(2L);
         checker(MIN_MAX_THRESHOLD_PROPERTIES).assertEmitCount(2);
     }
 
     @Test
     void emitsAllRecordsUsingConsumeAllOffsets() throws Exception {
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), recordBatch(2, 3));
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), recordBatch(2, 3));
         checker(CONSUME_ALL_OFFSETS_PROPERTIES).assertEmitCount(4);
     }
 
     @Test
     void emitsAllRecordsWithConsumeAllOffsetsPriorityOverMinAndMaxThresholds() throws Exception {
-        when(this.consumer.endOffsets(List.of(TOPIC_PARTITION))).thenReturn(Map.of(TOPIC_PARTITION, 8L));
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), recordBatch(2, 3), recordBatch(4, 5, 6, 7));
+        when(this.consumerMock.endOffsets(List.of(TOPIC_PARTITION))).thenReturn(Map.of(TOPIC_PARTITION, 8L));
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), recordBatch(2, 3), recordBatch(4, 5, 6, 7));
         checker(merge(MIN_MAX_THRESHOLD_PROPERTIES, CONSUME_ALL_OFFSETS_PROPERTIES)).assertEmitCount(8);
     }
 
     @Test
     void emitsAllRecordsUsingConsumeAllOffsetsWithEmptyRecordsInBetween() throws Exception {
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), EMPTY_CONSUMER_RECORDS, recordBatch(2, 3));
-        when(this.consumer.position(TOPIC_PARTITION)).thenReturn(2L);
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(recordBatch(0, 1), EMPTY_CONSUMER_RECORDS, recordBatch(2, 3));
+        when(this.consumerMock.position(TOPIC_PARTITION)).thenReturn(2L);
         checker(CONSUME_ALL_OFFSETS_PROPERTIES).assertEmitCount(4);
     }
 
     @Test
     void returnsWithoutEmittingRecordsWhenTopicIsEmpty() throws Exception {
-        when(this.consumer.endOffsets(List.of(TOPIC_PARTITION))).thenReturn(Map.of(TOPIC_PARTITION, 1L));
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS);
-        when(this.consumer.position(TOPIC_PARTITION)).thenReturn(1L);
+        when(this.consumerMock.endOffsets(List.of(TOPIC_PARTITION))).thenReturn(Map.of(TOPIC_PARTITION, 1L));
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS);
+        when(this.consumerMock.position(TOPIC_PARTITION)).thenReturn(1L);
         checker(CONSUME_ALL_OFFSETS_PROPERTIES).assertEmitCount(0);
     }
 
     @Test
     void returnsWithoutEmittingRecordsWhenAlreadyCaughtUp() throws Exception {
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS)
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS)
                 .thenThrow(new RuntimeException("test should not poll twice"));
-        when(this.consumer.position(TOPIC_PARTITION)).thenReturn(4L);
+        when(this.consumerMock.position(TOPIC_PARTITION)).thenReturn(4L);
         checker(CONSUME_ALL_OFFSETS_PROPERTIES, DEFAULT_END_OFFSET - 1).assertEmitCount(0);
     }
 
     @Test
     void returnsWithEmptyRecordsAndOffsetReset() throws Exception {
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS).thenReturn(EMPTY_CONSUMER_RECORDS);
-        when(this.consumer.position(TOPIC_PARTITION)).thenReturn(4L);
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS).thenReturn(EMPTY_CONSUMER_RECORDS);
+        when(this.consumerMock.position(TOPIC_PARTITION)).thenReturn(4L);
         checker(CONSUME_ALL_OFFSETS_PROPERTIES, 2L).assertEmitCount(0);
     }
 
     @Test
     void emitsRecordsUsingConsumeAllOffsetsWithEmptyRecordsAndOffsetReset() throws Exception {
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS).thenReturn(EMPTY_CONSUMER_RECORDS)
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS).thenReturn(EMPTY_CONSUMER_RECORDS)
                 .thenReturn(recordBatch(2, 3));
-        when(this.consumer.position(TOPIC_PARTITION)).thenReturn(2L);
+        when(this.consumerMock.position(TOPIC_PARTITION)).thenReturn(2L);
         checker(CONSUME_ALL_OFFSETS_PROPERTIES).assertEmitCount(2);
     }
 
     @Test
     void emitsRecordsUsingConsumeAllOffsetsWithEmptyRecordsAndOffsetResetToFirst() throws Exception {
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS).thenReturn(EMPTY_CONSUMER_RECORDS)
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenReturn(EMPTY_CONSUMER_RECORDS).thenReturn(EMPTY_CONSUMER_RECORDS)
                 .thenReturn(recordBatch(2, 3));
-        when(this.consumer.position(TOPIC_PARTITION)).thenReturn(1L);
+        when(this.consumerMock.position(TOPIC_PARTITION)).thenReturn(1L);
         checker(CONSUME_ALL_OFFSETS_PROPERTIES).assertEmitCount(2);
     }
 
@@ -135,10 +143,11 @@ class KafkaRecordConsumerTest {
     }
 
     private void assertExpectedException(final Exception exception, final String errorCode, final String cause) {
-        when(this.consumer.poll(DEFAULT_TIMEOUT)).thenThrow(exception);
-        final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
-                () -> checker(CONSUME_ALL_OFFSETS_PROPERTIES).assertEmitCount(1));
+        when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenThrow(exception);
+        final KafkaImportChecker checker = checker(CONSUME_ALL_OFFSETS_PROPERTIES);
+        final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class, () -> checker.assertEmitCount(1));
         assertTrue(thrown.getMessage().startsWith(errorCode));
+        assertThat(thrown.getMessage(), startsWith(errorCode));
         if (cause != null) {
             assertTrue(thrown.getMessage().contains(cause));
         }
@@ -146,8 +155,7 @@ class KafkaRecordConsumerTest {
 
     private ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> recordBatch(
             final long... offsets) {
-        final List<ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>>> records =
-                new ArrayList<>();
+        final List<ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>>> records = new ArrayList<>();
         for (final long offset : offsets) {
             records.add(new ConsumerRecord<>(TOPIC_NAME, 0, offset,
                     map(entry(RecordKey.INSTANCE, seq("key"))), map(entry(RecordValue.INSTANCE, seq(String.valueOf(offset))))));
@@ -185,8 +193,8 @@ class KafkaRecordConsumerTest {
 
         void assertEmitCount(final int count) throws Exception {
             final var properties = new KafkaConsumerProperties(merge(DEFAULT_PROPERTIES, this.additionalProperties));
-            new TestKafkaRecordConsumer(properties, this.startOffset).emit(iterator);
-            verify(iterator, times(count)).emit(any(Object[].class));
+            new TestKafkaRecordConsumer(properties, this.startOffset).emit(iteratorMock);
+            verify(iteratorMock, times(count)).emit(any(Object[].class));
         }
     }
 
@@ -197,14 +205,7 @@ class KafkaRecordConsumerTest {
 
         @Override
         protected KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> getRecordConsumer() {
-            return consumer;
-        }
-    }
-
-    @SuppressWarnings("serial")
-    private static class StubConsumer extends KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> {
-        StubConsumer(final Properties properties) {
-            super(properties);
+            return consumerMock;
         }
     }
 }

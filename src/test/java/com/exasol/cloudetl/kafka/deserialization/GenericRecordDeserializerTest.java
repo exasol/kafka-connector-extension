@@ -2,19 +2,25 @@ package com.exasol.cloudetl.kafka.deserialization;
 
 import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.util.*;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
-import org.apache.avro.generic.*;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.generic.GenericRecordBuilder;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exasol.cloudetl.kafka.JsonArgumentMatcher;
 
+@ExtendWith(MockitoExtension.class)
 class GenericRecordDeserializerTest {
     private final Schema schema = SchemaBuilder.record("test").fields()
             .optionalString("field1")
@@ -22,12 +28,13 @@ class GenericRecordDeserializerTest {
             .name("complex").type(SchemaBuilder.array().items().intType()).withDefault(Collections.emptyList())
             .endRecord();
 
+    @Mock
+    Deserializer<GenericRecord> delegateMock;
+
     private scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> extractFrom(
-            final GenericRecord record, final scala.collection.immutable.Seq<FieldSpecification> fieldList) {
-        @SuppressWarnings("unchecked")
-        final Deserializer<GenericRecord> delegate = mock(Deserializer.class);
-        when(delegate.deserialize(anyString(), any(byte[].class))).thenReturn(record);
-        return new GenericRecordDeserializer(fieldList, delegate).deserialize("", new byte[0]);
+            final GenericRecord genericRecord, final scala.collection.immutable.Seq<FieldSpecification> fieldList) {
+        when(delegateMock.deserialize(anyString(), any(byte[].class))).thenReturn(genericRecord);
+        return new GenericRecordDeserializer(fieldList, delegateMock).deserialize("", new byte[0]);
     }
 
     @Test

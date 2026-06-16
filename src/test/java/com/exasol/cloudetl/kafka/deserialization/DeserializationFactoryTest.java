@@ -3,12 +3,12 @@ package com.exasol.cloudetl.kafka.deserialization;
 import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
-import org.apache.kafka.common.serialization.*;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.Test;
 
-import com.exasol.cloudetl.kafka.*;
+import com.exasol.cloudetl.kafka.KafkaConnectorException;
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -64,11 +64,9 @@ class DeserializationFactoryTest {
 
     @Test
     void recordDeserializersEqualsAndHashCodeFollowContract() {
-        @SuppressWarnings("unchecked")
-        final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> red =
-                IgnoreKeyDeserializer.INSTANCE;
-        final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> black =
-                new JsonDeserializer(seq(new RecordValueField("field")), new StringDeserializer());
+        final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> red = IgnoreKeyDeserializer.INSTANCE;
+        final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> black = new JsonDeserializer(
+                seq(new RecordValueField("field")), new StringDeserializer());
 
         EqualsVerifier.forClass(DeserializationFactory.RecordDeserializers.class)
                 .withPrefabValues(Deserializer.class, red, black)

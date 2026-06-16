@@ -21,6 +21,8 @@ This release includes internal refactoring. It migrates the source code from Sca
 * Updated `com.exasol:extension-manager-integration-test-java:0.5.16` to `0.5.20`
 * Removed `com.sksamuel.avro4s:avro4s-core_2.13:4.1.2`
 * Added `nl.jqno.equalsverifier:equalsverifier:3.19.4`
+* Removed `org.mockito:mockito-core:5.18.0`
+* Added `org.mockito:mockito-junit-jupiter:5.18.0`
 * Removed `org.scalatestplus:scalatestplus-mockito_2.13:1.0.0-SNAP5`
 * Removed `org.scalatest:scalatest_2.13:3.3.0-SNAP4`
 

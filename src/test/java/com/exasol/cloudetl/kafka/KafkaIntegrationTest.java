@@ -1,23 +1,25 @@
 package com.exasol.cloudetl.kafka;
 
-import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.producer.*;
-import org.apache.kafka.common.serialization.*;
+import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.*;
 
 import com.exasol.ExaIterator;
 
-import io.github.embeddedkafka.schemaregistry.*;
+import io.github.embeddedkafka.schemaregistry.EmbeddedKafka;
+import io.github.embeddedkafka.schemaregistry.EmbeddedKafkaConfig;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class KafkaIntegrationTest {
+abstract class KafkaIntegrationTest {
     static final String BOOTSTRAP_SERVERS = "localhost:6001";
     static final String SCHEMA_REGISTRY_URL = "http://localhost:6002";
 
@@ -76,12 +78,12 @@ class KafkaIntegrationTest {
         publishToKafka(new ProducerRecord<>(topicName, value), new StringSerializer());
     }
 
-    <T> void publishToKafka(final ProducerRecord<String, T> record, final Serializer<T> valueSerializer) {
+    <T> void publishToKafka(final ProducerRecord<String, T> producerRecord, final Serializer<T> valueSerializer) {
         final Properties producerProperties = new Properties();
         producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
         producerProperties.put(ProducerConfig.CLIENT_ID_CONFIG, "consumer-group");
         try (Producer<String, T> producer = new KafkaProducer<>(producerProperties, new StringSerializer(), valueSerializer)) {
-            producer.send(record);
+            producer.send(producerRecord);
             producer.flush();
         }
     }
