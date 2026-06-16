@@ -1,13 +1,14 @@
 package com.exasol.cloudetl.kafka;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 
 class KafkaTopicDataImporterJsonToJsonIT extends KafkaIntegrationTest {
     @Override
@@ -29,9 +30,7 @@ class KafkaTopicDataImporterJsonToJsonIT extends KafkaIntegrationTest {
                 iterator);
 
         assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
-                () -> verify(iterator).emit(jsonMatcher(inputRecord1), ArgumentMatchers.eq(Integer.valueOf(0)),
-                        ArgumentMatchers.eq(Long.valueOf(0))),
-                () -> verify(iterator).emit(jsonMatcher(inputRecord2), ArgumentMatchers.eq(Integer.valueOf(0)),
-                        ArgumentMatchers.eq(Long.valueOf(1))));
+                () -> verify(iterator).emit(jsonMatcher(inputRecord1), Integer.valueOf(0), Long.valueOf(0)),
+                () -> verify(iterator).emit(jsonMatcher(inputRecord2), Integer.valueOf(0), Long.valueOf(1)));
     }
 }

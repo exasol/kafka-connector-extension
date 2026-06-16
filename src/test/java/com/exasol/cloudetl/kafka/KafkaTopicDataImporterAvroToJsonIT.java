@@ -2,12 +2,12 @@ package com.exasol.cloudetl.kafka;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 
 class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
     @Test
@@ -78,8 +78,7 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
 
     private void verifyJson(final com.exasol.ExaIterator iterator, final String colStr, final int colInt,
             final long colLong, final long offset) throws Exception {
-        verify(iterator).emit(jsonMatcher("{\"col_str\":\"" + colStr + "\",\"col_int\":" + colInt
-                + ",\"col_long\":" + colLong + "}"), ArgumentMatchers.eq(Integer.valueOf(0)),
-                ArgumentMatchers.eq(Long.valueOf(offset)));
+        verify(iterator).emit(jsonMatcher("{\"col_str\":\"" + colStr + "\",\"col_int\":" + colInt + ",\"col_long\":" + colLong + "}"), Integer.valueOf(0),
+                Long.valueOf(offset));
     }
 }
