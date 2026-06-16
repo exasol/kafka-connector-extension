@@ -137,13 +137,6 @@
             <artifactId>extension-manager-integration-test-java</artifactId>
             <version>0.5.20</version>
             <scope>test</scope>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    &lt;!&ndash; Fix CVE-2017-10355 &ndash;&gt;-->
-<!--                    <groupId>xerces</groupId>-->
-<!--                    <artifactId>xercesImpl</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
@@ -208,6 +201,13 @@
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
             <version>2.2.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Update to fix CVE-2024-29371 -->
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.13</artifactId>
+            <version>3.9.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

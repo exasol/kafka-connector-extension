@@ -35,6 +35,7 @@
 | [Testcontainers :: Kafka][36]              | [MIT][37]                                 |
 | [Maven Project Version Getter][38]         | [MIT License][39]                         |
 | [Apache MINA Core][40]                     | [Apache 2.0 License][17]                  |
+| [Apache Kafka][6]                          | [The Apache License, Version 2.0][7]      |
 
 ### Plugin Dependencies
 
