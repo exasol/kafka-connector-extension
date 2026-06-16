@@ -17,6 +17,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 #### Compile Dependency Updates
 
 * Updated `ch.qos.logback:logback-classic:1.5.20` to `1.5.34`
+* Updated `com.exasol:import-export-udf-common-scala:2.0.1` to `2.0.2`
 * Updated `io.confluent:kafka-avro-serializer:7.9.0` to `7.9.2`
 * Updated `org.apache.kafka:kafka-clients:3.9.1` to `3.9.2`
 
@@ -29,6 +30,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 * Added `junit:junit:4.13.2`
 * Added `nl.jqno.equalsverifier:equalsverifier:3.19.4`
 * Added `org.apache.kafka:kafka_2.13:3.9.2`
+* Added `org.apache.zookeeper:zookeeper:3.9.5`
 
 #### Plugin Dependency Updates
 
