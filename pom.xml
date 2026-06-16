@@ -270,8 +270,6 @@
                         <exclude>CVE-2023-36479</exclude>
                         <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
                         <exclude>CVE-2024-6763</exclude>
-                        <!-- Already fixed in JDBC driver >= 24.2.1 but not property updated in OSS Index. -->
-                        <exclude>CVE-2024-55551</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
@@ -286,24 +284,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.itsallcode</groupId>
-                <artifactId>openfasttrace-maven-plugin</artifactId>
-                <version>2.3.0</version>
-                <executions>
-                    <execution>
-                        <id>trace-requirements</id>
-                        <goals>
-                            <goal>trace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <reportOutputFormat>html</reportOutputFormat>
-                    <reportVerbosity>ALL</reportVerbosity>
-                    <reportShowOrigin>true</reportShowOrigin>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -363,15 +343,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.exasol</groupId>
-                <artifactId>artifact-reference-checker-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>/.metals/**/*</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>

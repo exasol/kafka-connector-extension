@@ -42,6 +42,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 * Updated `org.apache.maven.plugins:maven-resources-plugin:3.3.1` to `3.5.0`
 * Updated `org.apache.maven.plugins:maven-surefire-plugin:3.5.4` to `3.5.5`
 * Updated `org.codehaus.mojo:versions-maven-plugin:2.19.1` to `2.21.0`
+* Removed `org.itsallcode:openfasttrace-maven-plugin:2.3.0`
 * Removed `org.scalastyle:scalastyle-maven-plugin:1.0.0`
 * Removed `org.scalatest:scalatest-maven-plugin:2.2.0`
 * Updated `org.sonarsource.scanner.maven:sonar-maven-plugin:5.2.0.4988` to `5.5.0.6356`

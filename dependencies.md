@@ -50,19 +50,18 @@
 | [Apache Maven Artifact Plugin][49]                      | [Apache-2.0][17]                            |
 | [Apache Maven Assembly Plugin][50]                      | [Apache-2.0][17]                            |
 | [Apache Maven JAR Plugin][51]                           | [Apache-2.0][17]                            |
-| [Project Keeper Maven plugin][52]                       | [The MIT License][53]                       |
-| [OpenFastTrace Maven Plugin][54]                        | [GNU General Public License v3.0][55]       |
-| [Exec Maven Plugin][56]                                 | [Apache License 2][17]                      |
-| [Artifact reference checker and unifier][57]            | [MIT License][58]                           |
-| [Maven Failsafe Plugin][59]                             | [Apache-2.0][17]                            |
-| [JaCoCo :: Maven Plugin][60]                            | [EPL-2.0][61]                               |
-| [Quality Summarizer Maven Plugin][62]                   | [MIT License][63]                           |
-| [error-code-crawler-maven-plugin][64]                   | [MIT License][65]                           |
-| [Git Commit Id Maven Plugin][66]                        | [GNU Lesser General Public License 3.0][67] |
-| [Apache Maven Clean Plugin][68]                         | [Apache-2.0][17]                            |
-| [Apache Maven Resources Plugin][69]                     | [Apache-2.0][17]                            |
-| [Apache Maven Install Plugin][70]                       | [Apache-2.0][17]                            |
-| [Apache Maven Site Plugin][71]                          | [Apache-2.0][17]                            |
+| [Artifact reference checker and unifier][52]            | [MIT License][53]                           |
+| [Maven Failsafe Plugin][54]                             | [Apache-2.0][17]                            |
+| [JaCoCo :: Maven Plugin][55]                            | [EPL-2.0][56]                               |
+| [Quality Summarizer Maven Plugin][57]                   | [MIT License][58]                           |
+| [error-code-crawler-maven-plugin][59]                   | [MIT License][60]                           |
+| [Git Commit Id Maven Plugin][61]                        | [GNU Lesser General Public License 3.0][62] |
+| [Project Keeper Maven plugin][63]                       | [The MIT License][64]                       |
+| [Exec Maven Plugin][65]                                 | [Apache License 2][17]                      |
+| [Apache Maven Clean Plugin][66]                         | [Apache-2.0][17]                            |
+| [Apache Maven Resources Plugin][67]                     | [Apache-2.0][17]                            |
+| [Apache Maven Install Plugin][68]                       | [Apache-2.0][17]                            |
+| [Apache Maven Site Plugin][69]                          | [Apache-2.0][17]                            |
 
 ## Extension
 
@@ -70,7 +69,7 @@
 
 | Dependency                                | License |
 | ----------------------------------------- | ------- |
-| [@exasol/extension-manager-interface][72] | MIT     |
+| [@exasol/extension-manager-interface][70] | MIT     |
 
 [0]: https://www.scala-lang.org/
 [1]: https://www.apache.org/licenses/LICENSE-2.0
@@ -124,24 +123,22 @@
 [49]: https://maven.apache.org/plugins/maven-artifact-plugin/
 [50]: https://maven.apache.org/plugins/maven-assembly-plugin/
 [51]: https://maven.apache.org/plugins/maven-jar-plugin/
-[52]: https://github.com/exasol/project-keeper/
-[53]: https://github.com/exasol/project-keeper/blob/main/LICENSE
-[54]: https://github.com/itsallcode/openfasttrace-maven-plugin
-[55]: https://www.gnu.org/licenses/gpl-3.0.html
-[56]: https://www.mojohaus.org/exec-maven-plugin
-[57]: https://github.com/exasol/artifact-reference-checker-maven-plugin/
-[58]: https://github.com/exasol/artifact-reference-checker-maven-plugin/blob/main/LICENSE
-[59]: https://maven.apache.org/surefire/maven-failsafe-plugin/
-[60]: https://www.jacoco.org/jacoco/trunk/doc/maven.html
-[61]: https://www.eclipse.org/legal/epl-2.0/
-[62]: https://github.com/exasol/quality-summarizer-maven-plugin/
-[63]: https://github.com/exasol/quality-summarizer-maven-plugin/blob/main/LICENSE
-[64]: https://github.com/exasol/error-code-crawler-maven-plugin/
-[65]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
-[66]: https://github.com/git-commit-id/git-commit-id-maven-plugin
-[67]: http://www.gnu.org/licenses/lgpl-3.0.txt
-[68]: https://maven.apache.org/plugins/maven-clean-plugin/
-[69]: https://maven.apache.org/plugins/maven-resources-plugin/
-[70]: https://maven.apache.org/plugins/maven-install-plugin/
-[71]: https://maven.apache.org/plugins/maven-site-plugin/
-[72]: https://registry.npmjs.org/@exasol/extension-manager-interface/-/extension-manager-interface-0.5.0.tgz
+[52]: https://github.com/exasol/artifact-reference-checker-maven-plugin/
+[53]: https://github.com/exasol/artifact-reference-checker-maven-plugin/blob/main/LICENSE
+[54]: https://maven.apache.org/surefire/maven-failsafe-plugin/
+[55]: https://www.jacoco.org/jacoco/trunk/doc/maven.html
+[56]: https://www.eclipse.org/legal/epl-2.0/
+[57]: https://github.com/exasol/quality-summarizer-maven-plugin/
+[58]: https://github.com/exasol/quality-summarizer-maven-plugin/blob/main/LICENSE
+[59]: https://github.com/exasol/error-code-crawler-maven-plugin/
+[60]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
+[61]: https://github.com/git-commit-id/git-commit-id-maven-plugin
+[62]: http://www.gnu.org/licenses/lgpl-3.0.txt
+[63]: https://github.com/exasol/project-keeper/
+[64]: https://github.com/exasol/project-keeper/blob/main/LICENSE
+[65]: https://www.mojohaus.org/exec-maven-plugin
+[66]: https://maven.apache.org/plugins/maven-clean-plugin/
+[67]: https://maven.apache.org/plugins/maven-resources-plugin/
+[68]: https://maven.apache.org/plugins/maven-install-plugin/
+[69]: https://maven.apache.org/plugins/maven-site-plugin/
+[70]: https://registry.npmjs.org/@exasol/extension-manager-interface/-/extension-manager-interface-0.5.0.tgz
