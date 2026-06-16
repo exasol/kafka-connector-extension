@@ -58,7 +58,6 @@ This release includes internal refactoring. It migrates the source code from Sca
 * Updated `com.exasol:extension-manager-integration-test-java:0.5.16` to `0.5.20`
 * Removed `com.sksamuel.avro4s:avro4s-core_2.13:4.1.2`
 * Updated `io.confluent:kafka-streams-avro-serde:7.9.0` to `7.9.5`
-* Added `io.confluent:rest-utils:7.9.5`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.9.0` to `7.9.2`
 * Added `nl.jqno.equalsverifier:equalsverifier:3.19.4`
 * Added `org.apache.kafka:kafka_2.13:3.9.2`

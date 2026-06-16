@@ -153,13 +153,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <!-- Update to fix CVE-2024-6763 -->
-            <groupId>io.confluent</groupId>
-            <artifactId>rest-utils</artifactId>
-            <version>7.9.5</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            &lt;!&ndash; Update to fix CVE-2024-6763 &ndash;&gt;-->
+<!--            <groupId>io.confluent</groupId>-->
+<!--            <artifactId>rest-utils</artifactId>-->
+<!--            <version>7.9.5</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
             <!-- Fix CVE-2025-53864 in embedded-kafka-schema-registry transitive dependency -->
             <groupId>com.google.code.gson</groupId>
