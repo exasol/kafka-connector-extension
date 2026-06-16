@@ -6,15 +6,16 @@ sources:
       - integration_tests
   - type: npm
     path: extension/package.json
+    artifacts:
+      - dist/kafka-connector-extension.js
 version:
   fromSource: pom.xml
 build:
   runnerOs: ubuntu-24.04
   freeDiskSpace: true
   exasolDbVersions:
-    - "8.29.10"
-    - "8.34.0" # Added to test support for TIMESTAMP without nano precision.
-    # - "7.1.30" # Exasol 7.1.x does not yet support t Ubuntu versions later than 20.04
+    - "2026.1.0"
+    - "2025.1.10"
   workflows:
     - name: ci-build.yml
       stepCustomizations:

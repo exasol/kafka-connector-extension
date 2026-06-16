@@ -1,7 +1,11 @@
 package com.exasol.cloudetl.kafka.deserialization
 
+import com.exasol.cloudetl.kafka.KafkaConnectorException
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties
 
+import nl.jqno.equalsverifier.EqualsVerifier
+import org.apache.kafka.common.serialization.Deserializer
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.scalatest.funsuite.AnyFunSuite
 
 class DeserializationFactoryTest extends AnyFunSuite {
@@ -36,11 +40,34 @@ class DeserializationFactoryTest extends AnyFunSuite {
     val params = Map("RECORD_KEY_FORMAT" -> "json", "RECORD_VALUE_FORMAT" -> "string")
     val properties = new KafkaConsumerProperties(params)
     val deserializers = DeserializationFactory.getSerializers(
-      Seq(RecordKeyField("someField"), RecordValue),
+      Seq(new RecordKeyField("someField"), RecordValue),
       properties
     )
 
     assert(deserializers.keyDeserializer.isInstanceOf[JsonDeserializer])
     assert(deserializers.valueDeserializer.isInstanceOf[AsStringDeserializer])
+  }
+
+  test("must fail for unsupported record formats") {
+    val thrown = intercept[KafkaConnectorException] {
+      DeserializationFactory.getDeserialization("protobuf")
+    }
+
+    assert(thrown.getMessage.contains("E-KCE-19"))
+    assert(thrown.getMessage.contains("not supported"))
+  }
+
+  test("equals and hashCode of record deserializers must follow the contract") {
+    val red =
+      IgnoreKeyDeserializer.asInstanceOf[Deserializer[Map[FieldSpecification, Seq[Any]]]]
+    val black = new JsonDeserializer(
+      Seq(new RecordValueField("field")),
+      new StringDeserializer
+    ).asInstanceOf[Deserializer[Map[FieldSpecification, Seq[Any]]]]
+
+    EqualsVerifier
+      .forClass(classOf[DeserializationFactory.RecordDeserializers])
+      .withPrefabValues(classOf[Deserializer[?]], red, black)
+      .verify()
   }
 }

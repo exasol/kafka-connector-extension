@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.opentest4j.AssertionFailedError;
 
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.dbbuilder.dialects.Table;
@@ -28,8 +29,6 @@ import com.exasol.extensionmanager.itest.base.AbstractScriptExtensionIT;
 import com.exasol.extensionmanager.itest.base.ExtensionITConfig;
 import com.exasol.extensionmanager.itest.builder.ExtensionBuilder;
 import com.exasol.matcher.TypeMatchMode;
-
-import junit.framework.AssertionFailedError;
 
 class ExtensionIT extends AbstractScriptExtensionIT {
     private static final Logger LOGGER = Logger.getLogger(ExtensionIT.class.getName());
@@ -47,10 +46,10 @@ class ExtensionIT extends AbstractScriptExtensionIT {
     static void setup() throws FileNotFoundException, BucketAccessException, TimeoutException, SQLException,
             ExecutionException, InterruptedException {
         if (System.getProperty("com.exasol.dockerdb.image") == null) {
-            System.setProperty("com.exasol.dockerdb.image", "8.32.0");
+            System.setProperty("com.exasol.dockerdb.image", "2026.1.0");
         }
         exasolTestSetup = new ExasolTestSetupFactory(Paths.get("no-cloud-setup")).getTestSetup();
-        ExasolVersionCheck.assumeExasolVersion8(exasolTestSetup);
+        ExasolVersionCheck.assumeSupportedExasolVersion(exasolTestSetup);
         setup = ExtensionManagerSetup.create(exasolTestSetup, ExtensionBuilder.createDefaultNpmBuilder(
                 EXTENSION_SOURCE_DIR, EXTENSION_SOURCE_DIR.resolve("dist").resolve(EXTENSION_ID)));
         exasolTestSetup.getDefaultBucket().uploadFile(ADAPTER_JAR, ADAPTER_JAR.getFileName().toString());
@@ -92,7 +91,7 @@ class ExtensionIT extends AbstractScriptExtensionIT {
 
     @Override
     protected ExtensionITConfig createConfig() {
-        final String previousVersion = "1.7.1";
+        final String previousVersion = "1.7.4";
         final String previousVersionJarFile = "exasol-kafka-connector-extension-" + previousVersion + ".jar";
         return ExtensionITConfig.builder().projectName("kafka-connector-extension")
                 .currentVersion(IntegrationTestConstants.PROJECT_VERSION).extensionId(EXTENSION_ID)

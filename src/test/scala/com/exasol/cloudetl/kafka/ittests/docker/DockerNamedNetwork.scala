@@ -3,6 +3,7 @@ package com.exasol.cloudetl.kafka
 import java.util.concurrent.ConcurrentHashMap
 
 import com.typesafe.scalalogging.LazyLogging
+import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import org.testcontainers.DockerClientFactory
@@ -17,7 +18,7 @@ import org.testcontainers.containers.Network
  * @param name name of the docker network
  * @param reuse boolean value to indicate reusability
  */
-class DockerNamedNetwork(name: String, reuse: Boolean) extends Network with LazyLogging {
+class DockerNamedNetwork(name: String, reuse: Boolean) extends Network with TestRule with LazyLogging {
 
   private[this] val id = getNetworkId()
 
@@ -35,7 +36,7 @@ class DockerNamedNetwork(name: String, reuse: Boolean) extends Network with Lazy
     }
 
   override def apply(base: Statement, description: Description): Statement =
-    throw new UnsupportedOperationException()
+    base
 
   private[this] def getNetworkId(): String = {
     val network = DockerClientFactory

@@ -13,7 +13,7 @@ class JsonDeserializerTest extends AnyFunSuite {
 
   test("must deserialize json record with primitives") {
     val row = new JsonDeserializer(
-      Seq(RecordValueField("number"), RecordValueField("string"), RecordValueField("bool")),
+      Seq(new RecordValueField("number"), new RecordValueField("string"), new RecordValueField("bool")),
       new StringDeserializer
     ).deserialize(
       "randomTopic",
@@ -26,16 +26,16 @@ class JsonDeserializerTest extends AnyFunSuite {
     )
 
     val expected = Map(
-      RecordValueField("number") -> Seq(1),
-      RecordValueField("string") -> Seq("hello"),
-      RecordValueField("bool") -> Seq(true)
+      new RecordValueField("number") -> Seq(1),
+      new RecordValueField("string") -> Seq("hello"),
+      new RecordValueField("bool") -> Seq(true)
     )
     assert(row === expected)
   }
 
   test("must convert complex json type to its string representation") {
     val row = new JsonDeserializer(
-      Seq(RecordValueField("number"), RecordValueField("record")),
+      Seq(new RecordValueField("number"), new RecordValueField("record")),
       new StringDeserializer
     ).deserialize(
       "randomTopic",
@@ -50,15 +50,15 @@ class JsonDeserializerTest extends AnyFunSuite {
     )
 
     val expected = Map(
-      RecordValueField("number") -> Seq(1),
-      RecordValueField("record") -> Seq("""{"field1":"value1","field2":23}""")
+      new RecordValueField("number") -> Seq(1),
+      new RecordValueField("record") -> Seq("""{"field1":"value1","field2":23}""")
     )
     assert(row === expected)
   }
 
   test("must only use fields provided to deserializer in the right order") {
     val row = new JsonDeserializer(
-      Seq(RecordValueField("record"), RecordValueField("number")),
+      Seq(new RecordValueField("record"), new RecordValueField("number")),
       new StringDeserializer
     ).deserialize(
       "randomTopic",
@@ -77,15 +77,15 @@ class JsonDeserializerTest extends AnyFunSuite {
     )
 
     val expected = Map(
-      RecordValueField("number") -> Seq(1),
-      RecordValueField("record") -> Seq("""{"field1":"value1","field2":23}""")
+      new RecordValueField("number") -> Seq(1),
+      new RecordValueField("record") -> Seq("""{"field1":"value1","field2":23}""")
     )
     assert(row === expected)
   }
 
   test("must provide null values for fields not present") {
     val row = new JsonDeserializer(
-      Seq(RecordValueField("number"), RecordValueField("always_null_field")),
+      Seq(new RecordValueField("number"), new RecordValueField("always_null_field")),
       new StringDeserializer
     ).deserialize(
       "randomTopic",
@@ -96,8 +96,8 @@ class JsonDeserializerTest extends AnyFunSuite {
     )
 
     val expected = Map(
-      RecordValueField("number") -> Seq(1),
-      RecordValueField("always_null_field") -> Seq(null)
+      new RecordValueField("number") -> Seq(1),
+      new RecordValueField("always_null_field") -> Seq(null)
     )
     assert(row === expected)
   }
