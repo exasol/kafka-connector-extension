@@ -1,12 +1,14 @@
 # Kafka Connector Extension 1.7.17, released 2026-??-??
 
-Code name:
+Code name: Migrate to Java
 
 ## Summary
 
-## Features
+This release includes internal refactoring. It migrates the source code from Scala to Java to simplify development. It also improves test coverage.
 
-* ISSUE_NUMBER: description
+## Refactoring
+
+* #195: Migrate production code from Scala to Java
 
 ## Dependency Updates
 
@@ -20,9 +22,12 @@ Code name:
 
 #### Test Dependency Updates
 
+* Updated `com.exasol:exasol-testcontainers:7.1.7` to `7.3.0`
 * Updated `com.exasol:extension-manager-integration-test-java:0.5.16` to `0.5.20`
 * Updated `io.confluent:kafka-streams-avro-serde:7.9.0` to `7.9.2`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.9.0` to `7.9.2`
+* Added `junit:junit:4.13.2`
+* Added `nl.jqno.equalsverifier:equalsverifier:3.19.4`
 * Added `org.apache.kafka:kafka_2.13:3.9.2`
 
 #### Plugin Dependency Updates
@@ -34,6 +39,7 @@ Code name:
 * Updated `org.apache.maven.plugins:maven-compiler-plugin:3.14.1` to `3.15.0`
 * Updated `org.apache.maven.plugins:maven-failsafe-plugin:3.5.4` to `3.5.5`
 * Updated `org.apache.maven.plugins:maven-jar-plugin:3.4.2` to `3.5.0`
+* Removed `org.apache.maven.plugins:maven-javadoc-plugin:3.11.2`
 * Updated `org.apache.maven.plugins:maven-resources-plugin:3.3.1` to `3.5.0`
 * Updated `org.apache.maven.plugins:maven-surefire-plugin:3.5.4` to `3.5.5`
 * Updated `org.codehaus.mojo:versions-maven-plugin:2.19.1` to `2.21.0`

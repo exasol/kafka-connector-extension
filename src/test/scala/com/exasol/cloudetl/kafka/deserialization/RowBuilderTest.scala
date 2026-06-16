@@ -65,8 +65,8 @@ class RowBuilderTest extends AnyFunSuite with MockitoSugar {
 
   test("must emit null for values for concrete fields") {
     val row = RowBuilder.buildRow(
-      Seq(RecordValueField("field1"), RecordValueField("field2")),
-      record(null, Map(RecordValueField("field1") -> Seq("value1"))),
+      Seq(new RecordValueField("field1"), new RecordValueField("field2")),
+      record(null, Map(new RecordValueField("field1") -> Seq("value1"))),
       0
     )
     assert(row === Seq("value1", null))
