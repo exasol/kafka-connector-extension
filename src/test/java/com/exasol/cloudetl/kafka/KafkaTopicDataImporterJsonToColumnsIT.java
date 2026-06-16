@@ -1,5 +1,6 @@
 package com.exasol.cloudetl.kafka;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -28,9 +29,10 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
 
         KafkaTopicDataImporter.run(metadata, iterator);
 
-        verify(iterator, times(2)).emit(any(Object[].class));
-        verify(iterator).emit("val1", Integer.valueOf(11), "{\"field\":\"value\"}", Integer.valueOf(0), Long.valueOf(0));
-        verify(iterator).emit("val2", Integer.valueOf(22), null, Integer.valueOf(0), Long.valueOf(1));
+        assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
+                () -> verify(iterator).emit("val1", Integer.valueOf(11), "{\"field\":\"value\"}",
+                        Integer.valueOf(0), Long.valueOf(0)),
+                () -> verify(iterator).emit("val2", Integer.valueOf(22), null, Integer.valueOf(0), Long.valueOf(1)));
     }
 
     static ExaMetadata mockMetadata(final Class<?>... outputColumnTypes) throws Exception {

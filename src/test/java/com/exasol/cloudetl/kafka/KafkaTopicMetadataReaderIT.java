@@ -29,10 +29,10 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
         final var iterator = mockExasolIterator(this.properties, List.of(0), List.of(-1L));
         KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator);
 
-        verify(iterator, times(3)).emit(anyInt(), anyLong());
-        for (int partitionId = 0; partitionId < 3; partitionId++) {
-            verify(iterator).emit(Integer.valueOf(partitionId), Long.valueOf(-1));
-        }
+        assertAll(() -> verify(iterator, times(3)).emit(anyInt(), anyLong()),
+                () -> verify(iterator).emit(Integer.valueOf(0), Long.valueOf(-1)),
+                () -> verify(iterator).emit(Integer.valueOf(1), Long.valueOf(-1)),
+                () -> verify(iterator).emit(Integer.valueOf(2), Long.valueOf(-1)));
     }
 
     @Test
@@ -41,10 +41,10 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
         final var iterator = mockExasolIterator(this.properties, List.of(0, 1), List.of(3L, 4L));
         KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator);
 
-        verify(iterator, times(3)).emit(anyInt(), anyLong());
-        verify(iterator).emit(Integer.valueOf(0), Long.valueOf(3));
-        verify(iterator).emit(Integer.valueOf(1), Long.valueOf(4));
-        verify(iterator).emit(Integer.valueOf(2), Long.valueOf(-1));
+        assertAll(() -> verify(iterator, times(3)).emit(anyInt(), anyLong()),
+                () -> verify(iterator).emit(Integer.valueOf(0), Long.valueOf(3)),
+                () -> verify(iterator).emit(Integer.valueOf(1), Long.valueOf(4)),
+                () -> verify(iterator).emit(Integer.valueOf(2), Long.valueOf(-1)));
     }
 
     @Test
@@ -53,9 +53,9 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
         final var iterator = mockExasolIterator(this.properties, List.of(1, 3), List.of(7L, 17L));
         KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator);
 
-        verify(iterator, times(2)).emit(anyInt(), anyLong());
-        verify(iterator).emit(Integer.valueOf(0), Long.valueOf(-1));
-        verify(iterator).emit(Integer.valueOf(1), Long.valueOf(7));
+        assertAll(() -> verify(iterator, times(2)).emit(anyInt(), anyLong()),
+                () -> verify(iterator).emit(Integer.valueOf(0), Long.valueOf(-1)),
+                () -> verify(iterator).emit(Integer.valueOf(1), Long.valueOf(7)));
     }
 
     @Test

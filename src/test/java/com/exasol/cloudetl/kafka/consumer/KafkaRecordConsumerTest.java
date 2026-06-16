@@ -3,6 +3,7 @@ package com.exasol.cloudetl.kafka.consumer;
 import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -146,10 +147,11 @@ class KafkaRecordConsumerTest {
         when(this.consumerMock.poll(DEFAULT_TIMEOUT)).thenThrow(exception);
         final KafkaImportChecker checker = checker(CONSUME_ALL_OFFSETS_PROPERTIES);
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class, () -> checker.assertEmitCount(1));
-        assertTrue(thrown.getMessage().startsWith(errorCode));
-        assertThat(thrown.getMessage(), startsWith(errorCode));
         if (cause != null) {
-            assertTrue(thrown.getMessage().contains(cause));
+            assertAll(() -> assertThat(thrown.getMessage(), startsWith(errorCode)),
+                    () -> assertTrue(thrown.getMessage().contains(cause)));
+        } else {
+            assertThat(thrown.getMessage(), startsWith(errorCode));
         }
     }
 

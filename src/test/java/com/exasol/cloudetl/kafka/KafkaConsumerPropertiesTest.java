@@ -41,8 +41,8 @@ class KafkaConsumerPropertiesTest {
         final var consumer = KafkaConsumerPropertiesSupport.create(KafkaConsumerPropertiesSupport
                 .create(ScalaCollections.immutableMap(this.properties)).mkString());
 
-        assertEquals("", consumer.getSSLEndpointIdentificationAlgorithm());
-        assertEquals("", consumer.getGroupId());
+        assertAll(() -> assertEquals("", consumer.getSSLEndpointIdentificationAlgorithm()),
+                () -> assertEquals("", consumer.getGroupId()));
     }
 
     @Test
@@ -136,29 +136,29 @@ class KafkaConsumerPropertiesTest {
 
     @Test
     void sslAndSaslAreDisabledIfSecurityProtocolIsNotSet() {
-        assertFalse(base().isSSLEnabled());
-        assertFalse(base().isSASLEnabled());
+        assertAll(() -> assertFalse(base().isSSLEnabled()),
+                () -> assertFalse(base().isSASLEnabled()));
     }
 
     @Test
     void sslIsEnabledAndSaslIsDisabledIfSecurityProtocolIsSsl() {
         this.properties.put("SECURITY_PROTOCOL", "SSL");
-        assertTrue(base().isSSLEnabled());
-        assertFalse(base().isSASLEnabled());
+        assertAll(() -> assertTrue(base().isSSLEnabled()),
+                () -> assertFalse(base().isSASLEnabled()));
     }
 
     @Test
     void sslIsDisabledAndSaslIsEnabledIfSecurityProtocolIsSaslPlaintext() {
         this.properties.put("SECURITY_PROTOCOL", "SASL_PLAINTEXT");
-        assertFalse(base().isSSLEnabled());
-        assertTrue(base().isSASLEnabled());
+        assertAll(() -> assertFalse(base().isSSLEnabled()),
+                () -> assertTrue(base().isSASLEnabled()));
     }
 
     @Test
     void sslIsDisabledAndSaslIsEnabledIfSecurityProtocolIsSaslSsl() {
         this.properties.put("SECURITY_PROTOCOL", "SASL_SSL");
-        assertFalse(base().isSSLEnabled());
-        assertTrue(base().isSASLEnabled());
+        assertAll(() -> assertFalse(base().isSSLEnabled()),
+                () -> assertTrue(base().isSASLEnabled()));
     }
 
     @Test
@@ -456,15 +456,15 @@ class KafkaConsumerPropertiesTest {
 
         final var props = KafkaConsumerPropertiesSupport.create(map(entry("CONNECTION_NAME", "MY_CONNECTION")), metadata);
 
-        assertEquals("localhost:1000", props.getBootstrapServers());
-        assertEquals("http://n11:1001", props.getSchemaRegistryUrl());
+        assertAll(() -> assertEquals("localhost:1000", props.getBootstrapServers()),
+                () -> assertEquals("http://n11:1001", props.getSchemaRegistryUrl()));
     }
 
     @Test
     void applyReturnsSslEnabledConsumerProperties() throws Exception {
         final var props = getSecurityEnabledConsumerProperties("SSL", this.dummyKeystoreFile, this.dummyTruststoreFile, null);
-        assertEquals(this.dummyKeystoreFile.toString(), props.getSSLKeystoreLocation());
-        assertEquals(this.dummyTruststoreFile.toString(), props.getSSLTruststoreLocation());
+        assertAll(() -> assertEquals(this.dummyKeystoreFile.toString(), props.getSSLKeystoreLocation()),
+                () -> assertEquals(this.dummyTruststoreFile.toString(), props.getSSLTruststoreLocation()));
     }
 
     @Test
@@ -488,9 +488,9 @@ class KafkaConsumerPropertiesTest {
     void applyOptionallyChecksKeystoreAndTruststoreFilesWithSslSaslProtocol() throws Exception {
         final var props = getSecurityEnabledConsumerProperties("SASL_SSL", this.dummyKeystoreFile,
                 this.dummyTruststoreFile, null);
-        assertTrue(props.getSASLJaasConfig().contains("\"pass\""));
-        assertEquals(this.dummyKeystoreFile.toString(), props.getSSLKeystoreLocation());
-        assertEquals(this.dummyTruststoreFile.toString(), props.getSSLTruststoreLocation());
+        assertAll(() -> assertTrue(props.getSASLJaasConfig().contains("\"pass\"")),
+                () -> assertEquals(this.dummyKeystoreFile.toString(), props.getSSLKeystoreLocation()),
+                () -> assertEquals(this.dummyTruststoreFile.toString(), props.getSSLTruststoreLocation()));
     }
 
     @Test
@@ -523,18 +523,18 @@ class KafkaConsumerPropertiesTest {
     void getPropertiesContainsKeystoreAndTruststoreFilesWithSslSaslProtocol() throws Exception {
         final Map<String, Object> props = getSecurityEnabledConsumerProperties("SASL_SSL", this.dummyKeystoreFile,
                 this.dummyTruststoreFile, null).getProperties();
-        assertEquals(this.dummyKeystoreFile.toString(), props.get(SSL_KEYSTORE_LOCATION.kafkaPropertyName()));
-        assertEquals(this.dummyTruststoreFile.toString(), props.get(SSL_TRUSTSTORE_LOCATION.kafkaPropertyName()));
+        assertAll(() -> assertEquals(this.dummyKeystoreFile.toString(), props.get(SSL_KEYSTORE_LOCATION.kafkaPropertyName())),
+                () -> assertEquals(this.dummyTruststoreFile.toString(), props.get(SSL_TRUSTSTORE_LOCATION.kafkaPropertyName())));
     }
 
     @Test
     void getPropertiesContainsSslRelatedInformationWithSslSaslProtocol() throws Exception {
         final Map<String, Object> props = getSecurityEnabledConsumerProperties("SASL_SSL", null, null, null)
                 .getProperties();
-        assertEquals("kpw", getSecurityEnabledConsumerProperties("SASL_SSL", null, null, null).getProperties()
-                .get(SSL_KEY_PASSWORD.kafkaPropertyName()));
-        assertEquals("kspw", props.get(SSL_KEYSTORE_PASSWORD.kafkaPropertyName()));
-        assertEquals("tspw", props.get(SSL_TRUSTSTORE_PASSWORD.kafkaPropertyName()));
+        assertAll(() -> assertEquals("kpw", getSecurityEnabledConsumerProperties("SASL_SSL", null, null, null)
+                .getProperties().get(SSL_KEY_PASSWORD.kafkaPropertyName())),
+                () -> assertEquals("kspw", props.get(SSL_KEYSTORE_PASSWORD.kafkaPropertyName())),
+                () -> assertEquals("tspw", props.get(SSL_TRUSTSTORE_PASSWORD.kafkaPropertyName())));
     }
 
     @Test

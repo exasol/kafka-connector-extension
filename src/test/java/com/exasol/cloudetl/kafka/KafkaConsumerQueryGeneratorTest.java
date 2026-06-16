@@ -50,9 +50,9 @@ class KafkaConsumerQueryGeneratorTest {
 
         final String generatedSql = KafkaConsumerQueryGenerator.generateSqlForImportSpec(this.support.metadata,
                 this.support.importSpec);
-        assertEquals(expectedSqlStatement, generatedSql);
-        verify(this.support.metadata, atLeastOnce()).getScriptSchema();
-        verify(this.support.importSpec, times(1)).getParameters();
+        assertAll(() -> assertEquals(expectedSqlStatement, generatedSql),
+                () -> verify(this.support.metadata, atLeastOnce()).getScriptSchema(),
+                () -> verify(this.support.importSpec, times(1)).getParameters());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.exasol.cloudetl.kafka;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -20,11 +21,11 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
         final var iterator = mockExasolIterator(newProperties, List.of(0), List.of(-1L));
         KafkaTopicDataImporter.run(metadata(), iterator);
 
-        verify(iterator, times(3)).emit(any(Object[].class));
-        verify(iterator, times(3)).emit(anyString(), anyInt(), anyLong());
-        verifyJson(iterator, "{'Value':'abc'}", 3, 13, 0);
-        verifyJson(iterator, "{'Value':'hello'}", 4, 14, 1);
-        verifyJson(iterator, "{'Value':'xyz'}", 5, 15, 2);
+        assertAll(() -> verify(iterator, times(3)).emit(any(Object[].class)),
+                () -> verify(iterator, times(3)).emit(anyString(), anyInt(), anyLong()),
+                () -> verifyJson(iterator, "{'Value':'abc'}", 3, 13, 0),
+                () -> verifyJson(iterator, "{'Value':'hello'}", 4, 14, 1),
+                () -> verifyJson(iterator, "{'Value':'xyz'}", 5, 15, 2));
     }
 
     @Test
@@ -39,10 +40,10 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
         final var iterator = mockExasolIterator(newProperties, List.of(0), List.of(1L));
         KafkaTopicDataImporter.run(metadata(), iterator);
 
-        verify(iterator, times(2)).emit(any(Object[].class));
-        verify(iterator, times(2)).emit(anyString(), anyInt(), anyLong());
-        verifyJson(iterator, "{'Value':'def'}", 7, 17, 2);
-        verifyJson(iterator, "{'Value':'xyz'}", 13, 23, 3);
+        assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
+                () -> verify(iterator, times(2)).emit(anyString(), anyInt(), anyLong()),
+                () -> verifyJson(iterator, "{'Value':'def'}", 7, 17, 2),
+                () -> verifyJson(iterator, "{'Value':'xyz'}", 13, 23, 3));
     }
 
     @Test
@@ -61,8 +62,8 @@ class KafkaTopicDataImporterAvroToJsonIT extends KafkaTopicDataImporterAvroIT {
         final var iterator = mockExasolIterator(newProperties, List.of(0), List.of(-1L));
         KafkaTopicDataImporter.run(metadata(), iterator);
 
-        verify(iterator, times(4)).emit(any(Object[].class));
-        verify(iterator, times(4)).emit(anyString(), anyInt(), anyLong());
+        assertAll(() -> verify(iterator, times(4)).emit(any(Object[].class)),
+                () -> verify(iterator, times(4)).emit(anyString(), anyInt(), anyLong()));
     }
 
     private Map<String, String> withProperty(final String key, final String value) {

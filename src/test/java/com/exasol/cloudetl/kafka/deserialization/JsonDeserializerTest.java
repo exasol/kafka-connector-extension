@@ -65,11 +65,13 @@ class JsonDeserializerTest {
 
         final var row = deserialize(seq(RecordValue.INSTANCE), sourceRecord);
 
-        assertEquals(1, javaMap(row).size());
-        assertTrue(javaMap(row).containsKey(RecordValue.INSTANCE));
-        final var values = javaList(javaMap(row).get(RecordValue.INSTANCE));
-        assertEquals(1, values.size());
-        assertEquals(JsonArgumentMatcher.readJson(sourceRecord), JsonArgumentMatcher.readJson((String) values.get(0)));
+        final var javaRow = javaMap(row);
+        final var values = javaList(javaRow.get(RecordValue.INSTANCE));
+        assertAll(() -> assertEquals(1, javaRow.size()),
+                () -> assertTrue(javaRow.containsKey(RecordValue.INSTANCE)),
+                () -> assertEquals(1, values.size()),
+                () -> assertEquals(JsonArgumentMatcher.readJson(sourceRecord),
+                        JsonArgumentMatcher.readJson((String) values.get(0))));
     }
 
     private scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> deserialize(

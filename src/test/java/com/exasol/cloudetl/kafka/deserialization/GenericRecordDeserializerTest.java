@@ -86,13 +86,13 @@ class GenericRecordDeserializerTest {
                 seq(RecordValue.INSTANCE));
 
         final var javaRow = javaMap(row);
-        assertEquals(1, javaRow.size());
-        assertTrue(javaRow.containsKey(RecordValue.INSTANCE));
         final var values = javaList(javaRow.get(RecordValue.INSTANCE));
-        assertEquals(1, values.size());
-        assertInstanceOf(String.class, values.get(0));
-
         final String expectedJson = "{\"field1\":\"val1\",\"field2\":11,\"complex\":[1,2,3]}";
-        assertEquals(JsonArgumentMatcher.readJson(expectedJson), JsonArgumentMatcher.readJson((String) values.get(0)));
+        assertAll(() -> assertEquals(1, javaRow.size()),
+                () -> assertTrue(javaRow.containsKey(RecordValue.INSTANCE)),
+                () -> assertEquals(1, values.size()),
+                () -> assertInstanceOf(String.class, values.get(0)),
+                () -> assertEquals(JsonArgumentMatcher.readJson(expectedJson),
+                        JsonArgumentMatcher.readJson((String) values.get(0))));
     }
 }

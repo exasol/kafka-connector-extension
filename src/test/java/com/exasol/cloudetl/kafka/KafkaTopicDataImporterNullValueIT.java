@@ -1,5 +1,6 @@
 package com.exasol.cloudetl.kafka;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -26,8 +27,8 @@ class KafkaTopicDataImporterNullValueIT extends KafkaIntegrationTest {
         KafkaTopicDataImporter.run(KafkaTopicDataImporterJsonToColumnsIT.mockMetadata(Object.class, Object.class, Integer.class, Long.class),
                 iterator);
 
-        verify(iterator, times(2)).emit(any(Object[].class));
-        verify(iterator).emit(null, null, Integer.valueOf(0), Long.valueOf(0));
-        verify(iterator).emit(null, null, Integer.valueOf(0), Long.valueOf(1));
+        assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
+                () -> verify(iterator).emit(null, null, Integer.valueOf(0), Long.valueOf(0)),
+                () -> verify(iterator).emit(null, null, Integer.valueOf(0), Long.valueOf(1)));
     }
 }

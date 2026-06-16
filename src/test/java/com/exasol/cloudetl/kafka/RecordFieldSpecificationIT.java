@@ -74,10 +74,10 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
         publishAvro(this.topic, "theKey", null);
         final List<Object> values = getEmittedValues("key, timestamp, value",
                 List.of(String.class, Long.class, Object.class));
-        assertEquals(3, values.size());
-        assertEquals("theKey", values.get(0));
-        assertInstanceOf(Long.class, values.get(1));
-        assertNull(values.get(2));
+        assertAll(() -> assertEquals(3, values.size()),
+                () -> assertEquals("theKey", values.get(0)),
+                () -> assertInstanceOf(Long.class, values.get(1)),
+                () -> assertNull(values.get(2)));
     }
 
     @Test

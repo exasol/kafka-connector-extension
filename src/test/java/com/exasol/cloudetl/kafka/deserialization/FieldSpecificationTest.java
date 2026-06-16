@@ -19,8 +19,8 @@ class FieldSpecificationTest {
 
     @Test
     void timestampFieldBehavesAsSingletonForEqualsAndHashCode() {
-        assertEquals(TimestampField.INSTANCE, TimestampField.INSTANCE);
-        assertEquals(TimestampField.INSTANCE.hashCode(), TimestampField.INSTANCE.hashCode());
-        assertNotEquals(null, TimestampField.INSTANCE);
+        assertAll(() -> assertEquals(TimestampField.INSTANCE, TimestampField.INSTANCE),
+                () -> assertEquals(TimestampField.INSTANCE.hashCode(), TimestampField.INSTANCE.hashCode()),
+                () -> assertNotEquals(null, TimestampField.INSTANCE));
     }
 }
