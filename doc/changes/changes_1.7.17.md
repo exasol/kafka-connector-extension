@@ -9,6 +9,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 ## Refactoring
 
 * #195: Migrate production code from Scala to Java
+* #196: Migrate test code from Scala to Java
 
 ## Dependency Updates
 

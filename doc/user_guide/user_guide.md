@@ -83,8 +83,7 @@ Create an assembled jar file,
 mvn package
 ```
 
-The packaged jar file should be located at
-`target/exasol-kafka-connector-extension-1.7.17.jar`.
+The packaged jar file should be located at `target/exasol-kafka-connector-extension-1.7.17.jar`.
 
 ### Create an Exasol BucketFS Bucket
 
