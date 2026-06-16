@@ -173,18 +173,25 @@
             </exclusions>
         </dependency>
         <dependency>
-            <!-- Fix CVE-2025-53864 in embedded-kafka-schema-registry transitive dependency -->
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.13.1</version>
+            <!-- Update to fix CVE-2024-6763 -->
+            <groupId>io.confluent</groupId>
+            <artifactId>rest-utils</artifactId>
+            <version>8.2.1</version>
+            <scope>test</scope>
         </dependency>
-        <!-- [CVE-2025-1948] CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion') (8.7); https://ossindex.sonatype.org/vulnerability/CVE-2025-1948?component-type=maven&component-name=org.eclipse.jetty.http2%2Fhttp2-common&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
-        <!-- Lock down Jetty to the 9.x branch -->
-        <dependency>
-            <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>http2-common</artifactId>
-            <version>9.4.58.v20250814</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            &lt;!&ndash; Fix CVE-2025-53864 in embedded-kafka-schema-registry transitive dependency &ndash;&gt;-->
+<!--            <groupId>com.google.code.gson</groupId>-->
+<!--            <artifactId>gson</artifactId>-->
+<!--            <version>2.13.1</version>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; [CVE-2025-1948] CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion') (8.7); https://ossindex.sonatype.org/vulnerability/CVE-2025-1948?component-type=maven&component-name=org.eclipse.jetty.http2%2Fhttp2-common&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 &ndash;&gt;-->
+<!--        &lt;!&ndash; Lock down Jetty to the 9.x branch &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.eclipse.jetty.http2</groupId>-->
+<!--            <artifactId>http2-common</artifactId>-->
+<!--            <version>9.4.58.v20250814</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>

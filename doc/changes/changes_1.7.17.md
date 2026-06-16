@@ -18,14 +18,17 @@ This release includes internal refactoring. It migrates the source code from Sca
 
 * Updated `ch.qos.logback:logback-classic:1.5.20` to `1.5.34`
 * Updated `com.exasol:import-export-udf-common-scala:2.0.1` to `2.0.2`
+* Removed `com.google.code.gson:gson:2.13.1`
 * Updated `io.confluent:kafka-avro-serializer:7.9.0` to `7.9.2`
 * Updated `org.apache.kafka:kafka-clients:3.9.1` to `3.9.2`
+* Removed `org.eclipse.jetty.http2:http2-common:9.4.58.v20250814`
 
 #### Test Dependency Updates
 
 * Updated `com.exasol:exasol-testcontainers:7.1.7` to `7.3.0`
 * Updated `com.exasol:extension-manager-integration-test-java:0.5.16` to `0.5.20`
 * Updated `io.confluent:kafka-streams-avro-serde:7.9.0` to `7.9.2`
+* Added `io.confluent:rest-utils:8.2.1`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.9.0` to `7.9.2`
 * Added `junit:junit:4.13.2`
 * Added `nl.jqno.equalsverifier:equalsverifier:3.19.4`
