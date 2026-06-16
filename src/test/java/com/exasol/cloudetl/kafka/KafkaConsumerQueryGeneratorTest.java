@@ -1,5 +1,7 @@
 package com.exasol.cloudetl.kafka;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -79,6 +81,6 @@ class KafkaConsumerQueryGeneratorTest {
         final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> KafkaConsumerQueryGenerator.generateSqlForImportSpec(this.support.metadata, this.support.importSpec));
 
-        assertTrue(thrown.getMessage().contains(expectedMessage));
+        assertThat(thrown.getMessage(), containsString(expectedMessage));
     }
 }

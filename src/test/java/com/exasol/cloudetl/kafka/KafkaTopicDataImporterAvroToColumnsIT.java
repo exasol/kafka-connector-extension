@@ -1,5 +1,7 @@
 package com.exasol.cloudetl.kafka;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -73,9 +75,9 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
         newProperties.put("MIN_RECORDS_PER_RUN", "2");
         newProperties.put("MAX_RECORDS_PER_RUN", "4");
         createCustomTopic(this.topic);
-        for (final AvroRecord record : List.of(new AvroRecord("abc", 3, 13), new AvroRecord("hello", 4, 14),
+        for (final AvroRecord avroRecord : List.of(new AvroRecord("abc", 3, 13), new AvroRecord("hello", 4, 14),
                 new AvroRecord("def", 7, 17), new AvroRecord("xyz", 13, 23), new AvroRecord("last", 11, 22))) {
-            publishAvro(this.topic, record);
+            publishAvro(this.topic, avroRecord);
         }
 
         final var iterator = runImporter(newProperties, List.of(-1L));
@@ -112,8 +114,10 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> KafkaTopicDataImporter.run(metadata(), iterator));
 
-        assertAll(() -> assertTrue(thrown.getMessage().contains("Error polling for Kafka topic '" + this.topic + "' data. ")),
-                () -> assertTrue(thrown.getMessage().contains("It occurs for partition '0' in node '0' and vm")));
+        assertAll(() -> assertThat(thrown.getMessage(),
+                containsString("Error polling for Kafka topic '" + this.topic + "' data. ")),
+                () -> assertThat(thrown.getMessage(),
+                        containsString("It occurs for partition '0' in node '0' and vm")));
     }
 
     private ExaIterator runImporter(final Map<String, String> properties, final List<Long> offsets) throws Exception {

@@ -1,7 +1,11 @@
 package com.exasol.cloudetl.kafka;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
@@ -68,21 +72,21 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator));
 
-        assertTrue(thrown.getMessage().contains("Could not create a Kafka consumer for topic"));
+        assertThat(thrown.getMessage(), containsString("Could not create a Kafka consumer for topic"));
     }
 
     @Test
-    void catchesWhenEmitThrowsExaDataTypeException() throws Exception {
+    void catchesWhenEmitThrowsExaDataTypeException() {
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> emitThrowsAnException(ExaDataTypeException.class));
-        assertTrue(thrown.getMessage().contains("Error emitting metadata information for topic"));
+        assertThat(thrown.getMessage(), containsString("Error emitting metadata information for topic"));
     }
 
     @Test
-    void catchesWhenEmitThrowsExaIterationException() throws Exception {
+    void catchesWhenEmitThrowsExaIterationException() {
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> emitThrowsAnException(ExaIterationException.class));
-        assertTrue(thrown.getMessage().contains("Error iterating Exasol metadata iterator for topic"));
+        assertThat(thrown.getMessage(), containsString("Error iterating Exasol metadata iterator for topic"));
     }
 
     private <T extends Throwable> void emitThrowsAnException(final Class<T> exception) throws Exception {

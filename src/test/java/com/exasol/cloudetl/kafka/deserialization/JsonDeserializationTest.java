@@ -1,6 +1,8 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
 import static com.exasol.cloudetl.kafka.TestCollections.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
@@ -22,7 +24,7 @@ class JsonDeserializationTest {
                 () -> JsonDeserialization.getDeserializer(new KafkaConsumerProperties(map()),
                         seq(RecordValueFields.INSTANCE)));
 
-        assertAll(() -> assertTrue(thrown.getMessage().contains("E-KCE-16")),
-                () -> assertTrue(thrown.getMessage().contains("not supported for JSON")));
+        assertAll(() -> assertThat(thrown.getMessage(), containsString("E-KCE-16")),
+                () -> assertThat(thrown.getMessage(), containsString("not supported for JSON")));
     }
 }

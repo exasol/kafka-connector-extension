@@ -1,6 +1,8 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
 import static com.exasol.cloudetl.kafka.TestCollections.seq;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
@@ -36,7 +38,7 @@ class FieldParserTest {
     void failsForInvalidFieldReferences() {
         final Exception thrown = assertThrows(Exception.class, () -> FieldParser.get(seq("metadata.partition")));
 
-        assertAll(() -> assertTrue(thrown.getMessage().contains("E-KCE-14")),
-                () -> assertTrue(thrown.getMessage().contains("does not have the correct format")));
+        assertAll(() -> assertThat(thrown.getMessage(), containsString("E-KCE-14")),
+                () -> assertThat(thrown.getMessage(), containsString("does not have the correct format")));
     }
 }

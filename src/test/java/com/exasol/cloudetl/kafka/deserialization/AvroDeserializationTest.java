@@ -1,6 +1,8 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
 import static com.exasol.cloudetl.kafka.TestCollections.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
@@ -23,7 +25,7 @@ class AvroDeserializationTest {
                 () -> AvroDeserialization.getDeserializer(new KafkaConsumerProperties(map()),
                         seq(new RecordValueField("amount"))));
 
-        assertAll(() -> assertTrue(thrown.getMessage().contains("E-KCE-17")),
-                () -> assertTrue(thrown.getMessage().contains("Schema Registry URL is missing")));
+        assertAll(() -> assertThat(thrown.getMessage(), containsString("E-KCE-17")),
+                () -> assertThat(thrown.getMessage(), containsString("Schema Registry URL is missing")));
     }
 }

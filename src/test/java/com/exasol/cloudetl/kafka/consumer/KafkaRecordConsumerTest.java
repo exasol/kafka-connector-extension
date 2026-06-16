@@ -2,10 +2,10 @@ package com.exasol.cloudetl.kafka.consumer;
 
 import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -149,7 +149,7 @@ class KafkaRecordConsumerTest {
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class, () -> checker.assertEmitCount(1));
         if (cause != null) {
             assertAll(() -> assertThat(thrown.getMessage(), startsWith(errorCode)),
-                    () -> assertTrue(thrown.getMessage().contains(cause)));
+                    () -> assertThat(thrown.getMessage(), containsString(cause)));
         } else {
             assertThat(thrown.getMessage(), startsWith(errorCode));
         }

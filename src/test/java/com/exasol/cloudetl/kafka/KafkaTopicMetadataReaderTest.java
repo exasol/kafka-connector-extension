@@ -1,6 +1,8 @@
 package com.exasol.cloudetl.kafka;
 
 import static com.exasol.cloudetl.kafka.TestCollections.assertSeqEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,7 +59,7 @@ class KafkaTopicMetadataReaderTest {
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> KafkaTopicMetadataReader.getTopicPartitions(consumerMock, TOPIC));
 
-        assertAll(() -> assertTrue(thrown.getMessage().contains("F-KCE-27")),
+        assertAll(() -> assertThat(thrown.getMessage(), containsString("F-KCE-27")),
                 () -> assertInstanceOf(IllegalStateException.class, thrown.getCause()),
                 () -> verify(consumerMock).close());
     }
@@ -69,8 +71,8 @@ class KafkaTopicMetadataReaderTest {
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> KafkaTopicMetadataReader.getTopicPartitions(consumerMock, TOPIC));
 
-        assertAll(() -> assertTrue(thrown.getMessage().contains(errorCode)),
-                () -> assertTrue(thrown.getMessage().contains(messagePart)),
+        assertAll(() -> assertThat(thrown.getMessage(), containsString(errorCode)),
+                () -> assertThat(thrown.getMessage(), containsString(messagePart)),
                 () -> verify(consumerMock).close());
     }
 }

@@ -2,6 +2,8 @@ package com.exasol.cloudetl.kafka;
 
 import static com.exasol.cloudetl.kafka.KafkaConsumerProperties.*;
 import static com.exasol.cloudetl.kafka.TestCollections.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -187,7 +189,7 @@ class KafkaConsumerPropertiesTest {
         final var avroProperties = map(entry("BOOTSTRAP_SERVERS", "server"), entry("RECORD_FORMAT", "avro"));
         final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> KafkaConsumerPropertiesSupport.create(avroProperties).getProperties());
-        assertTrue(thrown.getMessage().contains(errorMessage("SCHEMA_REGISTRY_URL")));
+        assertThat(thrown.getMessage(), containsString(errorMessage("SCHEMA_REGISTRY_URL")));
     }
 
     @Test
@@ -442,7 +444,8 @@ class KafkaConsumerPropertiesTest {
                 () -> KafkaConsumerPropertiesSupport.create(map(entry("SECURITY_PROTOCOL", "SSL"),
                         entry("SSL_KEY_PASSWORD", "PASSWORD")), mock(ExaMetadata.class)));
 
-        assertTrue(thrown.getMessage().contains("Please use a named Exasol connection object to provide secure properties."));
+        assertThat(thrown.getMessage(),
+                containsString("Please use a named Exasol connection object to provide secure properties."));
     }
 
     @Test
@@ -488,7 +491,7 @@ class KafkaConsumerPropertiesTest {
     void applyOptionallyChecksKeystoreAndTruststoreFilesWithSslSaslProtocol() throws Exception {
         final var props = getSecurityEnabledConsumerProperties("SASL_SSL", this.dummyKeystoreFile,
                 this.dummyTruststoreFile, null);
-        assertAll(() -> assertTrue(props.getSASLJaasConfig().contains("\"pass\"")),
+        assertAll(() -> assertThat(props.getSASLJaasConfig(), containsString("\"pass\"")),
                 () -> assertEquals(this.dummyKeystoreFile.toString(), props.getSSLKeystoreLocation()),
                 () -> assertEquals(this.dummyTruststoreFile.toString(), props.getSSLTruststoreLocation()));
     }
@@ -543,8 +546,9 @@ class KafkaConsumerPropertiesTest {
 
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class, () -> properties.getProperties());
 
-        assertAll(() -> assertTrue(thrown.getMessage().contains("Unable to find the custom krb5.conf file")),
-                () -> assertTrue(thrown.getMessage().contains("Please make sure it is successfully uploaded to BucketFS bucket")));
+        assertAll(() -> assertThat(thrown.getMessage(), containsString("Unable to find the custom krb5.conf file")),
+                () -> assertThat(thrown.getMessage(),
+                        containsString("Please make sure it is successfully uploaded to BucketFS bucket")));
 
     }
 
@@ -559,8 +563,9 @@ class KafkaConsumerPropertiesTest {
             final Path krb5Conf, final String expectedMessage) {
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> getSecurityEnabledConsumerProperties(protocol, keyStore, trustStore, krb5Conf));
-        assertAll(() -> assertTrue(thrown.getMessage().contains(expectedMessage)),
-                () -> assertTrue(thrown.getMessage().contains("Please make sure it is successfully uploaded to BucketFS bucket")));
+        assertAll(() -> assertThat(thrown.getMessage(), containsString(expectedMessage)),
+                () -> assertThat(thrown.getMessage(),
+                        containsString("Please make sure it is successfully uploaded to BucketFS bucket")));
     }
 
     private KafkaConsumerProperties getSecurityEnabledConsumerProperties(final String securityProtocol,
@@ -623,7 +628,7 @@ class KafkaConsumerPropertiesTest {
     private void expectMissingProperty(final String key, final Runnable getter) {
         this.properties.clear();
         final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, getter::run);
-        assertTrue(thrown.getMessage().contains(errorMessage(key)));
+        assertThat(thrown.getMessage(), containsString(errorMessage(key)));
     }
 
     private String errorMessage(final String key) {

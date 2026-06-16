@@ -1,6 +1,8 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
 import static com.exasol.cloudetl.kafka.TestCollections.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.kafka.common.serialization.Deserializer;
@@ -58,8 +60,8 @@ class DeserializationFactoryTest {
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> DeserializationFactory.getDeserialization("protobuf"));
 
-        assertAll(() -> assertTrue(thrown.getMessage().contains("E-KCE-19")),
-                () -> assertTrue(thrown.getMessage().contains("not supported")));
+        assertAll(() -> assertThat(thrown.getMessage(), containsString("E-KCE-19")),
+                () -> assertThat(thrown.getMessage(), containsString("not supported")));
     }
 
     @Test
