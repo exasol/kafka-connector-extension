@@ -97,20 +97,8 @@
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${scala.compat.version}</artifactId>
-            <version>3.3.0-SNAP4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatestplus</groupId>
-            <artifactId>scalatestplus-mockito_${scala.compat.version}</artifactId>
-            <version>1.0.0-SNAP5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <version>5.18.0</version>
             <scope>test</scope>
         </dependency>
@@ -124,13 +112,6 @@
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
             <version>7.3.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- Required for DockerNamedNetwork.scala -->
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -199,12 +180,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.sksamuel.avro4s</groupId>
-            <artifactId>avro4s-core_${scala.compat.version}</artifactId>
-            <version>4.1.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
             <version>1.21.3</version>
@@ -262,122 +237,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>4.9.5</version>
-                <executions>
-                    <execution>
-                        <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>scala-test-compile</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>attach-scaladocs</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>doc</goal>
-                            <goal>doc-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                    <scalaCompatVersion>${scala.compat.version}</scalaCompatVersion>
-                    <checkMultipleScalaVersions>true</checkMultipleScalaVersions>
-                    <failOnMultipleScalaVersions>true</failOnMultipleScalaVersions>
-                    <recompileMode>incremental</recompileMode>
-                    <args>
-                        <arg>-unchecked</arg>
-                        <arg>-deprecation</arg>
-                        <arg>-feature</arg>
-                        <arg>-explaintypes</arg>
-                        <arg>-Xcheckinit</arg>
-                        <arg>-Xfatal-warnings</arg>
-                        <arg>-Xlint:_</arg>
-                        <arg>-Ywarn-dead-code</arg>
-                        <arg>-Ywarn-numeric-widen</arg>
-                        <arg>-Ywarn-value-discard</arg>
-                        <arg>-Ywarn-extra-implicit</arg>
-                        <arg>-Ywarn-unused:_</arg>
-                    </args>
-                    <javacArgs>
-                        <javacArg>-source</javacArg>
-                        <javacArg>${java.version}</javacArg>
-                        <javacArg>-target</javacArg>
-                        <javacArg>${java.version}</javacArg>
-                        <javacArg>-deprecation</javacArg>
-                        <javacArg>-parameters</javacArg>
-                        <javacArg>-Xlint:all,-path</javacArg>
-                    </javacArgs>
-                    <jvmArgs>
-                        <jvmArg>-Xmx2048m</jvmArg>
-                        <jvmArg>-Xss64m</jvmArg>
-                    </jvmArgs>
-                    <compilerPlugins>
-                        <compilerPlugin>
-                            <groupId>org.scalameta</groupId>
-                            <artifactId>semanticdb-scalac_${scala.version}</artifactId>
-                            <version>4.13.4</version>
-                        </compilerPlugin>
-                    </compilerPlugins>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.scalatest</groupId>
-                <artifactId>scalatest-maven-plugin</artifactId>
-                <version>2.2.0</version>
-                <configuration>
-                    <junitxml>.</junitxml>
-                    <filereports>TestSuite.txt</filereports>
-                    <argLine>-Djava.util.logging.config.file=src/test/resources/logging.properties ${argLine}</argLine>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>test</id>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <suffixes>(?&lt;!IT)</suffixes>
-                            <filereports>TestSuite.txt</filereports>
-                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>integration-test</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <suffixes>(?&lt;=IT)</suffixes>
-                            <filereports>IntegrationTestSuite.txt</filereports>
-                            <reportsDirectory>${project.build.directory}/failsafe-reports</reportsDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-test</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
@@ -411,8 +270,6 @@
                         <exclude>CVE-2023-36479</exclude>
                         <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
                         <exclude>CVE-2024-6763</exclude>
-                        <!-- Already fixed in JDBC driver >= 24.2.1 but not property updated in OSS Index. -->
-                        <exclude>CVE-2024-55551</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
@@ -427,91 +284,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.itsallcode</groupId>
-                <artifactId>openfasttrace-maven-plugin</artifactId>
-                <version>2.3.0</version>
-                <executions>
-                    <execution>
-                        <id>trace-requirements</id>
-                        <goals>
-                            <goal>trace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <reportOutputFormat>html</reportOutputFormat>
-                    <reportVerbosity>ALL</reportVerbosity>
-                    <reportShowOrigin>true</reportShowOrigin>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.scalastyle</groupId>
-                <artifactId>scalastyle-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <configuration>
-                    <verbose>false</verbose>
-                    <failOnViolation>true</failOnViolation>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <failOnWarning>false</failOnWarning>
-                    <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>
-                    <testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
-                    <configLocation>${project.basedir}/scalastyle-config.xml</configLocation>
-                    <outputFile>${project.build.directory}/scalastyle-output.xml</outputFile>
-                    <outputEncoding>UTF-8</outputEncoding>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.44.4</version>
-                <configuration>
-                    <scala>
-                        <scalafmt>
-                            <file>${project.basedir}/.scalafmt.conf</file>
-                        </scalafmt>
-                    </scala>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>io.github.evis</groupId>
-                <artifactId>scalafix-maven-plugin_${scala.compat.version}</artifactId>
-                <version>0.1.10_0.11.0</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.scalameta</groupId>
-                        <artifactId>metaconfig-pprint_${scala.compat.version}</artifactId>
-                        <version>0.15.0</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.github.vovapolu</groupId>
-                        <artifactId>scaluzzi_${scala.compat.version}</artifactId>
-                        <version>0.1.23</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.nequissimus</groupId>
-                        <artifactId>sort-imports_${scala.compat.version}</artifactId>
-                        <version>0.6.1</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <mode>CHECK</mode>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -571,15 +343,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.exasol</groupId>
-                <artifactId>artifact-reference-checker-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>/.metals/**/*</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>

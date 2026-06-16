@@ -10,9 +10,9 @@ import com.exasol.errorreporting.ExaError;
 
 public final class DeserializationFactory {
     private static final Map<String, RecordDeserialization> SUPPORTED_DESERIALIZATIONS = Map.of(
-            "avro", AvroDeserializationImpl::getDeserializer,
-            "json", JsonDeserializationImpl::getDeserializer,
-            "string", StringDeserializationImpl::getDeserializer);
+            "avro", AvroDeserialization::getDeserializer,
+            "json", JsonDeserialization::getDeserializer,
+            "string", StringDeserialization::getDeserializer);
 
     private DeserializationFactory() {
     }
