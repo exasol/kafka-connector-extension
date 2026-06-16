@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.exasol.cloudetl.kafka.*;
+import com.exasol.cloudetl.kafka.KafkaConnectorException;
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
+
+import scala.collection.immutable.Seq;
 
 class AvroDeserializationTest {
     @Test
@@ -22,7 +25,7 @@ class AvroDeserializationTest {
     @Test
     void failsWhenSchemaRegistryIsMissing() {
         final var properties = new KafkaConsumerProperties(map());
-        final scala.collection.immutable.Seq<FieldSpecification> fields = seq(new RecordValueField("amount"));
+        final Seq<FieldSpecification> fields = seq(new RecordValueField("amount"));
 
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> AvroDeserialization.getDeserializer(properties, fields));

@@ -4,17 +4,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.*;
 
+import scala.collection.immutable.Seq;
+
 public final class TestCollections {
     private TestCollections() {
     }
 
     @SafeVarargs
     @SuppressWarnings("varargs")
-    public static <T> scala.collection.immutable.Seq<T> seq(final T... values) {
+    public static <T> Seq<T> seq(final T... values) {
         return ScalaCollections.seq(Arrays.asList(values));
     }
 
-    public static <T> scala.collection.immutable.Seq<T> seq(final List<T> values) {
+    public static <T> Seq<T> seq(final List<T> values) {
         return ScalaCollections.seq(values);
     }
 
@@ -44,7 +46,7 @@ public final class TestCollections {
     }
 
     public static <K, V> void assertMapOfSeqEquals(final Map<K, List<V>> expected,
-            final scala.collection.Map<K, scala.collection.immutable.Seq<V>> actual) {
+            final scala.collection.Map<K, Seq<V>> actual) {
         final Map<K, List<V>> actualJava = new LinkedHashMap<>();
         javaMap(actual).forEach((key, value) -> actualJava.put(key, javaList(value)));
         assertEquals(expected, actualJava);

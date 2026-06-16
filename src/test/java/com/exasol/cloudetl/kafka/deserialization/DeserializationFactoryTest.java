@@ -13,6 +13,7 @@ import com.exasol.cloudetl.kafka.KafkaConnectorException;
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import scala.collection.immutable.Seq;
 
 class DeserializationFactoryTest {
     @Test
@@ -66,8 +67,8 @@ class DeserializationFactoryTest {
 
     @Test
     void recordDeserializersEqualsAndHashCodeFollowContract() {
-        final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> red = IgnoreKeyDeserializer.INSTANCE;
-        final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> black = new JsonDeserializer(
+        final Deserializer<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> red = IgnoreKeyDeserializer.INSTANCE;
+        final Deserializer<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> black = new JsonDeserializer(
                 seq(new RecordValueField("field")), new StringDeserializer());
 
         EqualsVerifier.forClass(DeserializationFactory.RecordDeserializers.class)

@@ -1,13 +1,17 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
-import static com.exasol.cloudetl.kafka.TestCollections.*;
+import static com.exasol.cloudetl.kafka.TestCollections.map;
+import static com.exasol.cloudetl.kafka.TestCollections.seq;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.exasol.cloudetl.kafka.*;
+import com.exasol.cloudetl.kafka.KafkaConnectorException;
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
+
+import scala.collection.immutable.Seq;
 
 class JsonDeserializationTest {
     @Test
@@ -21,7 +25,7 @@ class JsonDeserializationTest {
     @Test
     void rejectsWildcardFieldSelectionForJson() {
         final var properties = new KafkaConsumerProperties(map());
-        final scala.collection.immutable.Seq<FieldSpecification> fields = seq(RecordValueFields.INSTANCE);
+        final Seq<FieldSpecification> fields = seq(RecordValueFields.INSTANCE);
 
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> JsonDeserialization.getDeserializer(properties, fields));

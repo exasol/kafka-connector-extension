@@ -23,11 +23,11 @@ class RowBuilderTest {
     private static final long TIMESTAMP = 123456789L;
 
     @Mock
-    ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> recordMock;
+    ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> recordMock;
 
-    private ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> createRecord(
-            final scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> key,
-            final scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> value) {
+    private ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> createRecord(
+            final scala.collection.immutable.Map<FieldSpecification, Seq<Object>> key,
+            final scala.collection.immutable.Map<FieldSpecification, Seq<Object>> value) {
         lenient().when(recordMock.key()).thenReturn(key);
         lenient().when(recordMock.value()).thenReturn(value);
         lenient().when(recordMock.timestamp()).thenReturn(TIMESTAMP);
