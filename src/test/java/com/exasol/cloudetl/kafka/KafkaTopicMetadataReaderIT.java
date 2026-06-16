@@ -24,7 +24,7 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
     void emitsDefaultPartitionIdMaxOffsetPairsWithSingleTopicPartition() throws Exception {
         final var iterator = mockExasolIterator(this.properties, List.of(0), List.of(-1L));
         KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator);
-        verify(iterator).emit(Integer.valueOf(0), Long.valueOf(-1));
+        verify(iterator).emit(0, -1L);
     }
 
     @Test
@@ -34,9 +34,9 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
         KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator);
 
         assertAll(() -> verify(iterator, times(3)).emit(anyInt(), anyLong()),
-                () -> verify(iterator).emit(Integer.valueOf(0), Long.valueOf(-1)),
-                () -> verify(iterator).emit(Integer.valueOf(1), Long.valueOf(-1)),
-                () -> verify(iterator).emit(Integer.valueOf(2), Long.valueOf(-1)));
+                () -> verify(iterator).emit(0, -1L),
+                () -> verify(iterator).emit(1, -1L),
+                () -> verify(iterator).emit(2, -1L));
     }
 
     @Test
@@ -46,9 +46,9 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
         KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator);
 
         assertAll(() -> verify(iterator, times(3)).emit(anyInt(), anyLong()),
-                () -> verify(iterator).emit(Integer.valueOf(0), Long.valueOf(3)),
-                () -> verify(iterator).emit(Integer.valueOf(1), Long.valueOf(4)),
-                () -> verify(iterator).emit(Integer.valueOf(2), Long.valueOf(-1)));
+                () -> verify(iterator).emit(0, 3L),
+                () -> verify(iterator).emit(1, 4L),
+                () -> verify(iterator).emit(2, -1L));
     }
 
     @Test
@@ -58,8 +58,8 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
         KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator);
 
         assertAll(() -> verify(iterator, times(2)).emit(anyInt(), anyLong()),
-                () -> verify(iterator).emit(Integer.valueOf(0), Long.valueOf(-1)),
-                () -> verify(iterator).emit(Integer.valueOf(1), Long.valueOf(7)));
+                () -> verify(iterator).emit(0, -1L),
+                () -> verify(iterator).emit(1, 7L));
     }
 
     @Test
@@ -92,7 +92,7 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
     private <T extends Throwable> void emitThrowsAnException(final Class<T> exception) throws Exception {
         createCustomTopic(this.topic, 2);
         final var iterator = mockExasolIterator(this.properties, List.of(1, 3), List.of(7L, 17L));
-        doThrow(exception).when(iterator).emit(Integer.valueOf(1), Long.valueOf(7));
+        doThrow(exception).when(iterator).emit(1, 7L);
         KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator);
     }
 }

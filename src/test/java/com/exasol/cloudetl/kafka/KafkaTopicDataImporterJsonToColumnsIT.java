@@ -30,9 +30,8 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
         KafkaTopicDataImporter.run(metadata, iterator);
 
         assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
-                () -> verify(iterator).emit("val1", Integer.valueOf(11), "{\"field\":\"value\"}",
-                        Integer.valueOf(0), Long.valueOf(0)),
-                () -> verify(iterator).emit("val2", Integer.valueOf(22), null, Integer.valueOf(0), Long.valueOf(1)));
+                () -> verify(iterator).emit("val1", 11, "{\"field\":\"value\"}", 0, 0L),
+                () -> verify(iterator).emit("val2", 22, null, 0, 1L));
     }
 
     static ExaMetadata mockMetadata(final Class<?>... outputColumnTypes) throws Exception {

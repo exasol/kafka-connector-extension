@@ -28,7 +28,7 @@ class KafkaTopicDataImporterNullValueIT extends KafkaIntegrationTest {
                 iterator);
 
         assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
-                () -> verify(iterator).emit(null, null, Integer.valueOf(0), Long.valueOf(0)),
-                () -> verify(iterator).emit(null, null, Integer.valueOf(0), Long.valueOf(1)));
+                () -> verify(iterator).emit(null, null, 0, 0L),
+                () -> verify(iterator).emit(null, null, 0, 1L));
     }
 }

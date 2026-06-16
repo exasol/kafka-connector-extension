@@ -30,7 +30,7 @@ class KafkaTopicDataImporterJsonToJsonIT extends KafkaIntegrationTest {
                 iterator);
 
         assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
-                () -> verify(iterator).emit(jsonMatcher(inputRecord1), Integer.valueOf(0), Long.valueOf(0)),
-                () -> verify(iterator).emit(jsonMatcher(inputRecord2), Integer.valueOf(0), Long.valueOf(1)));
+                () -> verify(iterator).emit(jsonMatcher(inputRecord1), 0, 0L),
+                () -> verify(iterator).emit(jsonMatcher(inputRecord2), 0, 1L));
     }
 }

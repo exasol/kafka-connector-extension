@@ -24,10 +24,8 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
         final var iterator = runImporter(this.properties, List.of(-1L));
 
         assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
-                () -> verify(iterator).emit("abc", Integer.valueOf(3), Long.valueOf(13), Integer.valueOf(0),
-                        Long.valueOf(0)),
-                () -> verify(iterator).emit("hello", Integer.valueOf(4), Long.valueOf(14), Integer.valueOf(0),
-                        Long.valueOf(1)));
+                () -> verify(iterator).emit("abc", 3, 13L, 0, 0L),
+                () -> verify(iterator).emit("hello", 4, 14L, 0, 1L));
     }
 
     @Test
@@ -45,10 +43,8 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
         final var iterator = runImporter(this.properties, List.of(-1L));
 
         assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
-                () -> verify(iterator).emit("abc", Integer.valueOf(3), Long.valueOf(13), Integer.valueOf(0),
-                        Long.valueOf(startingOffset)),
-                () -> verify(iterator).emit("hello", Integer.valueOf(4), Long.valueOf(14), Integer.valueOf(0),
-                        Long.valueOf(startingOffset + 1L)));
+                () -> verify(iterator).emit("abc", 3, 13L, 0, (long) startingOffset),
+                () -> verify(iterator).emit("hello", 4, 14L, 0, startingOffset + 1L));
     }
 
     @Test
@@ -62,10 +58,8 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
         final var iterator = runImporter(this.properties, List.of(1L));
 
         assertAll(() -> verify(iterator, times(2)).emit(any(Object[].class)),
-                () -> verify(iterator).emit("def", Integer.valueOf(7), Long.valueOf(17), Integer.valueOf(0),
-                        Long.valueOf(2)),
-                () -> verify(iterator).emit("xyz", Integer.valueOf(13), Long.valueOf(23), Integer.valueOf(0),
-                        Long.valueOf(3)));
+                () -> verify(iterator).emit("def", 7, 17L, 0, 2L),
+                () -> verify(iterator).emit("xyz", 13, 23L, 0, 3L));
     }
 
     @Test
@@ -108,8 +102,7 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
         publishAvro(this.topic, new AvroRecord("first", 1, 2));
         publishAvro(this.topic, new AvroRecord("second", 3, 4));
         final var iterator = mockExasolIterator(this.properties, List.of(0), List.of(-1L));
-        doThrow(ExaDataTypeException.class).when(iterator).emit("second", Integer.valueOf(3), Long.valueOf(4),
-                Integer.valueOf(0), Long.valueOf(1));
+        doThrow(ExaDataTypeException.class).when(iterator).emit("second", 3, 4L, 0, 1L);
 
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> KafkaTopicDataImporter.run(metadata(), iterator));
