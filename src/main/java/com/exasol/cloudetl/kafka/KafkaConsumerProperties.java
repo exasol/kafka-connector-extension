@@ -259,7 +259,7 @@ public class KafkaConsumerProperties extends AbstractProperties {
         return path;
     }
 
-    public java.util.Map<String, Object> getProperties() {
+    public Map<String, Object> getProperties() {
         final Map<String, Object> props = new LinkedHashMap<>();
         props.put(ENABLE_AUTO_COMMIT.kafkaPropertyName(), ENABLE_AUTO_COMMIT.defaultValue());
         props.put(BOOTSTRAP_SERVERS.kafkaPropertyName(), getBootstrapServers());

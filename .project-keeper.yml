@@ -6,6 +6,8 @@ sources:
       - integration_tests
   - type: npm
     path: extension/package.json
+    artifacts:
+      - dist/kafka-connector-extension.js
 version:
   fromSource: pom.xml
 build:
