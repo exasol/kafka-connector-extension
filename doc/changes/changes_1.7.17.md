@@ -11,6 +11,35 @@ This release includes internal refactoring. It migrates the source code from Sca
 * #195: Migrate production code from Scala to Java
 * #196: Migrate test code from Scala to Java
 
+## Security updates
+
+* #154: CVE-2025-12383: org.glassfish.jersey.core:jersey-client:jar:2.45:test
+* #155: CVE-2025-12183: org.lz4:lz4-java:jar:1.8.0:runtime
+* #156: CVE-2025-66566: org.lz4:lz4-java:jar:1.8.0:runtime
+* #157: CVE-2024-29371: org.bitbucket.b_c:jose4j:jar:0.9.4:test
+* #158: CVE-2026-1225: ch.qos.logback:logback-core:jar:1.5.20:compile
+* #160: CVE-2025-33042: org.apache.avro:avro:jar:1.12.0:compile
+* #163: CVE-2026-24308: org.apache.zookeeper:zookeeper:jar:3.8.4:test
+* #165: CVE-2026-24281: org.apache.zookeeper:zookeeper:jar:3.8.4:test
+* #167: CVE-2026-35554: org.apache.kafka:kafka-clients:jar:3.9.1:compile
+* #169: CVE-2024-6763: org.eclipse.jetty:jetty-http:jar:9.4.58.v20250814:compile
+* #170: CVE-2026-2332: org.eclipse.jetty:jetty-http:jar:9.4.58.v20250814:compile
+* #172: CVE-2026-33558: org.apache.kafka:kafka-clients:jar:3.9.1:compile
+* #174: CVE-2026-41409: org.apache.mina:mina-core:jar:2.2.4:test
+* #176: CVE-2026-41635: org.apache.mina:mina-core:jar:2.2.4:test
+* #177: CVE-2026-42778: org.apache.mina:mina-core:jar:2.2.4:test
+* #179: CVE-2026-42583: io.netty:netty-codec-compression:jar:4.2.7.Final:test
+* #180: CVE-2026-42577: io.netty:netty-transport-native-epoll:jar:4.2.7.Final:test
+* #182: CVE-2026-45799: com.squareup.wire:wire-runtime-jvm:jar:5.1.0:test
+* #183: CVE-2026-42577: io.netty:netty-transport-classes-epoll:jar:4.2.7.Final:test
+* #184: CVE-2026-24281: org.apache.zookeeper:zookeeper:jar:3.8.4:test
+* #185: CVE-2026-41409: org.apache.mina:mina-core:jar:2.2.4:test
+* #186: CVE-2026-41635: org.apache.mina:mina-core:jar:2.2.4:test
+* #187: CVE-2026-42779: org.apache.mina:mina-core:jar:2.2.4:test
+* #189: CVE-2025-33042: org.apache.avro:avro:jar:1.12.0:compile
+* #191: CVE-2026-47065: org.apache.mina:mina-core:jar:2.2.4:test
+* #193: CVE-2026-44249: io.netty:netty-handler:jar:4.2.7.Final:test
+
 ## Dependency Updates
 
 ### Exasol Kafka Connector Extension
