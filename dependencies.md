@@ -14,7 +14,7 @@
 | [kafka-avro-serializer][8]          | [Apache License 2.0][9]                                                                 |
 | [scala-collection-compat][10]       | [Apache-2.0][1]                                                                         |
 | [SLF4J API Module][11]              | [MIT][12]                                                                               |
-| [Logback Classic Module][13]        | [Eclipse Public License - v 1.0][14]; [GNU Lesser General Public License][15]           |
+| [Logback Classic Module][13]        | [EPL-2.0][14]; [LGPL-2.1-only][15]                                                      |
 | [Gson][16]                          | [Apache-2.0][17]                                                                        |
 | [Jetty :: HTTP2 :: Common][18]      | [Apache Software License - Version 2.0][19]; [Eclipse Public License - Version 1.0][20] |
 
@@ -95,8 +95,8 @@
 [11]: http://www.slf4j.org
 [12]: https://opensource.org/license/mit
 [13]: http://logback.qos.ch/logback-classic
-[14]: http://www.eclipse.org/legal/epl-v10.html
-[15]: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+[14]: https://www.eclipse.org/legal/epl-v20.html
+[15]: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 [16]: https://github.com/google/gson
 [17]: https://www.apache.org/licenses/LICENSE-2.0.txt
 [18]: https://jetty.org/http2-parent/http2-common/

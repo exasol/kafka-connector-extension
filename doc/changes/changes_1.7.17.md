@@ -14,6 +14,7 @@ Code name:
 
 #### Compile Dependency Updates
 
+* Updated `ch.qos.logback:logback-classic:1.5.20` to `1.5.34`
 * Updated `io.confluent:kafka-avro-serializer:7.9.0` to `7.9.2`
 * Updated `org.apache.kafka:kafka-clients:3.9.1` to `3.9.2`
 
