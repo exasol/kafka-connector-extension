@@ -21,9 +21,11 @@ class AvroDeserializationTest {
 
     @Test
     void failsWhenSchemaRegistryIsMissing() {
+        final var properties = new KafkaConsumerProperties(map());
+        final scala.collection.immutable.Seq<FieldSpecification> fields = seq(new RecordValueField("amount"));
+
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
-                () -> AvroDeserialization.getDeserializer(new KafkaConsumerProperties(map()),
-                        seq(new RecordValueField("amount"))));
+                () -> AvroDeserialization.getDeserializer(properties, fields));
 
         assertAll(() -> assertThat(thrown.getMessage(), containsString("E-KCE-17")),
                 () -> assertThat(thrown.getMessage(), containsString("Schema Registry URL is missing")));

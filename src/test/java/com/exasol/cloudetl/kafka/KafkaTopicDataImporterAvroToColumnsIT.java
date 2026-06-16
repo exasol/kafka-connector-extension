@@ -103,9 +103,10 @@ class KafkaTopicDataImporterAvroToColumnsIT extends KafkaTopicDataImporterAvroIT
         publishAvro(this.topic, new AvroRecord("second", 3, 4));
         final var iterator = mockExasolIterator(this.properties, List.of(0), List.of(-1L));
         doThrow(ExaDataTypeException.class).when(iterator).emit("second", 3, 4L, 0, 1L);
+        final ExaMetadata metadata = metadata();
 
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
-                () -> KafkaTopicDataImporter.run(metadata(), iterator));
+                () -> KafkaTopicDataImporter.run(metadata, iterator));
 
         assertAll(() -> assertThat(thrown.getMessage(),
                 containsString("Error polling for Kafka topic '" + this.topic + "' data. ")),

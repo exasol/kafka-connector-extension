@@ -9,8 +9,8 @@ import java.util.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.Test;
 
-import com.exasol.cloudetl.kafka.KafkaConnectorException;
 import com.exasol.cloudetl.kafka.JsonArgumentMatcher;
+import com.exasol.cloudetl.kafka.KafkaConnectorException;
 
 class JsonDeserializerTest {
     @Test
@@ -55,8 +55,9 @@ class JsonDeserializerTest {
 
     @Test
     void failsWhenAllFieldsAreReferenced() {
+        final scala.collection.immutable.Seq<FieldSpecification> fields = seq(RecordValueFields.INSTANCE);
         assertThrows(KafkaConnectorException.class,
-                () -> deserialize(seq(RecordValueFields.INSTANCE), "{\"number\":1}"));
+                () -> deserialize(fields, "{\"number\":1}"));
     }
 
     @Test

@@ -24,7 +24,7 @@ class KafkaImportIT extends BaseKafkaDockerIntegrationTest {
     private String topicName;
 
     @BeforeAll
-    void beforeAllKafkaImport() throws Exception {
+    void beforeAllKafkaImport() {
         installKafkaConnector(SCHEMA_NAME);
         updateExasolHostsFile();
     }

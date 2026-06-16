@@ -20,9 +20,11 @@ class JsonDeserializationTest {
 
     @Test
     void rejectsWildcardFieldSelectionForJson() {
+        final var properties = new KafkaConsumerProperties(map());
+        final scala.collection.immutable.Seq<FieldSpecification> fields = seq(RecordValueFields.INSTANCE);
+
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
-                () -> JsonDeserialization.getDeserializer(new KafkaConsumerProperties(map()),
-                        seq(RecordValueFields.INSTANCE)));
+                () -> JsonDeserialization.getDeserializer(properties, fields));
 
         assertAll(() -> assertThat(thrown.getMessage(), containsString("E-KCE-16")),
                 () -> assertThat(thrown.getMessage(), containsString("not supported for JSON")));

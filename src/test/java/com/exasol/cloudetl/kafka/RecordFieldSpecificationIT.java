@@ -51,7 +51,8 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
     void failsWhenKeyIsAccessedWithConcreteField() {
         createCustomTopic(this.topic);
         publishAvro(this.topic, "string_key", this.customRecord);
-        assertThrows(KafkaConnectorException.class, () -> getEmittedValues("key.someFieldReference", List.of(String.class)));
+        final List<Class<?>> outputColumnTypes = List.of(String.class);
+        assertThrows(KafkaConnectorException.class, () -> getEmittedValues("key.someFieldReference", outputColumnTypes));
     }
 
     @Test

@@ -101,7 +101,8 @@ class KafkaConsumerPropertiesTest {
     @Test
     void getPollTimeoutMsThrowsIfValueCannotBeConvertedToLong() {
         this.properties.put("POLL_TIMEOUT_MS", "1l");
-        assertThrows(NumberFormatException.class, () -> base().getPollTimeoutMs());
+        final BaseProperties baseProperties = base();
+        assertThrows(NumberFormatException.class, baseProperties::getPollTimeoutMs);
     }
 
     @Test
@@ -117,7 +118,8 @@ class KafkaConsumerPropertiesTest {
     @Test
     void getMinRecordsPerRunThrowsIfValueCannotBeConvertedToInt() {
         this.properties.put("MIN_RECORDS_PER_RUN", "e");
-        assertThrows(NumberFormatException.class, () -> base().getMinRecordsPerRun());
+        final BaseProperties baseProperties = base();
+        assertThrows(NumberFormatException.class, baseProperties::getMinRecordsPerRun);
     }
 
     @Test
@@ -133,7 +135,8 @@ class KafkaConsumerPropertiesTest {
     @Test
     void getMaxRecordsPerRunThrowsIfValueCannotBeConvertedToInt() {
         this.properties.put("MAX_RECORDS_PER_RUN", "max");
-        assertThrows(NumberFormatException.class, () -> base().getMaxRecordsPerRun());
+        final BaseProperties baseProperties = base();
+        assertThrows(NumberFormatException.class, baseProperties::getMaxRecordsPerRun);
     }
 
     @Test
@@ -187,8 +190,9 @@ class KafkaConsumerPropertiesTest {
     @Test
     void getPropertiesThrowsIfSchemaRegistryIsNotSetAndRecordFormatIsAvro() {
         final var avroProperties = map(entry("BOOTSTRAP_SERVERS", "server"), entry("RECORD_FORMAT", "avro"));
+        final KafkaConsumerProperties properties = KafkaConsumerPropertiesSupport.create(avroProperties);
         final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> KafkaConsumerPropertiesSupport.create(avroProperties).getProperties());
+                properties::getProperties);
         assertThat(thrown.getMessage(), containsString(errorMessage("SCHEMA_REGISTRY_URL")));
     }
 
@@ -440,9 +444,10 @@ class KafkaConsumerPropertiesTest {
 
     @Test
     void applyRejectsSecureSslPropertiesWithoutConnectionObject() {
+        final var consumerProperties = map(entry("SECURITY_PROTOCOL", "SSL"), entry("SSL_KEY_PASSWORD", "PASSWORD"));
+        final ExaMetadata metadata = mock(ExaMetadata.class);
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
-                () -> KafkaConsumerPropertiesSupport.create(map(entry("SECURITY_PROTOCOL", "SSL"),
-                        entry("SSL_KEY_PASSWORD", "PASSWORD")), mock(ExaMetadata.class)));
+                () -> KafkaConsumerPropertiesSupport.create(consumerProperties, metadata));
 
         assertThat(thrown.getMessage(),
                 containsString("Please use a named Exasol connection object to provide secure properties."));
@@ -542,9 +547,11 @@ class KafkaConsumerPropertiesTest {
 
     @Test
     void errorIsThrownWhenNonExistentKrb5ConfFilePassed() throws Exception {
-        final var properties = getSecurityEnabledConsumerProperties("SASL_SSL", null, null, Paths.get("krb5_non_existing"));
+        final var consumerProperties = getSecurityEnabledConsumerProperties("SASL_SSL", null, null,
+                Paths.get("krb5_non_existing"));
 
-        final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class, () -> properties.getProperties());
+        final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
+                consumerProperties::getProperties);
 
         assertAll(() -> assertThat(thrown.getMessage(), containsString("Unable to find the custom krb5.conf file")),
                 () -> assertThat(thrown.getMessage(),
