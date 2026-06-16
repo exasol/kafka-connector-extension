@@ -5,15 +5,20 @@ import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.net.URISyntaxException;
-import java.nio.file.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import com.exasol.*;
+import com.exasol.ExaConnectionInformation;
+import com.exasol.ExaMetadata;
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties.Config;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -190,9 +195,9 @@ class KafkaConsumerPropertiesTest {
     @Test
     void getPropertiesThrowsIfSchemaRegistryIsNotSetAndRecordFormatIsAvro() {
         final var avroProperties = map(entry("BOOTSTRAP_SERVERS", "server"), entry("RECORD_FORMAT", "avro"));
-        final KafkaConsumerProperties properties = KafkaConsumerPropertiesSupport.create(avroProperties);
+        final KafkaConsumerProperties consumerProperties = KafkaConsumerPropertiesSupport.create(avroProperties);
         final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                properties::getProperties);
+                consumerProperties::getProperties);
         assertThat(thrown.getMessage(), containsString(errorMessage("SCHEMA_REGISTRY_URL")));
     }
 
