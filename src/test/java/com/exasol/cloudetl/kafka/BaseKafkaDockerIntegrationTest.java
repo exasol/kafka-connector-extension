@@ -1,17 +1,21 @@
 package com.exasol.cloudetl.kafka;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.producer.*;
-import org.apache.kafka.common.serialization.*;
-import org.junit.jupiter.api.*;
-import org.testcontainers.containers.*;
+import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.testcontainers.containers.Container;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-class BaseKafkaDockerIntegrationTest extends BaseDockerIntegrationTest {
+abstract class BaseKafkaDockerIntegrationTest extends BaseDockerIntegrationTest {
     private static final String DEFAULT_CONFLUENT_PLATFORM_VERSION = KafkaTestSetup.DEFAULT_CONFLUENT_PLATFORM_VERSION;
     private static final int ZOOKEEPER_PORT = 2181;
     private static final int KAFKA_EXTERNAL_PORT = 29092;
@@ -81,7 +85,7 @@ class BaseKafkaDockerIntegrationTest extends BaseDockerIntegrationTest {
     }
 
     @BeforeAll
-    void beforeAllKafkaDocker() throws Exception {
+    void beforeAllKafkaDocker() {
         super.beforeAllDocker();
         this.zookeeperContainer.start();
         this.kafkaBrokerContainer.start();
@@ -102,12 +106,14 @@ class BaseKafkaDockerIntegrationTest extends BaseDockerIntegrationTest {
         return container.getContainerInfo().getNetworkSettings().getNetworks().values().iterator().next().getIpAddress();
     }
 
+    @SuppressWarnings("resource") // Will be closed by afterAllKafkaDocker()
     private GenericContainer<?> createZookeeperContainer() {
         final var image = DockerImageName.parse("confluentinc/cp-zookeeper").withTag(DEFAULT_CONFLUENT_PLATFORM_VERSION);
         return new GenericContainer<>(image).withNetwork(this.network).withNetworkAliases("zookeeper")
                 .withEnv("ZOOKEEPER_CLIENT_PORT", String.valueOf(ZOOKEEPER_PORT)).withReuse(true);
     }
 
+    @SuppressWarnings("resource") // Will be closed by afterAllKafkaDocker()
     private GenericContainer<?> createKafkaBrokerContainer() {
         final var image = DockerImageName.parse("confluentinc/cp-kafka").withTag(DEFAULT_CONFLUENT_PLATFORM_VERSION);
         return new KafkaContainer(image, KAFKA_EXTERNAL_PORT).dependsOn(this.zookeeperContainer).withNetwork(this.network)

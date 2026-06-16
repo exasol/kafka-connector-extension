@@ -5,15 +5,16 @@ import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Arrays;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestInstance;
 
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.dialects.Column;
-import com.exasol.dbbuilder.dialects.exasol.*;
+import com.exasol.dbbuilder.dialects.exasol.ExasolObjectFactory;
+import com.exasol.dbbuilder.dialects.exasol.ExasolSchema;
 import com.exasol.dbbuilder.dialects.exasol.udf.UdfScript;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BaseDockerIntegrationTest {
+abstract class BaseDockerIntegrationTest {
     private static final String JAR_NAME_PATTERN = "exasol-kafka-connector-extension-";
     private static final String DEFAULT_EXASOL_DOCKER_IMAGE = "2026.1.0";
 
@@ -24,7 +25,7 @@ class BaseDockerIntegrationTest {
     Connection connection;
     final String assembledJarName = getAssembledJarName();
 
-    void beforeAllDocker() throws SQLException {
+    void beforeAllDocker() {
         this.exasolContainer.start();
         this.connection = getConnection();
     }
@@ -59,7 +60,7 @@ class BaseDockerIntegrationTest {
     }
 
     private ExasolContainer<? extends ExasolContainer<?>> createExasolContainer() {
-        @SuppressWarnings("resource")
+        @SuppressWarnings("resource") // Will be closed by afterAllDocker()
         final ExasolContainer<? extends ExasolContainer<?>> container = new ExasolContainer<>(getExasolDockerImageVersion());
         container.withNetwork(this.network);
         container.withReuse(true);

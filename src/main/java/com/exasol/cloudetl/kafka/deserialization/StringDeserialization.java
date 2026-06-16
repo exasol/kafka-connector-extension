@@ -9,6 +9,7 @@ public final class StringDeserialization {
     private StringDeserialization() {
     }
 
+    @SuppressWarnings("java:S1172") // Argument properties is unused but required for consistency with other deserializations
     public static Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> getDeserializer(
             final KafkaConsumerProperties properties, final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
         for (final FieldSpecification fieldSpec : ScalaCollections.javaList(fieldSpecs)) {
