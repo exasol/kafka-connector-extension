@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>kafka-connector-extension</artifactId>
-    <version>1.7.16</version>
+    <version>1.7.17</version>
     <name>Exasol Kafka Connector Extension</name>
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
@@ -29,7 +29,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.2.7.Final</version>
+                <version>4.2.15.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -54,12 +54,12 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>3.9.1</version>
+            <version>3.9.2</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>7.9.0</version>
+            <version>7.9.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -148,7 +148,7 @@
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
             <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
-            <version>7.9.0</version>
+            <version>7.9.2</version>
             <scope>test</scope>
             <exclusions>
                 <!-- [CVE-2025-48734] CWE-284: Improper Access Control (8.8); https://ossindex.sonatype.org/vulnerability/CVE-2025-48734?component-type=maven&component-name=commons-beanutils%2Fcommons-beanutils&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
@@ -182,7 +182,7 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
-            <version>7.9.0</version>
+            <version>7.9.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -427,7 +427,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>5.4.3</version>
+                <version>5.6.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -594,7 +594,7 @@
     <parent>
         <artifactId>kafka-connector-extension-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>1.7.16</version>
+        <version>1.7.17</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
