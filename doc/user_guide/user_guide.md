@@ -80,11 +80,11 @@ cd kafka-connector-extension
 Create an assembled jar file,
 
 ```bash
-sbt assembly
+mvn package
 ```
 
 The packaged jar file should be located at
-`target/scala-2.12/exasol-kafka-connector-extension-1.7.17.jar`.
+`target/exasol-kafka-connector-extension-1.7.17.jar`.
 
 ### Create an Exasol BucketFS Bucket
 
