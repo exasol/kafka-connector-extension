@@ -9,9 +9,9 @@ import org.junit.jupiter.api.TestInstance;
 
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.dialects.Column;
-import com.exasol.dbbuilder.dialects.exasol.ExasolObjectFactory;
-import com.exasol.dbbuilder.dialects.exasol.ExasolSchema;
+import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.dbbuilder.dialects.exasol.udf.UdfScript;
+import com.exasol.udfdebugging.UdfTestSetup;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class BaseDockerIntegrationTest {
@@ -20,6 +20,7 @@ abstract class BaseDockerIntegrationTest {
 
     final DockerNamedNetwork network = DockerNamedNetwork.get("kafka-it-tests", true);
     final ExasolContainer<? extends ExasolContainer<?>> exasolContainer = createExasolContainer();
+    private UdfTestSetup udfTestSetup;
     ExasolObjectFactory factory;
     ExasolSchema schema;
     Connection connection;
@@ -31,13 +32,15 @@ abstract class BaseDockerIntegrationTest {
     }
 
     void afterAllDocker() throws SQLException {
+        this.udfTestSetup.close();
         this.connection.close();
         this.exasolContainer.stop();
     }
 
     void installKafkaConnector(final String schemaName) {
         executeStmt("DROP SCHEMA IF EXISTS " + schemaName + " CASCADE;");
-        this.factory = new ExasolObjectFactory(createConnection());
+        this.udfTestSetup = new UdfTestSetup("localhost", exasolContainer.getDefaultBucket(), this.connection);
+        this.factory = new ExasolObjectFactory(this.connection, ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
         this.schema = this.factory.createSchema(schemaName);
         createKafkaImportDeploymentScripts();
         uploadJarToBucket();
