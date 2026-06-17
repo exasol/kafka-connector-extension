@@ -19,8 +19,7 @@ import org.opentest4j.AssertionFailedError;
 
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.dbbuilder.dialects.Table;
-import com.exasol.dbbuilder.dialects.exasol.ExasolObjectFactory;
-import com.exasol.dbbuilder.dialects.exasol.ExasolSchema;
+import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.exasoltestsetup.ExasolTestSetup;
 import com.exasol.exasoltestsetup.ExasolTestSetupFactory;
 import com.exasol.extensionmanager.itest.ExasolVersionCheck;
@@ -29,6 +28,7 @@ import com.exasol.extensionmanager.itest.base.AbstractScriptExtensionIT;
 import com.exasol.extensionmanager.itest.base.ExtensionITConfig;
 import com.exasol.extensionmanager.itest.builder.ExtensionBuilder;
 import com.exasol.matcher.TypeMatchMode;
+import com.exasol.udfdebugging.UdfTestSetup;
 
 class ExtensionIT extends AbstractScriptExtensionIT {
     private static final Logger LOGGER = Logger.getLogger(ExtensionIT.class.getName());
@@ -41,6 +41,7 @@ class ExtensionIT extends AbstractScriptExtensionIT {
     private static KafkaTestSetup kafkaSetup;
     private static Connection connection;
     private static ExasolObjectFactory exasolObjectFactory;
+    private static UdfTestSetup udfTestSetup;
 
     @BeforeAll
     static void setup() throws FileNotFoundException, BucketAccessException, TimeoutException, SQLException,
@@ -55,7 +56,8 @@ class ExtensionIT extends AbstractScriptExtensionIT {
         exasolTestSetup.getDefaultBucket().uploadFile(ADAPTER_JAR, ADAPTER_JAR.getFileName().toString());
         kafkaSetup = KafkaTestSetup.create();
         connection = exasolTestSetup.createConnection();
-        exasolObjectFactory = new ExasolObjectFactory(connection);
+        udfTestSetup = new UdfTestSetup(exasolTestSetup, connection);
+        exasolObjectFactory = new ExasolObjectFactory(connection, ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
     }
 
     private static Path getAdapterJar() {
@@ -69,6 +71,9 @@ class ExtensionIT extends AbstractScriptExtensionIT {
 
     @AfterAll
     static void teardown() throws Exception {
+        if (udfTestSetup != null) {
+            udfTestSetup.close();
+        }
         if (connection != null) {
             connection.close();
         }
