@@ -48,6 +48,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 
 * Updated `ch.qos.logback:logback-classic:1.5.20` to `1.5.34`
 * Updated `com.exasol:import-export-udf-common-scala:2.0.1` to `2.0.2`
+* Removed `com.google.code.gson:gson:2.13.1`
 * Updated `io.confluent:kafka-avro-serializer:7.9.0` to `7.9.2`
 * Updated `org.apache.kafka:kafka-clients:3.9.1` to `3.9.2`
 * Removed `org.eclipse.jetty.http2:http2-common:9.4.58.v20250814`
@@ -56,10 +57,12 @@ This release includes internal refactoring. It migrates the source code from Sca
 
 * Updated `com.exasol:exasol-testcontainers:7.1.7` to `7.3.0`
 * Updated `com.exasol:extension-manager-integration-test-java:0.5.16` to `0.5.20`
+* Added `com.google.code.gson:gson:2.13.1`
 * Removed `com.sksamuel.avro4s:avro4s-core_2.13:4.1.2`
 * Updated `io.confluent:kafka-streams-avro-serde:7.9.0` to `7.9.5`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.9.0` to `7.9.2`
 * Added `nl.jqno.equalsverifier:equalsverifier:3.19.4`
+* Added `org.apache.commons:commons-lang3:3.20.0`
 * Added `org.apache.kafka:kafka_2.13:3.9.2`
 * Updated `org.apache.mina:mina-core:2.2.4` to `2.2.8`
 * Added `org.apache.zookeeper:zookeeper:3.9.5`

@@ -158,6 +158,14 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.13.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Fix CVE-2025-48924 in embedded-kafka-schema-registry transitive dependency -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.20.0</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
@@ -270,6 +278,13 @@
                         <exclude>CVE-2023-36479</exclude>
                         <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
                         <exclude>CVE-2024-6763</exclude>
+                        <!-- Test dependency org.eclipse.jetty.http2:http2-common:jar:9.4.57.v20241219 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+                        <exclude>CVE-2025-5115</exclude>
+                        <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.57.v20241219:test; is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+                        <exclude>CVE-2025-11143</exclude>
+                        <exclude>CVE-2026-2332</exclude>
+                        <!-- Test dependency com.squareup.wire:wire-runtime-jvm:jar:5.1.0 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+                        <exclude>CVE-2026-45799</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
