@@ -21,7 +21,7 @@ abstract class BaseDockerIntegrationTest {
     final DockerNamedNetwork network = DockerNamedNetwork.get("kafka-it-tests", true);
     final ExasolContainer<? extends ExasolContainer<?>> exasolContainer = createExasolContainer();
     private UdfTestSetup udfTestSetup;
-    ExasolObjectFactory factory;
+    private ExasolObjectFactory factory;
     ExasolSchema schema;
     Connection connection;
     final String assembledJarName = getAssembledJarName();
@@ -39,7 +39,7 @@ abstract class BaseDockerIntegrationTest {
 
     void installKafkaConnector(final String schemaName) {
         executeStmt("DROP SCHEMA IF EXISTS " + schemaName + " CASCADE;");
-        this.udfTestSetup = new UdfTestSetup("localhost", exasolContainer.getDefaultBucket(), this.connection);
+        this.udfTestSetup = new UdfTestSetup(IntegrationTestConstants.DOCKER_IP_ADDRESS, exasolContainer.getDefaultBucket(), this.connection);
         this.factory = new ExasolObjectFactory(this.connection, ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
         this.schema = this.factory.createSchema(schemaName);
         createKafkaImportDeploymentScripts();

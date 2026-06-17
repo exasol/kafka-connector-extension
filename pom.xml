@@ -29,7 +29,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.2.7.Final</version>
+                <version>4.2.15.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>import-export-udf-common-scala</artifactId>
-            <version>2.0.1</version>
+            <version>2.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
@@ -54,12 +54,12 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>3.9.1</version>
+            <version>3.9.2</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>7.9.0</version>
+            <version>7.9.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.20</version>
+            <version>1.5.34</version>
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
@@ -137,18 +137,11 @@
             <artifactId>extension-manager-integration-test-java</artifactId>
             <version>0.5.20</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <!-- Fix CVE-2017-10355 -->
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
             <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
-            <version>7.9.0</version>
+            <version>7.9.2</version>
             <scope>test</scope>
             <exclusions>
                 <!-- [CVE-2025-48734] CWE-284: Improper Access Control (8.8); https://ossindex.sonatype.org/vulnerability/CVE-2025-48734?component-type=maven&component-name=commons-beanutils%2Fcommons-beanutils&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
@@ -171,18 +164,19 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.13.1</version>
+            <scope>test</scope>
         </dependency>
-        <!-- [CVE-2025-1948] CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion') (8.7); https://ossindex.sonatype.org/vulnerability/CVE-2025-1948?component-type=maven&component-name=org.eclipse.jetty.http2%2Fhttp2-common&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
-        <!-- Lock down Jetty to the 9.x branch -->
         <dependency>
-            <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>http2-common</artifactId>
-            <version>9.4.58.v20250814</version>
+            <!-- Fix CVE-2025-48924 in embedded-kafka-schema-registry transitive dependency -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.20.0</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
-            <version>7.9.0</version>
+            <version>7.9.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -201,7 +195,21 @@
             <!-- Update to fix CVE-2024-52046 -->
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
-            <version>2.2.4</version>
+            <version>2.2.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Update to fix CVE-2024-29371 -->
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_${scala.compat.version}</artifactId>
+            <version>3.9.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Update to fix CVE-2026-24308 -->
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.9.5</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -275,6 +283,13 @@
                         <exclude>CVE-2023-36479</exclude>
                         <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
                         <exclude>CVE-2024-6763</exclude>
+                        <!-- Test dependency org.eclipse.jetty.http2:http2-common:jar:9.4.57.v20241219 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+                        <exclude>CVE-2025-5115</exclude>
+                        <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.57.v20241219:test; is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+                        <exclude>CVE-2025-11143</exclude>
+                        <exclude>CVE-2026-2332</exclude>
+                        <!-- Test dependency com.squareup.wire:wire-runtime-jvm:jar:5.1.0 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
+                        <exclude>CVE-2026-45799</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
