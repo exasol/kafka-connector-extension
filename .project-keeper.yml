@@ -4,6 +4,7 @@ sources:
     modules:
       - jar_artifact
       - integration_tests
+      - udf_coverage
   - type: npm
     path: extension/package.json
     artifacts:
