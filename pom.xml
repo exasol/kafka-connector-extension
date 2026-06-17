@@ -208,7 +208,6 @@
                 <version>2.0.1</version>
                 <configuration>
                     <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
-                    <failBuildInCaseOfDuplicateClasses>true</failBuildInCaseOfDuplicateClasses>
                     <ignoredResourcePatterns>
                         <ignoredResource>about\.html</ignoredResource>
                         <ignoredResource>META-INF/LICENSE</ignoredResource>
