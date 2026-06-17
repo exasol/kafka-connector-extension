@@ -3,9 +3,11 @@ package com.exasol.cloudetl.kafka;
 import java.io.File;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.Arrays;
+import java.util.*;
 
 import org.junit.jupiter.api.TestInstance;
+import org.testcontainers.DockerClientFactory;
+import org.testcontainers.Testcontainers;
 
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.dialects.Column;
@@ -17,6 +19,8 @@ import com.exasol.udfdebugging.UdfTestSetup;
 abstract class BaseDockerIntegrationTest {
     private static final String JAR_NAME_PATTERN = "exasol-kafka-connector-extension-";
     private static final String DEFAULT_EXASOL_DOCKER_IMAGE = "2026.1.0";
+    private static final String TESTCONTAINERS_SSHD_IMAGE = "testcontainers/sshd:1.3.0";
+    private static final int JACOCO_SERVER_PORT = 3002;
 
     final DockerNamedNetwork network = DockerNamedNetwork.get("kafka-it-tests", true);
     final ExasolContainer<? extends ExasolContainer<?>> exasolContainer = createExasolContainer();
@@ -32,14 +36,16 @@ abstract class BaseDockerIntegrationTest {
     }
 
     void afterAllDocker() throws SQLException {
-        this.udfTestSetup.close();
+        if (this.udfTestSetup != null) {
+            this.udfTestSetup.close();
+        }
         this.connection.close();
         this.exasolContainer.stop();
     }
 
     void installKafkaConnector(final String schemaName) {
         executeStmt("DROP SCHEMA IF EXISTS " + schemaName + " CASCADE;");
-        this.udfTestSetup = new UdfTestSetup(IntegrationTestConstants.DOCKER_IP_ADDRESS, exasolContainer.getDefaultBucket(), this.connection);
+        this.udfTestSetup = new UdfTestSetup(getTestcontainersPortForwarderAddress(), exasolContainer.getDefaultBucket(), this.connection);
         this.factory = new ExasolObjectFactory(this.connection, ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
         this.schema = this.factory.createSchema(schemaName);
         createKafkaImportDeploymentScripts();
@@ -66,8 +72,24 @@ abstract class BaseDockerIntegrationTest {
         @SuppressWarnings("resource") // Will be closed by afterAllDocker()
         final ExasolContainer<? extends ExasolContainer<?>> container = new ExasolContainer<>(getExasolDockerImageVersion());
         container.withNetwork(this.network);
-        container.withReuse(true);
+        Testcontainers.exposeHostPorts(JACOCO_SERVER_PORT);
+        container.withReuse(!isUdfCoverageEnabled());
         return container;
+    }
+
+    private boolean isUdfCoverageEnabled() {
+        return Boolean.getBoolean("test.coverage");
+    }
+
+    private String getTestcontainersPortForwarderAddress() {
+        return DockerClientFactory.lazyClient().listContainersCmd()
+                .withAncestorFilter(List.of(TESTCONTAINERS_SSHD_IMAGE))
+                .withStatusFilter(List.of("running"))
+                .exec().stream()
+                .max(Comparator.comparing(com.github.dockerjava.api.model.Container::getCreated))
+                .map(container -> container.getNetworkSettings().getNetworks().values().iterator().next().getIpAddress())
+                .orElseThrow(() -> new IllegalStateException("Could not find running " + TESTCONTAINERS_SSHD_IMAGE
+                        + " container for forwarding host port " + JACOCO_SERVER_PORT));
     }
 
     private Connection getConnection() {
