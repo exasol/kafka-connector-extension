@@ -28,12 +28,6 @@ public final class AvroDeserialization {
                 .toString());
     }
 
-    @Deprecated
-    public static Deserializer<Map<FieldSpecification, List<Object>>> getDeserializer(
-            final KafkaConsumerProperties properties, final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
-        return getDeserializer(properties, com.exasol.cloudetl.kafka.ScalaCollections.javaList(fieldSpecs));
-    }
-
     @SuppressWarnings("unchecked")
     private static Deserializer<GenericRecord> getAvroDeserializer(final String schemaRegistryUrl) {
         final KafkaAvroDeserializer kafkaAvroDeserializer = new KafkaAvroDeserializer();

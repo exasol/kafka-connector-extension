@@ -5,19 +5,12 @@ import java.util.*;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import com.exasol.cloudetl.kafka.ScalaCollections;
-
 public class AsStringDeserializer implements Deserializer<Map<FieldSpecification, List<Object>>> {
     private final List<FieldSpecification> fieldSpecs;
     private final StringDeserializer deserializer = new StringDeserializer();
 
     public AsStringDeserializer(final List<FieldSpecification> fieldSpecs) {
         this.fieldSpecs = fieldSpecs;
-    }
-
-    @Deprecated
-    public AsStringDeserializer(final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
-        this(ScalaCollections.javaList(fieldSpecs));
     }
 
     @Override

@@ -4,11 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -74,11 +70,6 @@ public class KafkaConsumerProperties extends AbstractProperties {
     public KafkaConsumerProperties(final Map<String, String> properties) {
         super(ScalaCollections.immutableMap(properties));
         this.properties = new LinkedHashMap<>(properties);
-    }
-
-    @Deprecated
-    public KafkaConsumerProperties(final scala.collection.immutable.Map<String, String> properties) {
-        this(ScalaCollections.javaMap(properties));
     }
 
     public String getBootstrapServers() {
@@ -343,20 +334,9 @@ public class KafkaConsumerProperties extends AbstractProperties {
         return createConsumerProperties(params, Option.empty());
     }
 
-    @Deprecated
-    public static KafkaConsumerProperties apply(final scala.collection.immutable.Map<String, String> params) {
-        return apply(ScalaCollections.javaMap(params));
-    }
-
     public static KafkaConsumerProperties apply(final Map<String, String> params,
             final ExaMetadata metadata) {
         return createConsumerProperties(params, Option.apply(metadata));
-    }
-
-    @Deprecated
-    public static KafkaConsumerProperties apply(final scala.collection.immutable.Map<String, String> params,
-            final ExaMetadata metadata) {
-        return apply(ScalaCollections.javaMap(params), metadata);
     }
 
     public static KafkaConsumerProperties apply(final String string) {

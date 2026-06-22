@@ -1,20 +1,16 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
-import com.exasol.cloudetl.kafka.ScalaCollections;
 import com.exasol.errorreporting.ExaError;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 
 public class JsonDeserializer implements Deserializer<Map<FieldSpecification, List<Object>>> {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -24,12 +20,6 @@ public class JsonDeserializer implements Deserializer<Map<FieldSpecification, Li
     public JsonDeserializer(final List<FieldSpecification> fieldSpecs, final StringDeserializer stringDeserializer) {
         this.fieldSpecs = fieldSpecs;
         this.stringDeserializer = stringDeserializer;
-    }
-
-    @Deprecated
-    public JsonDeserializer(final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs,
-            final StringDeserializer stringDeserializer) {
-        this(ScalaCollections.javaList(fieldSpecs), stringDeserializer);
     }
 
     @Override

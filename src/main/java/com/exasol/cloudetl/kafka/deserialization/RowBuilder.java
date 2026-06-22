@@ -1,14 +1,10 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
-import com.exasol.cloudetl.kafka.ScalaCollections;
 import com.exasol.errorreporting.ExaError;
 
 public final class RowBuilder {
@@ -24,27 +20,6 @@ public final class RowBuilder {
             final List<Object> value = getValue(spec, consumerRecord);
             rowValues.add(value);
             present.add(value != null);
-        }
-        final long absentCount = present.stream().filter(isPresent -> !isPresent.booleanValue()).count();
-        if (absentCount > 0) {
-            validateSingleMissingExpression(absentCount);
-            return buildRowWithMissingValues(rowValues, present, outputColumnCount);
-        }
-        return flatten(rowValues);
-    }
-
-    @Deprecated
-    public static List<Object> buildRow(final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
-            final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumerRecord,
-            final int outputColumnCount) {
-        final List<List<Object>> rowValues = new ArrayList<>();
-        final List<Boolean> present = new ArrayList<>();
-        final Map<FieldSpecification, List<Object>> key = convertRecordPart(consumerRecord.key());
-        final Map<FieldSpecification, List<Object>> value = convertRecordPart(consumerRecord.value());
-        for (final GlobalFieldSpecification spec : ScalaCollections.javaList(fieldSpecs)) {
-            final List<Object> specValue = getValue(spec, key, value, consumerRecord.timestamp());
-            rowValues.add(specValue);
-            present.add(specValue != null);
         }
         final long absentCount = present.stream().filter(isPresent -> !isPresent.booleanValue()).count();
         if (absentCount > 0) {
@@ -135,15 +110,5 @@ public final class RowBuilder {
             return null;
         }
         return Collections.singletonList(null);
-    }
-
-    private static Map<FieldSpecification, List<Object>> convertRecordPart(
-            final scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> recordPart) {
-        if (recordPart == null) {
-            return null;
-        }
-        final Map<FieldSpecification, List<Object>> result = new java.util.LinkedHashMap<>();
-        ScalaCollections.javaMap(recordPart).forEach((key, value) -> result.put(key, ScalaCollections.javaList(value)));
-        return result;
     }
 }

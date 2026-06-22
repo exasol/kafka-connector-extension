@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
-import com.exasol.cloudetl.kafka.ScalaCollections;
 import com.exasol.errorreporting.ExaError;
 
 public final class FieldParser {
@@ -17,11 +16,6 @@ public final class FieldParser {
             result.add(parse(field));
         }
         return result;
-    }
-
-    @Deprecated
-    public static List<GlobalFieldSpecification> get(final scala.collection.immutable.Seq<String> fields) {
-        return get(ScalaCollections.javaList(fields));
     }
 
     public static List<GlobalFieldSpecification> get(final String columnString) {

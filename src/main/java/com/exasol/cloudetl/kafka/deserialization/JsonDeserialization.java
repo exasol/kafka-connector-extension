@@ -27,10 +27,4 @@ public final class JsonDeserialization {
         }
         return new JsonDeserializer(fieldSpecs, new StringDeserializer());
     }
-
-    @Deprecated
-    public static Deserializer<Map<FieldSpecification, List<Object>>> getDeserializer(
-            final KafkaConsumerProperties properties, final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
-        return getDeserializer(properties, ScalaCollections.javaList(fieldSpecs));
-    }
 }

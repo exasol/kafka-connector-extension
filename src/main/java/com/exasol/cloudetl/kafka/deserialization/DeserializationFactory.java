@@ -33,15 +33,9 @@ public final class DeserializationFactory {
         final Deserializer<Map<FieldSpecification, List<Object>>> keyDeserializer = keyFieldSpecs.isEmpty()
                 ? FieldSpecificationSingletons.ignoreKeyDeserializer()
                 : getDeserialization(kafkaProperties.getRecordKeyFormat()).getDeserializer(kafkaProperties, keyFieldSpecs);
-        final Deserializer<Map<FieldSpecification, List<Object>>> valueDeserializer =
-                getDeserialization(kafkaProperties.getRecordValueFormat()).getDeserializer(kafkaProperties, valueFieldSpecs);
+        final Deserializer<Map<FieldSpecification, List<Object>>> valueDeserializer = getDeserialization(kafkaProperties.getRecordValueFormat())
+                .getDeserializer(kafkaProperties, valueFieldSpecs);
         return new RecordDeserializers(keyDeserializer, valueDeserializer);
-    }
-
-    @Deprecated
-    public static RecordDeserializers getSerializers(final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
-            final KafkaConsumerProperties kafkaProperties) {
-        return getSerializers(ScalaCollections.javaList(fieldSpecs), kafkaProperties);
     }
 
     public static RecordDeserialization getDeserialization(final String format) {

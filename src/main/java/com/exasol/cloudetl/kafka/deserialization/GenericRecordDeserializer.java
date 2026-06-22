@@ -1,17 +1,12 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.exasol.cloudetl.kafka.ScalaCollections;
-import com.exasol.common.avro.AvroConverter;
+import java.util.*;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.common.serialization.Deserializer;
+
+import com.exasol.common.avro.AvroConverter;
 
 public class GenericRecordDeserializer implements Deserializer<Map<FieldSpecification, List<Object>>> {
     private final List<FieldSpecification> fieldSpecs;
@@ -22,12 +17,6 @@ public class GenericRecordDeserializer implements Deserializer<Map<FieldSpecific
             final Deserializer<GenericRecord> deserializer) {
         this.fieldSpecs = fieldSpecs;
         this.deserializer = deserializer;
-    }
-
-    @Deprecated
-    public GenericRecordDeserializer(final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs,
-            final Deserializer<GenericRecord> deserializer) {
-        this(ScalaCollections.javaList(fieldSpecs), deserializer);
     }
 
     @Override
