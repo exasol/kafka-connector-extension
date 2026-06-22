@@ -1,43 +1,38 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
-import com.exasol.cloudetl.kafka.ScalaCollections;
 import com.exasol.errorreporting.ExaError;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
-
-public class JsonDeserializer
-        implements Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> {
+public class JsonDeserializer implements Deserializer<Map<FieldSpecification, List<Object>>> {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs;
+    private final List<FieldSpecification> fieldSpecs;
     private final StringDeserializer stringDeserializer;
 
-    public JsonDeserializer(final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs,
-            final StringDeserializer stringDeserializer) {
+    public JsonDeserializer(final List<FieldSpecification> fieldSpecs, final StringDeserializer stringDeserializer) {
         this.fieldSpecs = fieldSpecs;
         this.stringDeserializer = stringDeserializer;
     }
 
     @Override
-    public scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> deserialize(
-            final String topic, final byte[] data) {
+    public Map<FieldSpecification, List<Object>> deserialize(final String topic, final byte[] data) {
         try {
             final JsonNode tree = OBJECT_MAPPER.readTree(this.stringDeserializer.deserialize(topic, data));
-            final Map<FieldSpecification, scala.collection.immutable.Seq<Object>> result = new LinkedHashMap<>();
-            for (final FieldSpecification fieldSpec : ScalaCollections.javaList(this.fieldSpecs)) {
+            final Map<FieldSpecification, List<Object>> result = new LinkedHashMap<>();
+            for (final FieldSpecification fieldSpec : this.fieldSpecs) {
                 if (fieldSpec instanceof ConcreteField) {
                     final JsonNode node = tree.get(((ConcreteField) fieldSpec).fieldName());
-                    result.put(fieldSpec, ScalaCollections.seqOf(node == null ? null : jsonNodeToObject(node)));
+                    result.put(fieldSpec, Collections.singletonList(node == null ? null : jsonNodeToObject(node)));
                 } else if (fieldSpec instanceof FullRecord) {
-                    result.put(fieldSpec, ScalaCollections.seqOf(OBJECT_MAPPER.writeValueAsString(tree)));
+                    result.put(fieldSpec, Collections.singletonList(OBJECT_MAPPER.writeValueAsString(tree)));
                 } else {
                     throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-15")
                             .message("JSON records can only be used as full record or for extracting explicit fields.")
@@ -45,7 +40,7 @@ public class JsonDeserializer
                             .toString());
                 }
             }
-            return ScalaCollections.immutableMap(result);
+            return result;
         } catch (final IOException exception) {
             throw new KafkaConnectorException("Could not deserialize JSON record.", exception);
         }

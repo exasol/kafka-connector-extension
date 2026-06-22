@@ -25,8 +25,7 @@ class KafkaConsumerQueryGeneratorTest {
     @Test
     void generateSqlForImportSpecReturnsSqlStatement() {
         when(this.support.importSpec.getParameters()).thenReturn(this.support.properties);
-        final String propertyPairs = KafkaConsumerPropertiesSupport
-                .create(ScalaCollections.immutableMap(this.support.properties)).mkString();
+        final String propertyPairs = KafkaConsumerPropertiesSupport.create(this.support.properties).mkString();
 
         final String expectedSqlStatement = String.join("\n",
                 "SELECT",

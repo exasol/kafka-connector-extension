@@ -1,6 +1,5 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
-import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -20,8 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exasol.cloudetl.kafka.JsonArgumentMatcher;
 
-import scala.collection.immutable.Seq;
-
 @ExtendWith(MockitoExtension.class)
 class GenericRecordDeserializerTest {
     private final Schema schema = SchemaBuilder.record("test").fields()
@@ -33,8 +30,8 @@ class GenericRecordDeserializerTest {
     @Mock
     Deserializer<GenericRecord> delegateMock;
 
-    private scala.collection.immutable.Map<FieldSpecification, Seq<Object>> extractFrom(
-            final GenericRecord genericRecord, final Seq<FieldSpecification> fieldList) {
+    private Map<FieldSpecification, List<Object>> extractFrom(
+            final GenericRecord genericRecord, final List<FieldSpecification> fieldList) {
         when(delegateMock.deserialize(anyString(), any(byte[].class))).thenReturn(genericRecord);
         return new GenericRecordDeserializer(fieldList, delegateMock).deserialize("", new byte[0]);
     }
@@ -43,52 +40,52 @@ class GenericRecordDeserializerTest {
     void givesAllFieldsFromRecordIfFieldListIsNotProvided() {
         final var row = extractFrom(new GenericRecordBuilder(this.schema)
                 .set("field1", "val1").set("field2", 11L).set("complex", new Integer[] { 1, 2, 3 }).build(),
-                seq(RecordValueFields.INSTANCE));
+                List.of(RecordValueFields.INSTANCE));
 
-        assertMapOfSeqEquals(Map.of(RecordValueFields.INSTANCE, List.of("val1", 11L, "[1,2,3]")), row);
+        assertEquals(Map.of(RecordValueFields.INSTANCE, List.of("val1", 11L, "[1,2,3]")), row);
     }
 
     @Test
     void onlyUsesFieldsProvidedToDeserializerInTheRightOrder() {
         final var row = extractFrom(new GenericRecordBuilder(this.schema)
                 .set("field1", "val1").set("field2", 11L).set("complex", new Integer[] { 1, 2, 3 }).build(),
-                seq(new RecordValueField("complex"), new RecordValueField("field1")));
+                List.of(new RecordValueField("complex"), new RecordValueField("field1")));
 
-        assertMapOfSeqEquals(Map.of(new RecordValueField("complex"), List.of("[1,2,3]"),
+        assertEquals(Map.of(new RecordValueField("complex"), List.of("[1,2,3]"),
                 new RecordValueField("field1"), List.of("val1")), row);
     }
 
     @Test
     void providesNullValuesForFieldsNotPresentAndDefaultValues() {
         final var row = extractFrom(new GenericRecordBuilder(this.schema).set("field2", 11L).build(),
-                seq(new RecordValueField("field1"), new RecordValueField("field2"), new RecordValueField("complex")));
+                List.of(new RecordValueField("field1"), new RecordValueField("field2"), new RecordValueField("complex")));
 
         final Map<FieldSpecification, List<Object>> expected = new LinkedHashMap<>();
         expected.put(new RecordValueField("field1"), Collections.singletonList(null));
         expected.put(new RecordValueField("field2"), List.of(11L));
         expected.put(new RecordValueField("complex"), List.of("[]"));
-        assertMapOfSeqEquals(expected, row);
+        assertEquals(expected, row);
     }
 
     @Test
     void returnsNullForNonExistentFieldToKeepTableStructure() {
         final var row = extractFrom(new GenericRecordBuilder(this.schema).set("field2", 11L).build(),
-                seq(new RecordValueField("field2"), new RecordValueField("unknownField")));
+                List.of(new RecordValueField("field2"), new RecordValueField("unknownField")));
 
         final Map<FieldSpecification, List<Object>> expected = new LinkedHashMap<>();
         expected.put(new RecordValueField("field2"), List.of(11L));
         expected.put(new RecordValueField("unknownField"), Collections.singletonList(null));
-        assertMapOfSeqEquals(expected, row);
+        assertEquals(expected, row);
     }
 
     @Test
     void serializesRecordAsFullJsonWhenRequested() {
         final var row = extractFrom(new GenericRecordBuilder(this.schema)
                 .set("field1", "val1").set("field2", 11L).set("complex", new Integer[] { 1, 2, 3 }).build(),
-                seq(RecordValue.INSTANCE));
+                List.of(RecordValue.INSTANCE));
 
-        final var javaRow = javaMap(row);
-        final var values = javaList(javaRow.get(RecordValue.INSTANCE));
+        final var javaRow = row;
+        final var values = javaRow.get(RecordValue.INSTANCE);
         final String expectedJson = "{\"field1\":\"val1\",\"field2\":11,\"complex\":[1,2,3]}";
         assertAll(() -> assertEquals(1, javaRow.size()),
                 () -> assertTrue(javaRow.containsKey(RecordValue.INSTANCE)),

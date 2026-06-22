@@ -14,8 +14,7 @@ public final class KafkaConsumerQueryGenerator {
     }
 
     public static String generateSqlForImportSpec(final ExaMetadata metadata, final ExaImportSpecification importSpec) {
-        final KafkaConsumerProperties kafkaProperties = KafkaConsumerProperties.apply(
-                ScalaCollections.immutableMap(importSpec.getParameters()));
+        final KafkaConsumerProperties kafkaProperties = KafkaConsumerProperties.apply(importSpec.getParameters());
         final String tableName = kafkaProperties.getTableName();
         final String topic = kafkaProperties.getTopic();
         if (topic.contains(",")) {

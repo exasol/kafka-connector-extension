@@ -133,12 +133,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.exasol</groupId>
-            <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.20</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.github.embeddedkafka</groupId>
             <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
             <version>7.9.2</version>
@@ -302,65 +296,6 @@
                         <goals>
                             <goal>verify</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <id>npm-ci</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>extension/</workingDirectory>
-                            <executable>npm</executable>
-                            <commandlineArgs>ci</commandlineArgs>
-                            <useMavenLogger>false</useMavenLogger>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>build-extension</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>extension/</workingDirectory>
-                            <executable>npm</executable>
-                            <commandlineArgs>run build</commandlineArgs>
-                            <useMavenLogger>false</useMavenLogger>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>unit-test-extension</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>extension/</workingDirectory>
-                            <executable>npm</executable>
-                            <commandlineArgs>test</commandlineArgs>
-                            <useMavenLogger>false</useMavenLogger>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>lint-extension</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>extension/</workingDirectory>
-                            <executable>npm</executable>
-                            <commandlineArgs>run lint</commandlineArgs>
-                            <useMavenLogger>false</useMavenLogger>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

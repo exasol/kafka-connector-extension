@@ -65,11 +65,11 @@ public class KafkaConsumerProperties extends AbstractProperties {
     public static final Config<String> SASL_JAAS_CONFIG = new Config<>("SASL_JAAS_CONFIG", SaslConfigs.SASL_JAAS_CONFIG, "");
     public static final String BUCKETFS_CHECK_MITIGATION = "Please make sure it is successfully uploaded to BucketFS bucket.";
 
-    private final scala.collection.immutable.Map<String, String> properties;
+    private final Map<String, String> properties;
 
-    public KafkaConsumerProperties(final scala.collection.immutable.Map<String, String> properties) {
-        super(properties);
-        this.properties = properties;
+    public KafkaConsumerProperties(final Map<String, String> properties) {
+        super(ScalaCollections.immutableMap(properties));
+        this.properties = new LinkedHashMap<>(properties);
     }
 
     public String getBootstrapServers() {
@@ -97,19 +97,19 @@ public class KafkaConsumerProperties extends AbstractProperties {
         return getOrDefault(RECORD_KEY_FORMAT, "string").toLowerCase(Locale.ENGLISH);
     }
 
-    public scala.collection.immutable.Seq<String> getRecordFields() {
+    public List<String> getRecordFields() {
         final Option<String> fields = get(RECORD_FIELDS);
         if (fields.isDefined()) {
             final java.util.ArrayList<String> result = new java.util.ArrayList<>();
             for (final String field : fields.get().split(",")) {
                 result.add(field.trim());
             }
-            return ScalaCollections.seq(result);
+            return result;
         }
         return defaultRecordFields();
     }
 
-    private scala.collection.immutable.Seq<String> defaultRecordFields() {
+    private List<String> defaultRecordFields() {
         final String recordField;
         if (isSingleColumnJsonEnabled()) {
             recordField = "value";
@@ -118,7 +118,7 @@ public class KafkaConsumerProperties extends AbstractProperties {
         } else {
             recordField = "value";
         }
-        return ScalaCollections.seqOf(recordField);
+        return List.of(recordField);
     }
 
     public String getTopic() {
@@ -303,9 +303,9 @@ public class KafkaConsumerProperties extends AbstractProperties {
     public KafkaConsumerProperties mergeWithConnectionObject(final ExaMetadata metadata) {
         final scala.collection.immutable.Map<String, String> connectionParsedMap = parseConnectionInfo(BOOTSTRAP_SERVERS.userPropertyName(),
                 Option.apply(metadata));
-        final Map<String, String> merged = new LinkedHashMap<>(ScalaCollections.javaMap(this.properties));
+        final Map<String, String> merged = new LinkedHashMap<>(this.properties);
         merged.putAll(ScalaCollections.javaMap(connectionParsedMap));
-        return new KafkaConsumerProperties(ScalaCollections.immutableMap(merged));
+        return new KafkaConsumerProperties(merged);
     }
 
     public String mkString() {
@@ -330,11 +330,11 @@ public class KafkaConsumerProperties extends AbstractProperties {
         }
     }
 
-    public static KafkaConsumerProperties apply(final scala.collection.immutable.Map<String, String> params) {
+    public static KafkaConsumerProperties apply(final Map<String, String> params) {
         return createConsumerProperties(params, Option.empty());
     }
 
-    public static KafkaConsumerProperties apply(final scala.collection.immutable.Map<String, String> params,
+    public static KafkaConsumerProperties apply(final Map<String, String> params,
             final ExaMetadata metadata) {
         return createConsumerProperties(params, Option.apply(metadata));
     }
@@ -347,12 +347,12 @@ public class KafkaConsumerProperties extends AbstractProperties {
         return createConsumerProperties(mapFromString(string), Option.apply(metadata));
     }
 
-    private static scala.collection.immutable.Map<String, String> mapFromString(final String string) {
-        return new PropertiesParser(INNER_PROPERTY_SEPARATOR, INNER_KEYVALUE_ASSIGNMENT).mapFromString(string);
+    private static Map<String, String> mapFromString(final String string) {
+        return ScalaCollections.javaMap(new PropertiesParser(INNER_PROPERTY_SEPARATOR, INNER_KEYVALUE_ASSIGNMENT).mapFromString(string));
     }
 
     private static KafkaConsumerProperties createConsumerProperties(
-            final scala.collection.immutable.Map<String, String> params, final Option<ExaMetadata> metadataOpt) {
+            final Map<String, String> params, final Option<ExaMetadata> metadataOpt) {
         final KafkaConsumerProperties properties = new KafkaConsumerProperties(params);
         validateNoSSLCredentials(properties);
         if (metadataOpt.isEmpty() || !properties.hasNamedConnection()) {

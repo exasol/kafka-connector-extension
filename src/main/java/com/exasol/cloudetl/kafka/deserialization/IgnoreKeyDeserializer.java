@@ -1,18 +1,15 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.kafka.common.serialization.Deserializer;
 
-import com.exasol.cloudetl.kafka.ScalaCollections;
-
-public enum IgnoreKeyDeserializer
-        implements Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> {
+public enum IgnoreKeyDeserializer implements Deserializer<Map<FieldSpecification, List<Object>>> {
     INSTANCE;
 
     @Override
-    public scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> deserialize(
-            final String topic, final byte[] data) {
-        return ScalaCollections.immutableMap(Map.of());
+    public Map<FieldSpecification, List<Object>> deserialize(final String topic, final byte[] data) {
+        return Map.of();
     }
 }

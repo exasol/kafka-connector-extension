@@ -1,5 +1,8 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.kafka.common.serialization.Deserializer;
 
 final class FieldSpecificationSingletons {
@@ -26,7 +29,7 @@ final class FieldSpecificationSingletons {
         return TimestampField.INSTANCE;
     }
 
-    static Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> ignoreKeyDeserializer() {
+    static Deserializer<Map<FieldSpecification, List<Object>>> ignoreKeyDeserializer() {
         return IgnoreKeyDeserializer.INSTANCE;
     }
 }

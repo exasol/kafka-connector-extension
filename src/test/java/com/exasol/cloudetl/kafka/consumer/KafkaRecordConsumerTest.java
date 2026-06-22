@@ -1,6 +1,5 @@
 package com.exasol.cloudetl.kafka.consumer;
 
-import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
@@ -25,28 +24,26 @@ import com.exasol.ExaIterator;
 import com.exasol.cloudetl.kafka.*;
 import com.exasol.cloudetl.kafka.deserialization.*;
 
-import scala.collection.immutable.Seq;
-
 @SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
 class KafkaRecordConsumerTest {
     private static final String TOPIC_NAME = "topicName";
     private static final TopicPartition TOPIC_PARTITION = new TopicPartition(TOPIC_NAME, 0);
-    private static final scala.collection.immutable.Map<String, String> DEFAULT_PROPERTIES = map(
-            entry("TOPIC_NAME", TOPIC_NAME), entry("RECORD_KEY_FORMAT", "string"), entry("RECORD_VALUE_FORMAT", "string"));
-    private static final scala.collection.immutable.Map<String, String> MIN_MAX_THRESHOLD_PROPERTIES = map(
-            entry("MIN_RECORDS_PER_RUN", "2"), entry("MAX_RECORDS_PER_RUN", "4"));
-    private static final scala.collection.immutable.Map<String, String> CONSUME_ALL_OFFSETS_PROPERTIES = map(
-            entry("CONSUME_ALL_OFFSETS", "true"));
+    private static final Map<String, String> DEFAULT_PROPERTIES = Map.of(
+            "TOPIC_NAME", TOPIC_NAME, "RECORD_KEY_FORMAT", "string", "RECORD_VALUE_FORMAT", "string");
+    private static final Map<String, String> MIN_MAX_THRESHOLD_PROPERTIES = Map.of(
+            "MIN_RECORDS_PER_RUN", "2", "MAX_RECORDS_PER_RUN", "4");
+    private static final Map<String, String> CONSUME_ALL_OFFSETS_PROPERTIES = Map.of(
+            "CONSUME_ALL_OFFSETS", "true");
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMillis(30000);
     private static final long DEFAULT_END_OFFSET = 4L;
-    private static final ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> EMPTY_CONSUMER_RECORDS = new ConsumerRecords<>(
+    private static final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> EMPTY_CONSUMER_RECORDS = new ConsumerRecords<>(
             Collections.emptyMap());
 
     @Mock
     ExaIterator iteratorMock;
     @Mock
-    private KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> consumerMock;
+    private KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumerMock;
 
     @BeforeEach
     void beforeEach() {
@@ -157,39 +154,40 @@ class KafkaRecordConsumerTest {
         }
     }
 
-    private ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> recordBatch(
+    private ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> recordBatch(
             final long... offsets) {
-        final List<ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>>> records = new ArrayList<>();
+        final List<ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>>> records = new ArrayList<>();
         for (final long offset : offsets) {
             records.add(new ConsumerRecord<>(TOPIC_NAME, 0, offset,
-                    map(entry(RecordKey.INSTANCE, seq("key"))), map(entry(RecordValue.INSTANCE, seq(String.valueOf(offset))))));
+                    Map.of(RecordKey.INSTANCE, List.of("key")),
+                    Map.of(RecordValue.INSTANCE, List.of(String.valueOf(offset)))));
         }
         return new ConsumerRecords<>(Map.of(TOPIC_PARTITION, records));
     }
 
     private KafkaImportChecker checker(
-            final scala.collection.immutable.Map<String, String> additionalProperties) {
+            final Map<String, String> additionalProperties) {
         return checker(additionalProperties, 0L);
     }
 
-    private KafkaImportChecker checker(final scala.collection.immutable.Map<String, String> additionalProperties,
+    private KafkaImportChecker checker(final Map<String, String> additionalProperties,
             final long startOffset) {
         return new KafkaImportChecker(additionalProperties, startOffset);
     }
 
-    private scala.collection.immutable.Map<String, String> merge(
-            final scala.collection.immutable.Map<String, String> first,
-            final scala.collection.immutable.Map<String, String> second) {
-        final Map<String, String> merged = new LinkedHashMap<>(javaMap(first));
-        merged.putAll(javaMap(second));
-        return ScalaCollections.immutableMap(merged);
+    private Map<String, String> merge(
+            final Map<String, String> first,
+            final Map<String, String> second) {
+        final Map<String, String> merged = new LinkedHashMap<>(first);
+        merged.putAll(second);
+        return merged;
     }
 
     private final class KafkaImportChecker {
-        private final scala.collection.immutable.Map<String, String> additionalProperties;
+        private final Map<String, String> additionalProperties;
         private final long startOffset;
 
-        private KafkaImportChecker(final scala.collection.immutable.Map<String, String> additionalProperties,
+        private KafkaImportChecker(final Map<String, String> additionalProperties,
                 final long startOffset) {
             this.additionalProperties = additionalProperties;
             this.startOffset = startOffset;
@@ -204,11 +202,11 @@ class KafkaRecordConsumerTest {
 
     private final class TestKafkaRecordConsumer extends KafkaRecordConsumer {
         private TestKafkaRecordConsumer(final KafkaConsumerProperties properties, final long startOffset) {
-            super(properties, 0, startOffset, seq(String.class, Long.class, Long.class), 3, 1L, "vm1");
+            super(properties, 0, startOffset, List.of(String.class, Long.class, Long.class), 3, 1L, "vm1");
         }
 
         @Override
-        protected KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> getRecordConsumer() {
+        protected KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> getRecordConsumer() {
             return consumerMock;
         }
     }
