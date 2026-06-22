@@ -1,4 +1,4 @@
-# Kafka Connector Extension 1.7.17, released 2026-??-??
+# Kafka Connector Extension 1.7.17, released 2026-06-22
 
 Code name: Migrate to Java
 
@@ -11,6 +11,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 * #195: Migrate production code from Scala to Java
 * #196: Migrate test code from Scala to Java
 * #198: Enable UDF coverage collection for integration tests
+* #199: Replace Scala collections with Java collections where possible
 
 ## Security updates
 
