@@ -35,7 +35,15 @@
         <developerConnection>scm:git:https://github.com/exasol/kafka-connector-extension.git</developerConnection>
         <url>https://github.com/exasol/kafka-connector-extension/</url>
     </scm>
-    <dependencies/>
+    <dependencies>
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <version>0.8.14</version>
+            <scope>test</scope>
+            <classifier>runtime</classifier>
+        </dependency>
+    </dependencies>
     <build>
         <pluginManagement>
             <plugins>
@@ -314,6 +322,26 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.10.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-jacoco</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <includeArtifactIds>org.jacoco.agent</includeArtifactIds>
+                            <includeClassifiers>runtime</includeClassifiers>
+                            <outputDirectory>${project.build.directory}/jacoco-agent</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.5.5</version>
                 <configuration>
@@ -322,6 +350,7 @@
                         <EXASOL_TELEMETRY_DISABLE>true</EXASOL_TELEMETRY_DISABLE>
                     </environmentVariables>
                     <systemPropertyVariables>
+                        <test.coverage>true</test.coverage>
                         <!-- Set the highest log level for coverage testing, so that we have a chance to reach branches in the logging lambdas too. -->
                         <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
                     </systemPropertyVariables>
@@ -346,6 +375,12 @@
                         <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>prepare-agent-integration</id>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
                         </goals>
                     </execution>
                     <execution>
