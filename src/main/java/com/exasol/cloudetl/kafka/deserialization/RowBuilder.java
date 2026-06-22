@@ -105,6 +105,7 @@ public final class RowBuilder {
         return defaultFor(spec);
     }
 
+    @SuppressWarnings("java:S1168") // We want to return null for missing all.* specifications, not an empty list. Calling code handles this case explicitly.
     private static List<Object> defaultFor(final FieldSpecification spec) {
         if (spec instanceof AllFieldsSpecification) {
             return null;
