@@ -38,6 +38,7 @@ public final class DeserializationFactory {
         return new RecordDeserializers(keyDeserializer, valueDeserializer);
     }
 
+    @Deprecated
     public static RecordDeserializers getSerializers(final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
             final KafkaConsumerProperties kafkaProperties) {
         return getSerializers(ScalaCollections.javaList(fieldSpecs), kafkaProperties);

@@ -19,6 +19,7 @@ public final class FieldParser {
         return result;
     }
 
+    @Deprecated
     public static List<GlobalFieldSpecification> get(final scala.collection.immutable.Seq<String> fields) {
         return get(ScalaCollections.javaList(fields));
     }

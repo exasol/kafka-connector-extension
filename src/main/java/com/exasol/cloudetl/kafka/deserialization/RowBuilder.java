@@ -33,6 +33,7 @@ public final class RowBuilder {
         return flatten(rowValues);
     }
 
+    @Deprecated
     public static List<Object> buildRow(final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
             final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumerRecord,
             final int outputColumnCount) {

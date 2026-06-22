@@ -24,6 +24,7 @@ public class GenericRecordDeserializer implements Deserializer<Map<FieldSpecific
         this.deserializer = deserializer;
     }
 
+    @Deprecated
     public GenericRecordDeserializer(final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs,
             final Deserializer<GenericRecord> deserializer) {
         this(ScalaCollections.javaList(fieldSpecs), deserializer);

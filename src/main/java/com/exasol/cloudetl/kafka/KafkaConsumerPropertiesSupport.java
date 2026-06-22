@@ -1,5 +1,7 @@
 package com.exasol.cloudetl.kafka;
 
+import java.util.Map;
+
 import com.exasol.ExaMetadata;
 
 public final class KafkaConsumerPropertiesSupport {
@@ -24,10 +26,21 @@ public final class KafkaConsumerPropertiesSupport {
     private KafkaConsumerPropertiesSupport() {
     }
 
+    public static KafkaConsumerProperties create(final Map<String, String> params) {
+        return KafkaConsumerProperties.apply(params);
+    }
+
+    @Deprecated
     public static KafkaConsumerProperties create(final scala.collection.immutable.Map<String, String> params) {
         return KafkaConsumerProperties.apply(params);
     }
 
+    public static KafkaConsumerProperties create(final Map<String, String> params,
+            final ExaMetadata metadata) {
+        return KafkaConsumerProperties.apply(params, metadata);
+    }
+
+    @Deprecated
     public static KafkaConsumerProperties create(final scala.collection.immutable.Map<String, String> params,
             final ExaMetadata metadata) {
         return KafkaConsumerProperties.apply(params, metadata);

@@ -1,14 +1,11 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Collections;
-
-import com.exasol.cloudetl.kafka.ScalaCollections;
+import java.util.*;
 
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+
+import com.exasol.cloudetl.kafka.ScalaCollections;
 
 public class AsStringDeserializer implements Deserializer<Map<FieldSpecification, List<Object>>> {
     private final List<FieldSpecification> fieldSpecs;
@@ -18,6 +15,7 @@ public class AsStringDeserializer implements Deserializer<Map<FieldSpecification
         this.fieldSpecs = fieldSpecs;
     }
 
+    @Deprecated
     public AsStringDeserializer(final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
         this(ScalaCollections.javaList(fieldSpecs));
     }

@@ -26,6 +26,7 @@ public class JsonDeserializer implements Deserializer<Map<FieldSpecification, Li
         this.stringDeserializer = stringDeserializer;
     }
 
+    @Deprecated
     public JsonDeserializer(final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs,
             final StringDeserializer stringDeserializer) {
         this(ScalaCollections.javaList(fieldSpecs), stringDeserializer);
