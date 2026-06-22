@@ -59,11 +59,10 @@
 | [error-code-crawler-maven-plugin][60]                   | [MIT License][61]                           |
 | [Git Commit Id Maven Plugin][62]                        | [GNU Lesser General Public License 3.0][63] |
 | [Project Keeper Maven plugin][64]                       | [The MIT License][65]                       |
-| [Exec Maven Plugin][66]                                 | [Apache License 2][19]                      |
-| [Apache Maven Clean Plugin][67]                         | [Apache-2.0][19]                            |
-| [Apache Maven Resources Plugin][68]                     | [Apache-2.0][19]                            |
-| [Apache Maven Install Plugin][69]                       | [Apache-2.0][19]                            |
-| [Apache Maven Site Plugin][70]                          | [Apache-2.0][19]                            |
+| [Apache Maven Clean Plugin][66]                         | [Apache-2.0][19]                            |
+| [Apache Maven Resources Plugin][67]                     | [Apache-2.0][19]                            |
+| [Apache Maven Install Plugin][68]                       | [Apache-2.0][19]                            |
+| [Apache Maven Site Plugin][69]                          | [Apache-2.0][19]                            |
 
 [0]: https://www.scala-lang.org/
 [1]: https://www.apache.org/licenses/LICENSE-2.0
@@ -131,8 +130,7 @@
 [63]: http://www.gnu.org/licenses/lgpl-3.0.txt
 [64]: https://github.com/exasol/project-keeper/
 [65]: https://github.com/exasol/project-keeper/blob/main/LICENSE
-[66]: https://www.mojohaus.org/exec-maven-plugin
-[67]: https://maven.apache.org/plugins/maven-clean-plugin/
-[68]: https://maven.apache.org/plugins/maven-resources-plugin/
-[69]: https://maven.apache.org/plugins/maven-install-plugin/
-[70]: https://maven.apache.org/plugins/maven-site-plugin/
+[66]: https://maven.apache.org/plugins/maven-clean-plugin/
+[67]: https://maven.apache.org/plugins/maven-resources-plugin/
+[68]: https://maven.apache.org/plugins/maven-install-plugin/
+[69]: https://maven.apache.org/plugins/maven-site-plugin/
