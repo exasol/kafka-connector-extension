@@ -1,7 +1,6 @@
 package com.exasol.cloudetl.kafka;
 
 import static com.exasol.cloudetl.kafka.KafkaConsumerProperties.*;
-import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
@@ -194,7 +193,7 @@ class KafkaConsumerPropertiesTest {
 
     @Test
     void getPropertiesThrowsIfSchemaRegistryIsNotSetAndRecordFormatIsAvro() {
-        final var avroProperties = map(entry("BOOTSTRAP_SERVERS", "server"), entry("RECORD_FORMAT", "avro"));
+        final var avroProperties = Map.of("BOOTSTRAP_SERVERS", "server", "RECORD_FORMAT", "avro");
         final KafkaConsumerProperties consumerProperties = KafkaConsumerPropertiesSupport.create(avroProperties);
         final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 consumerProperties::getProperties);
@@ -374,25 +373,25 @@ class KafkaConsumerPropertiesTest {
     @Test
     void getRecordFieldsReturnsUserProvidedPropertyValue() {
         this.properties = mutableMap("RECORD_FIELDS", "value.name,value.Sur_Name, value.address1, timestamp");
-        assertSeqEquals(Arrays.asList("value.name", "value.Sur_Name", "value.address1", "timestamp"),
+        assertEquals(Arrays.asList("value.name", "value.Sur_Name", "value.address1", "timestamp"),
                 base().getRecordFields());
     }
 
     @Test
     void getRecordFieldsReturnsDefaultValueIfNotSet() {
-        assertSeqEquals(List.of("value.*"), base().getRecordFields());
+        assertEquals(List.of("value.*"), base().getRecordFields());
     }
 
     @Test
     void getRecordFieldsReturnsDefaultValueWhenRecordValueIsNotAvro() {
         this.properties = mutableMap("RECORD_VALUE_FORMAT", "json");
-        assertSeqEquals(List.of("value"), base().getRecordFields());
+        assertEquals(List.of("value"), base().getRecordFields());
     }
 
     @Test
     void getRecordFieldsReturnsDefaultValueWhenSingleJsonColumnIsRequested() {
         this.properties = mutableMap("AS_JSON_DOC", "true");
-        assertSeqEquals(List.of("value"), base().getRecordFields());
+        assertEquals(List.of("value"), base().getRecordFields());
     }
 
     @Test
@@ -425,8 +424,8 @@ class KafkaConsumerPropertiesTest {
 
     @Test
     void mergeWithConnectionObjectReturnsNewKafkaConsumerProperties() throws Exception {
-        final var kafkaConsumerProperties = new BaseProperties(map(entry("TOPICS", "test-topic"),
-                entry("CONNECTION_NAME", "MY_CONNECTION")));
+        final var kafkaConsumerProperties = new BaseProperties(Map.of("TOPICS", "test-topic",
+                "CONNECTION_NAME", "MY_CONNECTION"));
         final ExaMetadata metadata = mock(ExaMetadata.class);
         final ExaConnectionInformation connectionInformation = mock(ExaConnectionInformation.class);
         when(metadata.getConnection("MY_CONNECTION")).thenReturn(connectionInformation);
@@ -449,7 +448,7 @@ class KafkaConsumerPropertiesTest {
 
     @Test
     void applyRejectsSecureSslPropertiesWithoutConnectionObject() {
-        final var consumerProperties = map(entry("SECURITY_PROTOCOL", "SSL"), entry("SSL_KEY_PASSWORD", "PASSWORD"));
+        final var consumerProperties = Map.of("SECURITY_PROTOCOL", "SSL", "SSL_KEY_PASSWORD", "PASSWORD");
         final ExaMetadata metadata = mock(ExaMetadata.class);
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> KafkaConsumerPropertiesSupport.create(consumerProperties, metadata));
@@ -467,7 +466,7 @@ class KafkaConsumerPropertiesTest {
         when(connectionInformation.getPassword()).thenReturn("BOOTSTRAP_SERVERS=localhost:1000;"
                 + "SCHEMA_REGISTRY_URL=http://n11:1001");
 
-        final var props = KafkaConsumerPropertiesSupport.create(map(entry("CONNECTION_NAME", "MY_CONNECTION")), metadata);
+        final var props = KafkaConsumerPropertiesSupport.create(Map.of("CONNECTION_NAME", "MY_CONNECTION"), metadata);
 
         assertAll(() -> assertEquals("localhost:1000", props.getBootstrapServers()),
                 () -> assertEquals("http://n11:1001", props.getSchemaRegistryUrl()));
@@ -598,9 +597,9 @@ class KafkaConsumerPropertiesTest {
             addSimpleSaslParameters(builder);
         }
         when(connectionInformation.getPassword()).thenReturn(builder.toString());
-        return KafkaConsumerPropertiesSupport.create(map(entry("BOOTSTRAP_SERVERS", "kafka01"),
-                entry("RECORD_FORMAT", "string"), entry("SECURITY_PROTOCOL", securityProtocol),
-                entry("CONNECTION_NAME", "SSL_CONNECTION")), metadata);
+        return KafkaConsumerPropertiesSupport.create(Map.of("BOOTSTRAP_SERVERS", "kafka01",
+                "RECORD_FORMAT", "string", "SECURITY_PROTOCOL", securityProtocol,
+                "CONNECTION_NAME", "SSL_CONNECTION"), metadata);
     }
 
     private void appendPath(final StringBuilder builder, final String key, final Path file) {

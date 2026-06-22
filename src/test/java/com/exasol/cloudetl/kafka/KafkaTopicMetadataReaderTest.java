@@ -1,6 +1,5 @@
 package com.exasol.cloudetl.kafka;
 
-import static com.exasol.cloudetl.kafka.TestCollections.assertSeqEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +29,7 @@ class KafkaTopicMetadataReaderTest {
 
         final var partitions = KafkaTopicMetadataReader.getTopicPartitions(consumerMock, TOPIC);
 
-        assertAll(() -> assertSeqEquals(Arrays.asList(0, 2), partitions),
+        assertAll(() -> assertEquals(Arrays.asList(0, 2), partitions),
                 () -> verify(consumerMock).close());
     }
 

@@ -1,6 +1,5 @@
 package com.exasol.cloudetl.kafka.consumer;
 
-import static com.exasol.cloudetl.kafka.TestCollections.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
@@ -30,12 +29,12 @@ import com.exasol.cloudetl.kafka.deserialization.*;
 class KafkaRecordConsumerTest {
     private static final String TOPIC_NAME = "topicName";
     private static final TopicPartition TOPIC_PARTITION = new TopicPartition(TOPIC_NAME, 0);
-    private static final Map<String, String> DEFAULT_PROPERTIES = map(
-            entry("TOPIC_NAME", TOPIC_NAME), entry("RECORD_KEY_FORMAT", "string"), entry("RECORD_VALUE_FORMAT", "string"));
-    private static final Map<String, String> MIN_MAX_THRESHOLD_PROPERTIES = map(
-            entry("MIN_RECORDS_PER_RUN", "2"), entry("MAX_RECORDS_PER_RUN", "4"));
-    private static final Map<String, String> CONSUME_ALL_OFFSETS_PROPERTIES = map(
-            entry("CONSUME_ALL_OFFSETS", "true"));
+    private static final Map<String, String> DEFAULT_PROPERTIES = Map.of(
+            "TOPIC_NAME", TOPIC_NAME, "RECORD_KEY_FORMAT", "string", "RECORD_VALUE_FORMAT", "string");
+    private static final Map<String, String> MIN_MAX_THRESHOLD_PROPERTIES = Map.of(
+            "MIN_RECORDS_PER_RUN", "2", "MAX_RECORDS_PER_RUN", "4");
+    private static final Map<String, String> CONSUME_ALL_OFFSETS_PROPERTIES = Map.of(
+            "CONSUME_ALL_OFFSETS", "true");
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMillis(30000);
     private static final long DEFAULT_END_OFFSET = 4L;
     private static final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> EMPTY_CONSUMER_RECORDS = new ConsumerRecords<>(

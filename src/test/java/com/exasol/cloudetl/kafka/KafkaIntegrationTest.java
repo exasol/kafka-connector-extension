@@ -35,7 +35,7 @@ abstract class KafkaIntegrationTest {
 
     @BeforeAll
     void startEmbeddedKafka() {
-        final var emptyMap = Map.<String, String>of();
+        final var emptyMap = ScalaCollections.immutableMap(Map.<String, String>of());
         EmbeddedKafka.start(EmbeddedKafkaConfig.apply(6001, 6000, 6002, emptyMap, emptyMap, emptyMap, emptyMap));
     }
 
