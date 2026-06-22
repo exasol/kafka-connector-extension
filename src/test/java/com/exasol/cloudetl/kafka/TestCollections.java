@@ -37,12 +37,24 @@ public final class TestCollections {
         return ScalaCollections.javaList(values);
     }
 
+    public static <T> List<T> javaList(final List<T> values) {
+        return values;
+    }
+
     public static <K, V> Map<K, V> javaMap(final scala.collection.Map<K, V> values) {
         return ScalaCollections.javaMap(values);
     }
 
+    public static <K, V> Map<K, V> javaMap(final Map<K, V> values) {
+        return values;
+    }
+
     public static <T> void assertSeqEquals(final List<T> expected, final scala.collection.Iterable<T> actual) {
         assertEquals(expected, javaList(actual));
+    }
+
+    public static <T> void assertSeqEquals(final List<T> expected, final List<T> actual) {
+        assertEquals(expected, actual);
     }
 
     public static <K, V> void assertMapOfSeqEquals(final Map<K, List<V>> expected,
@@ -50,5 +62,9 @@ public final class TestCollections {
         final Map<K, List<V>> actualJava = new LinkedHashMap<>();
         javaMap(actual).forEach((key, value) -> actualJava.put(key, javaList(value)));
         assertEquals(expected, actualJava);
+    }
+
+    public static <K, V> void assertMapOfSeqEquals(final Map<K, List<V>> expected, final Map<K, List<V>> actual) {
+        assertEquals(expected, actual);
     }
 }

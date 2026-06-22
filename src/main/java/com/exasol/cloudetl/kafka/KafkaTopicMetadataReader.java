@@ -38,11 +38,7 @@ public final class KafkaTopicMetadataReader {
     private static <K, V> void emitMetadata(final ExaIterator iterator, final KafkaConsumer<K, V> consumer,
             final String topic) throws ExaIterationException, ExaDataTypeException {
         final HashMap<Integer, Long> seenPartitionOffsets = getPreviousPartitionOffsets(iterator);
-        final List<Integer> topicPartitionIds = new ArrayList<>();
-        for (final Object partitionId : ScalaCollections.javaList(getTopicPartitions(consumer, topic))) {
-            topicPartitionIds.add((Integer) partitionId);
-        }
-        emitTopicPartitionOffsets(iterator, consumer, topic, topicPartitionIds, seenPartitionOffsets);
+        emitTopicPartitionOffsets(iterator, consumer, topic, getTopicPartitions(consumer, topic), seenPartitionOffsets);
     }
 
     private static HashMap<Integer, Long> getPreviousPartitionOffsets(final ExaIterator iterator)
@@ -55,12 +51,11 @@ public final class KafkaTopicMetadataReader {
         return partitionOffsets;
     }
 
-    public static <K, V> scala.collection.immutable.List<Object> getTopicPartitions(
-            final KafkaConsumer<K, V> consumer, final String topic) {
-        final List<Object> partitions = new ArrayList<>();
+    public static <K, V> List<Integer> getTopicPartitions(final KafkaConsumer<K, V> consumer, final String topic) {
+        final List<Integer> partitions = new ArrayList<>();
         try {
             consumer.partitionsFor(topic).forEach(partitionInfo -> partitions.add(partitionInfo.partition()));
-            return ScalaCollections.list(partitions);
+            return partitions;
         } catch (final TimeoutException exception) {
             throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-24")
                     .message(KafkaConnectorConstants.ERROR_READING_TOPIC_PARTITION, topic)

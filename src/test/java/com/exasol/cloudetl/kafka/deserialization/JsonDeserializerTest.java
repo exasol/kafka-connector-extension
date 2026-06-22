@@ -77,7 +77,7 @@ class JsonDeserializerTest {
                         JsonArgumentMatcher.readJson((String) values.get(0))));
     }
 
-    private scala.collection.immutable.Map<FieldSpecification, Seq<Object>> deserialize(
+    private Map<FieldSpecification, List<Object>> deserialize(
             final Seq<FieldSpecification> fields, final String json) {
         return new JsonDeserializer(fields, new StringDeserializer()).deserialize("randomTopic",
                 json.getBytes(StandardCharsets.UTF_8));

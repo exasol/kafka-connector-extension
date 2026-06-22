@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.exasol.ExaDataTypeException;
 import com.exasol.ExaIterator;
@@ -12,7 +13,6 @@ import com.exasol.cloudetl.kafka.KafkaConnectorConstants;
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
 import com.exasol.cloudetl.kafka.KafkaConsumerFactory;
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
-import com.exasol.cloudetl.kafka.ScalaCollections;
 import com.exasol.cloudetl.kafka.deserialization.DeserializationFactory;
 import com.exasol.cloudetl.kafka.deserialization.FieldConverter;
 import com.exasol.cloudetl.kafka.deserialization.FieldParser;
@@ -37,20 +37,20 @@ public class KafkaRecordConsumer implements RecordConsumer {
     private final KafkaConsumerProperties properties;
     private final int partitionId;
     private final long partitionStartOffset;
-    private final scala.collection.immutable.Seq<Class<?>> outputColumnTypes;
+    private final List<Class<?>> outputColumnTypes;
     private final int tableColumnCount;
     private final long nodeId;
     private final String vmId;
     private final String topic;
-    private final KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumer;
+    private final KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumer;
     private final long partitionEndOffset;
     private final int maxRecordsPerRun;
     private final int minRecordsPerRun;
     private final Duration timeout;
-    private final scala.collection.immutable.Seq<GlobalFieldSpecification> recordFieldSpecifications;
+    private final List<GlobalFieldSpecification> recordFieldSpecifications;
 
     public KafkaRecordConsumer(final KafkaConsumerProperties properties, final int partitionId,
-            final long partitionStartOffset, final scala.collection.immutable.Seq<Class<?>> outputColumnTypes,
+            final long partitionStartOffset, final List<Class<?>> outputColumnTypes,
             final int tableColumnCount, final long nodeId, final String vmId) {
         this.properties = properties;
         this.partitionId = partitionId;
@@ -75,7 +75,8 @@ public class KafkaRecordConsumer implements RecordConsumer {
         long totalRecordCount = 0L;
         try {
             do {
-                final ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> records = this.consumer.poll(this.timeout);
+                final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> records =
+                        this.consumer.poll(this.timeout);
                 recordCount = records.count();
                 totalRecordCount += recordCount;
                 recordOffset = updateRecordOffset(emitRecords(iterator, records));
@@ -93,33 +94,32 @@ public class KafkaRecordConsumer implements RecordConsumer {
         return currentOffset == -1L ? getPartitionCurrentOffset() : currentOffset;
     }
 
-    protected KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> getRecordConsumer() {
+    protected KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> getRecordConsumer() {
         final TopicPartition topicPartition = new TopicPartition(this.topic, this.partitionId);
-        final scala.collection.immutable.Seq<GlobalFieldSpecification> recordFields =
-                FieldParser.get(this.properties.getRecordFields());
+        final List<GlobalFieldSpecification> recordFields = FieldParser.get(this.properties.getRecordFields());
         final DeserializationFactory.RecordDeserializers recordDeserializers =
                 DeserializationFactory.getSerializers(recordFields, this.properties);
-        final KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> newConsumer = KafkaConsumerFactory.apply(this.properties,
-                recordDeserializers.getKeyDeserializer(), recordDeserializers.getValueDeserializer());
+        final KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> newConsumer =
+                KafkaConsumerFactory.apply(this.properties, recordDeserializers.getKeyDeserializer(),
+                        recordDeserializers.getValueDeserializer());
         newConsumer.assign(Arrays.asList(topicPartition));
         newConsumer.seek(topicPartition, this.partitionStartOffset);
         return newConsumer;
     }
 
-    private long emitRecords(final ExaIterator iterator, final ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> records)
+    private long emitRecords(final ExaIterator iterator,
+            final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> records)
             throws ExaIterationException, ExaDataTypeException {
         long lastRecordOffset = -1L;
         final FieldConverter fieldConverter = new FieldConverter(this.outputColumnTypes);
-        for (final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumerRecord : records) {
+        for (final ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumerRecord : records) {
             lastRecordOffset = consumerRecord.offset();
             final List<Object> metadata = List.of(consumerRecord.partition(), consumerRecord.offset());
             final int columnsCount = this.tableColumnCount - metadata.size();
-            final List<Object> row = new ArrayList<>(
-                    ScalaCollections.javaList(RowBuilder.buildRow(this.recordFieldSpecifications, consumerRecord, columnsCount)));
+            final List<Object> row = new ArrayList<>(RowBuilder.buildRow(this.recordFieldSpecifications, consumerRecord, columnsCount));
             row.addAll(metadata);
-            final scala.collection.immutable.Seq<Object> convertedRow =
-                    fieldConverter.convertRow(ScalaCollections.seq(row));
-            iterator.emit(ScalaCollections.javaList(convertedRow).toArray(new Object[0]));
+            final List<Object> convertedRow = fieldConverter.convertRow(row);
+            iterator.emit(convertedRow.toArray(new Object[0]));
         }
         return lastRecordOffset;
     }

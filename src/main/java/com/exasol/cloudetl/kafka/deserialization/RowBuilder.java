@@ -1,6 +1,7 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,23 +15,33 @@ public final class RowBuilder {
     private RowBuilder() {
     }
 
-    public static scala.collection.immutable.Seq<Object> buildRow(
-            final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
-            final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumerRecord,
+    public static List<Object> buildRow(final List<GlobalFieldSpecification> fieldSpecs,
+            final ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumerRecord,
             final int outputColumnCount) {
-        final List<scala.collection.immutable.Seq<Object>> rowValues = new ArrayList<>();
+        final List<List<Object>> rowValues = new ArrayList<>();
         final List<Boolean> present = new ArrayList<>();
-        for (final GlobalFieldSpecification spec : ScalaCollections.javaList(fieldSpecs)) {
-            final scala.collection.immutable.Seq<Object> value = getValue(spec, consumerRecord);
+        for (final GlobalFieldSpecification spec : fieldSpecs) {
+            final List<Object> value = getValue(spec, consumerRecord);
             rowValues.add(value);
             present.add(value != null);
         }
         final long absentCount = present.stream().filter(isPresent -> !isPresent.booleanValue()).count();
         if (absentCount > 0) {
             validateSingleMissingExpression(absentCount);
-            return ScalaCollections.seq(buildRowWithMissingValues(rowValues, present, outputColumnCount));
+            return buildRowWithMissingValues(rowValues, present, outputColumnCount);
         }
-        return ScalaCollections.seq(flatten(rowValues));
+        return flatten(rowValues);
+    }
+
+    public static List<Object> buildRow(final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
+            final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumerRecord,
+            final int outputColumnCount) {
+        final ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> convertedRecord =
+                new ConsumerRecord<>(consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset(),
+                        consumerRecord.timestamp(), consumerRecord.timestampType(), consumerRecord.serializedKeySize(),
+                        consumerRecord.serializedValueSize(), convertRecordPart(consumerRecord.key()),
+                        convertRecordPart(consumerRecord.value()), consumerRecord.headers(), consumerRecord.leaderEpoch());
+        return buildRow(ScalaCollections.javaList(fieldSpecs), convertedRecord, outputColumnCount);
     }
 
     private static void validateSingleMissingExpression(final long absentCount) {
@@ -43,14 +54,13 @@ public final class RowBuilder {
         }
     }
 
-    private static List<Object> buildRowWithMissingValues(
-            final List<scala.collection.immutable.Seq<Object>> rowValues, final List<Boolean> present,
+    private static List<Object> buildRowWithMissingValues(final List<List<Object>> rowValues, final List<Boolean> present,
             final int outputColumnCount) {
         final int valuesMissing = outputColumnCount - countPresentColumns(rowValues, present);
         final List<Object> result = new ArrayList<>();
         for (int index = 0; index < rowValues.size(); index++) {
             if (present.get(index).booleanValue()) {
-                result.addAll(ScalaCollections.javaList(rowValues.get(index)));
+                result.addAll(rowValues.get(index));
             } else {
                 addNulls(result, valuesMissing);
             }
@@ -58,12 +68,11 @@ public final class RowBuilder {
         return result;
     }
 
-    private static int countPresentColumns(final List<scala.collection.immutable.Seq<Object>> rowValues,
-            final List<Boolean> present) {
+    private static int countPresentColumns(final List<List<Object>> rowValues, final List<Boolean> present) {
         int presentColumnCount = 0;
         for (int index = 0; index < rowValues.size(); index++) {
             if (present.get(index).booleanValue()) {
-                presentColumnCount += ScalaCollections.javaList(rowValues.get(index)).size();
+                presentColumnCount += rowValues.get(index).size();
             }
         }
         return presentColumnCount;
@@ -75,22 +84,22 @@ public final class RowBuilder {
         }
     }
 
-    private static List<Object> flatten(final List<scala.collection.immutable.Seq<Object>> rowValues) {
+    private static List<Object> flatten(final List<List<Object>> rowValues) {
         final List<Object> result = new ArrayList<>();
-        for (final scala.collection.immutable.Seq<Object> value : rowValues) {
-            result.addAll(ScalaCollections.javaList(value));
+        for (final List<Object> value : rowValues) {
+            result.addAll(value);
         }
         return result;
     }
 
-    private static scala.collection.immutable.Seq<Object> getValue(final GlobalFieldSpecification spec,
-            final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumerRecord) {
+    private static List<Object> getValue(final GlobalFieldSpecification spec,
+            final ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumerRecord) {
         if (spec instanceof KeySpecification) {
             return getFromRecord(consumerRecord.key(), (FieldSpecification) spec);
         } else if (spec instanceof ValueSpecification) {
             return getFromRecord(consumerRecord.value(), (FieldSpecification) spec);
         } else if (spec == FieldSpecificationSingletons.timestampField()) {
-            return ScalaCollections.seqOf(consumerRecord.timestamp());
+            return List.of(consumerRecord.timestamp());
         }
         throw new KafkaConnectorException(ExaError.messageBuilder("F-KCE-11")
                 .message("Unsupported field specification {{SPECIFICATION}} is provided.", spec)
@@ -98,22 +107,28 @@ public final class RowBuilder {
                 .toString());
     }
 
-    private static scala.collection.immutable.Seq<Object> getFromRecord(
-            final scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> recordPart,
+    private static List<Object> getFromRecord(final Map<FieldSpecification, List<Object>> recordPart,
             final FieldSpecification spec) {
-        if (recordPart != null) {
-            final Map<FieldSpecification, scala.collection.immutable.Seq<Object>> values = ScalaCollections.javaMap(recordPart);
-            if (values.containsKey(spec)) {
-                return values.get(spec);
-            }
+        if (recordPart != null && recordPart.containsKey(spec)) {
+            return recordPart.get(spec);
         }
         return defaultFor(spec);
     }
 
-    private static scala.collection.immutable.Seq<Object> defaultFor(final FieldSpecification spec) {
+    private static List<Object> defaultFor(final FieldSpecification spec) {
         if (spec instanceof AllFieldsSpecification) {
             return null;
         }
-        return ScalaCollections.seqOf((Object) null);
+        return Collections.singletonList(null);
+    }
+
+    private static Map<FieldSpecification, List<Object>> convertRecordPart(
+            final scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>> recordPart) {
+        if (recordPart == null) {
+            return null;
+        }
+        final Map<FieldSpecification, List<Object>> result = new java.util.LinkedHashMap<>();
+        ScalaCollections.javaMap(recordPart).forEach((key, value) -> result.put(key, ScalaCollections.javaList(value)));
+        return result;
     }
 }

@@ -1,5 +1,8 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
@@ -11,9 +14,9 @@ public final class JsonDeserialization {
     }
 
     @SuppressWarnings("java:S1172") // Argument properties is unused but required for consistency with other deserializations
-    public static Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> getDeserializer(
-            final KafkaConsumerProperties properties, final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
-        for (final FieldSpecification fieldSpec : ScalaCollections.javaList(fieldSpecs)) {
+    public static Deserializer<Map<FieldSpecification, List<Object>>> getDeserializer(
+            final KafkaConsumerProperties properties, final List<FieldSpecification> fieldSpecs) {
+        for (final FieldSpecification fieldSpec : fieldSpecs) {
             if (fieldSpec instanceof AllFieldsSpecification) {
                 throw new KafkaConnectorException(ExaError.messageBuilder("E-KCE-16")
                         .message("Referencing all fields with key.* or value.* is not supported "
@@ -23,5 +26,10 @@ public final class JsonDeserialization {
             }
         }
         return new JsonDeserializer(fieldSpecs, new StringDeserializer());
+    }
+
+    public static Deserializer<Map<FieldSpecification, List<Object>>> getDeserializer(
+            final KafkaConsumerProperties properties, final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
+        return getDeserializer(properties, ScalaCollections.javaList(fieldSpecs));
     }
 }

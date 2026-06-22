@@ -97,19 +97,19 @@ public class KafkaConsumerProperties extends AbstractProperties {
         return getOrDefault(RECORD_KEY_FORMAT, "string").toLowerCase(Locale.ENGLISH);
     }
 
-    public scala.collection.immutable.Seq<String> getRecordFields() {
+    public List<String> getRecordFields() {
         final Option<String> fields = get(RECORD_FIELDS);
         if (fields.isDefined()) {
             final java.util.ArrayList<String> result = new java.util.ArrayList<>();
             for (final String field : fields.get().split(",")) {
                 result.add(field.trim());
             }
-            return ScalaCollections.seq(result);
+            return result;
         }
         return defaultRecordFields();
     }
 
-    private scala.collection.immutable.Seq<String> defaultRecordFields() {
+    private List<String> defaultRecordFields() {
         final String recordField;
         if (isSingleColumnJsonEnabled()) {
             recordField = "value";
@@ -118,7 +118,7 @@ public class KafkaConsumerProperties extends AbstractProperties {
         } else {
             recordField = "value";
         }
-        return ScalaCollections.seqOf(recordField);
+        return List.of(recordField);
     }
 
     public String getTopic() {

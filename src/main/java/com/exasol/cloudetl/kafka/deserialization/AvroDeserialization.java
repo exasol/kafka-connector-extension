@@ -1,5 +1,6 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.generic.GenericRecord;
@@ -16,8 +17,8 @@ public final class AvroDeserialization {
     private AvroDeserialization() {
     }
 
-    public static Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> getDeserializer(
-            final KafkaConsumerProperties properties, final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
+    public static Deserializer<Map<FieldSpecification, List<Object>>> getDeserializer(
+            final KafkaConsumerProperties properties, final List<FieldSpecification> fieldSpecs) {
         if (properties.hasSchemaRegistryUrl()) {
             return new GenericRecordDeserializer(fieldSpecs, getAvroDeserializer(properties.getSchemaRegistryUrl()));
         }
@@ -25,6 +26,11 @@ public final class AvroDeserialization {
                 .message("Required Schema Registry URL is missing for Avro records.")
                 .mitigation("Please provide URL using SCHEMA_REGISTRY_URL property.")
                 .toString());
+    }
+
+    public static Deserializer<Map<FieldSpecification, List<Object>>> getDeserializer(
+            final KafkaConsumerProperties properties, final scala.collection.immutable.Seq<FieldSpecification> fieldSpecs) {
+        return getDeserializer(properties, com.exasol.cloudetl.kafka.ScalaCollections.javaList(fieldSpecs));
     }
 
     @SuppressWarnings("unchecked")

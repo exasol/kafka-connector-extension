@@ -25,8 +25,6 @@ import com.exasol.ExaIterator;
 import com.exasol.cloudetl.kafka.*;
 import com.exasol.cloudetl.kafka.deserialization.*;
 
-import scala.collection.immutable.Seq;
-
 @SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
 class KafkaRecordConsumerTest {
@@ -40,13 +38,13 @@ class KafkaRecordConsumerTest {
             entry("CONSUME_ALL_OFFSETS", "true"));
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMillis(30000);
     private static final long DEFAULT_END_OFFSET = 4L;
-    private static final ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> EMPTY_CONSUMER_RECORDS = new ConsumerRecords<>(
+    private static final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> EMPTY_CONSUMER_RECORDS = new ConsumerRecords<>(
             Collections.emptyMap());
 
     @Mock
     ExaIterator iteratorMock;
     @Mock
-    private KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> consumerMock;
+    private KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumerMock;
 
     @BeforeEach
     void beforeEach() {
@@ -157,12 +155,13 @@ class KafkaRecordConsumerTest {
         }
     }
 
-    private ConsumerRecords<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> recordBatch(
+    private ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> recordBatch(
             final long... offsets) {
-        final List<ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>>> records = new ArrayList<>();
+        final List<ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>>> records = new ArrayList<>();
         for (final long offset : offsets) {
             records.add(new ConsumerRecord<>(TOPIC_NAME, 0, offset,
-                    map(entry(RecordKey.INSTANCE, seq("key"))), map(entry(RecordValue.INSTANCE, seq(String.valueOf(offset))))));
+                    Map.of(RecordKey.INSTANCE, List.of("key")),
+                    Map.of(RecordValue.INSTANCE, List.of(String.valueOf(offset)))));
         }
         return new ConsumerRecords<>(Map.of(TOPIC_PARTITION, records));
     }
@@ -204,11 +203,11 @@ class KafkaRecordConsumerTest {
 
     private final class TestKafkaRecordConsumer extends KafkaRecordConsumer {
         private TestKafkaRecordConsumer(final KafkaConsumerProperties properties, final long startOffset) {
-            super(properties, 0, startOffset, seq(String.class, Long.class, Long.class), 3, 1L, "vm1");
+            super(properties, 0, startOffset, List.of(String.class, Long.class, Long.class), 3, 1L, "vm1");
         }
 
         @Override
-        protected KafkaConsumer<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> getRecordConsumer() {
+        protected KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> getRecordConsumer() {
             return consumerMock;
         }
     }

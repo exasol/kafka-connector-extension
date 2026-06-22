@@ -11,21 +11,24 @@ public final class FieldParser {
     private FieldParser() {
     }
 
-    public static scala.collection.immutable.Seq<GlobalFieldSpecification> get(
-            final scala.collection.immutable.Seq<String> fields) {
+    public static List<GlobalFieldSpecification> get(final List<String> fields) {
         final List<GlobalFieldSpecification> result = new ArrayList<>();
-        for (final String field : ScalaCollections.javaList(fields)) {
+        for (final String field : fields) {
             result.add(parse(field));
         }
-        return ScalaCollections.seq(result);
+        return result;
     }
 
-    public static scala.collection.immutable.Seq<GlobalFieldSpecification> get(final String columnString) {
+    public static List<GlobalFieldSpecification> get(final scala.collection.immutable.Seq<String> fields) {
+        return get(ScalaCollections.javaList(fields));
+    }
+
+    public static List<GlobalFieldSpecification> get(final String columnString) {
         final List<String> fields = new ArrayList<>();
         for (final String field : columnString.split(",")) {
             fields.add(field.trim());
         }
-        return get(ScalaCollections.seq(fields));
+        return get(fields);
     }
 
     private static GlobalFieldSpecification parse(final String field) {

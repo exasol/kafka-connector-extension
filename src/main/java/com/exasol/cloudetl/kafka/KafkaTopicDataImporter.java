@@ -3,14 +3,11 @@ package com.exasol.cloudetl.kafka;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.exasol.ExaDataTypeException;
-import com.exasol.ExaIterator;
-import com.exasol.ExaIterationException;
-import com.exasol.ExaMetadata;
-import com.exasol.cloudetl.kafka.consumer.KafkaRecordConsumer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.exasol.*;
+import com.exasol.cloudetl.kafka.consumer.KafkaRecordConsumer;
 
 public final class KafkaTopicDataImporter {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaTopicDataImporter.class);
@@ -35,7 +32,6 @@ public final class KafkaTopicDataImporter {
         final String vmId = metadata.getVmId();
         LOGGER.info("Starting Kafka consumer for partition '{}' at next offset '{}' for node '{}' and vm '{}'.",
                 partitionId, partitionNextOffset, nodeId, vmId);
-        new KafkaRecordConsumer(kafkaProperties, partitionId, partitionNextOffset, ScalaCollections.seq(outputColumnTypes),
-                outputColumnCount, nodeId, vmId).emit(iterator);
+        new KafkaRecordConsumer(kafkaProperties, partitionId, partitionNextOffset, outputColumnTypes, outputColumnCount, nodeId, vmId).emit(iterator);
     }
 }

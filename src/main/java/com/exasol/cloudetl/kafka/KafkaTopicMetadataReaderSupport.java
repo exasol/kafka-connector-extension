@@ -1,5 +1,7 @@
 package com.exasol.cloudetl.kafka;
 
+import java.util.List;
+
 import com.exasol.ExaDataTypeException;
 import com.exasol.ExaIterator;
 import com.exasol.ExaIterationException;
@@ -16,8 +18,7 @@ public final class KafkaTopicMetadataReaderSupport {
         KafkaTopicMetadataReader.run(metadata, iterator);
     }
 
-    public static <K, V> scala.collection.immutable.List<Object> getTopicPartitions(final KafkaConsumer<K, V> consumer,
-            final String topic) {
+    public static <K, V> List<Integer> getTopicPartitions(final KafkaConsumer<K, V> consumer, final String topic) {
         return KafkaTopicMetadataReader.getTopicPartitions(consumer, topic);
     }
 }

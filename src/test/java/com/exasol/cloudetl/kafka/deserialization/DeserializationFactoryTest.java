@@ -5,6 +5,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.Test;
@@ -13,8 +16,6 @@ import com.exasol.cloudetl.kafka.KafkaConnectorException;
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import scala.collection.immutable.Seq;
-
 class DeserializationFactoryTest {
     @Test
     void providesDefaultSerializersStringKeyAndAvroValueWhenFieldsAreNotSpecified() {
@@ -67,9 +68,9 @@ class DeserializationFactoryTest {
 
     @Test
     void recordDeserializersEqualsAndHashCodeFollowContract() {
-        final Deserializer<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> red = IgnoreKeyDeserializer.INSTANCE;
-        final Deserializer<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> black = new JsonDeserializer(
-                seq(new RecordValueField("field")), new StringDeserializer());
+        final Deserializer<Map<FieldSpecification, List<Object>>> red = IgnoreKeyDeserializer.INSTANCE;
+        final Deserializer<Map<FieldSpecification, List<Object>>> black = new JsonDeserializer(
+                List.of(new RecordValueField("field")), new StringDeserializer());
 
         EqualsVerifier.forClass(DeserializationFactory.RecordDeserializers.class)
                 .withPrefabValues(Deserializer.class, red, black)

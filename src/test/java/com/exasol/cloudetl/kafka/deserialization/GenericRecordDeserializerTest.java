@@ -33,7 +33,7 @@ class GenericRecordDeserializerTest {
     @Mock
     Deserializer<GenericRecord> delegateMock;
 
-    private scala.collection.immutable.Map<FieldSpecification, Seq<Object>> extractFrom(
+    private Map<FieldSpecification, List<Object>> extractFrom(
             final GenericRecord genericRecord, final Seq<FieldSpecification> fieldList) {
         when(delegateMock.deserialize(anyString(), any(byte[].class))).thenReturn(genericRecord);
         return new GenericRecordDeserializer(fieldList, delegateMock).deserialize("", new byte[0]);

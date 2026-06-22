@@ -1,5 +1,7 @@
 package com.exasol.cloudetl.kafka.deserialization;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -18,25 +20,27 @@ public final class DeserializationFactory {
     }
 
     public static RecordDeserializers getSerializers(
-            final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
-            final KafkaConsumerProperties kafkaProperties) {
-        final java.util.List<FieldSpecification> keyFieldSpecs = new java.util.ArrayList<>();
-        final java.util.List<FieldSpecification> valueFieldSpecs = new java.util.ArrayList<>();
-        for (final GlobalFieldSpecification spec : ScalaCollections.javaList(fieldSpecs)) {
+            final List<GlobalFieldSpecification> fieldSpecs, final KafkaConsumerProperties kafkaProperties) {
+        final List<FieldSpecification> keyFieldSpecs = new ArrayList<>();
+        final List<FieldSpecification> valueFieldSpecs = new ArrayList<>();
+        for (final GlobalFieldSpecification spec : fieldSpecs) {
             if (spec instanceof KeySpecification) {
                 keyFieldSpecs.add((FieldSpecification) spec);
             } else if (spec instanceof ValueSpecification) {
                 valueFieldSpecs.add((FieldSpecification) spec);
             }
         }
-        final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> keyDeserializer = keyFieldSpecs.isEmpty()
+        final Deserializer<Map<FieldSpecification, List<Object>>> keyDeserializer = keyFieldSpecs.isEmpty()
                 ? FieldSpecificationSingletons.ignoreKeyDeserializer()
-                : getDeserialization(kafkaProperties.getRecordKeyFormat())
-                        .getDeserializer(kafkaProperties, ScalaCollections.seq(keyFieldSpecs));
-        final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> valueDeserializer = getDeserialization(
-                kafkaProperties.getRecordValueFormat())
-                        .getDeserializer(kafkaProperties, ScalaCollections.seq(valueFieldSpecs));
+                : getDeserialization(kafkaProperties.getRecordKeyFormat()).getDeserializer(kafkaProperties, keyFieldSpecs);
+        final Deserializer<Map<FieldSpecification, List<Object>>> valueDeserializer =
+                getDeserialization(kafkaProperties.getRecordValueFormat()).getDeserializer(kafkaProperties, valueFieldSpecs);
         return new RecordDeserializers(keyDeserializer, valueDeserializer);
+    }
+
+    public static RecordDeserializers getSerializers(final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
+            final KafkaConsumerProperties kafkaProperties) {
+        return getSerializers(ScalaCollections.javaList(fieldSpecs), kafkaProperties);
     }
 
     public static RecordDeserialization getDeserialization(final String format) {
@@ -52,21 +56,21 @@ public final class DeserializationFactory {
     }
 
     public static final class RecordDeserializers {
-        public final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> keyDeserializer;
-        public final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> valueDeserializer;
+        public final Deserializer<Map<FieldSpecification, List<Object>>> keyDeserializer;
+        public final Deserializer<Map<FieldSpecification, List<Object>>> valueDeserializer;
 
         public RecordDeserializers(
-                final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> keyDeserializer,
-                final Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> valueDeserializer) {
+                final Deserializer<Map<FieldSpecification, List<Object>>> keyDeserializer,
+                final Deserializer<Map<FieldSpecification, List<Object>>> valueDeserializer) {
             this.keyDeserializer = keyDeserializer;
             this.valueDeserializer = valueDeserializer;
         }
 
-        public Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> getKeyDeserializer() {
+        public Deserializer<Map<FieldSpecification, List<Object>>> getKeyDeserializer() {
             return this.keyDeserializer;
         }
 
-        public Deserializer<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> getValueDeserializer() {
+        public Deserializer<Map<FieldSpecification, List<Object>>> getValueDeserializer() {
             return this.valueDeserializer;
         }
 
