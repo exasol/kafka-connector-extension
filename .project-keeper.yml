@@ -5,10 +5,6 @@ sources:
       - jar_artifact
       - integration_tests
       - udf_coverage
-  - type: npm
-    path: extension/package.json
-    artifacts:
-      - dist/kafka-connector-extension.js
 version:
   fromSource: pom.xml
 build:

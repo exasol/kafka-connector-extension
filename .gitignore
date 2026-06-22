@@ -73,13 +73,6 @@ pom.xml.versionsBackup
 *.md.html
 *.flattened-pom.xml
 
-# Extension
-/extension/node_modules/
-/extension/dist/
-/extension/src/extension-description.ts
-/extension/coverage/
-/extension-test.properties
-
 /.testcontainers-tmp-*
 
 .settings

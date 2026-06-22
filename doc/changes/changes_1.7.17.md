@@ -44,9 +44,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 
 ## Dependency Updates
 
-### Exasol Kafka Connector Extension
-
-#### Compile Dependency Updates
+### Compile Dependency Updates
 
 * Updated `ch.qos.logback:logback-classic:1.5.20` to `1.5.34`
 * Updated `com.exasol:import-export-udf-common-scala:2.0.1` to `2.0.2`
@@ -55,10 +53,10 @@ This release includes internal refactoring. It migrates the source code from Sca
 * Updated `org.apache.kafka:kafka-clients:3.9.1` to `3.9.2`
 * Removed `org.eclipse.jetty.http2:http2-common:9.4.58.v20250814`
 
-#### Test Dependency Updates
+### Test Dependency Updates
 
 * Updated `com.exasol:exasol-testcontainers:7.1.7` to `7.3.0`
-* Updated `com.exasol:extension-manager-integration-test-java:0.5.16` to `0.5.20`
+* Removed `com.exasol:extension-manager-integration-test-java:0.5.16`
 * Added `com.exasol:udf-debugging-java:0.6.18`
 * Added `com.google.code.gson:gson:2.13.1`
 * Removed `com.sksamuel.avro4s:avro4s-core_2.13:4.1.2`
@@ -75,7 +73,7 @@ This release includes internal refactoring. It migrates the source code from Sca
 * Removed `org.scalatestplus:scalatestplus-mockito_2.13:1.0.0-SNAP5`
 * Removed `org.scalatest:scalatest_2.13:3.3.0-SNAP4`
 
-#### Plugin Dependency Updates
+### Plugin Dependency Updates
 
 * Removed `com.diffplug.spotless:spotless-maven-plugin:2.44.4`
 * Updated `com.exasol:error-code-crawler-maven-plugin:2.0.5` to `2.0.7`

@@ -133,12 +133,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.exasol</groupId>
-            <artifactId>extension-manager-integration-test-java</artifactId>
-            <version>0.5.20</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.github.embeddedkafka</groupId>
             <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
             <version>7.9.2</version>
