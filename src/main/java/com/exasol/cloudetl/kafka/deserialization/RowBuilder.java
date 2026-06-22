@@ -36,12 +36,21 @@ public final class RowBuilder {
     public static List<Object> buildRow(final scala.collection.immutable.Seq<GlobalFieldSpecification> fieldSpecs,
             final ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, scala.collection.immutable.Seq<Object>>> consumerRecord,
             final int outputColumnCount) {
-        final ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> convertedRecord =
-                new ConsumerRecord<>(consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset(),
-                        consumerRecord.timestamp(), consumerRecord.timestampType(), consumerRecord.serializedKeySize(),
-                        consumerRecord.serializedValueSize(), convertRecordPart(consumerRecord.key()),
-                        convertRecordPart(consumerRecord.value()), consumerRecord.headers(), consumerRecord.leaderEpoch());
-        return buildRow(ScalaCollections.javaList(fieldSpecs), convertedRecord, outputColumnCount);
+        final List<List<Object>> rowValues = new ArrayList<>();
+        final List<Boolean> present = new ArrayList<>();
+        final Map<FieldSpecification, List<Object>> key = convertRecordPart(consumerRecord.key());
+        final Map<FieldSpecification, List<Object>> value = convertRecordPart(consumerRecord.value());
+        for (final GlobalFieldSpecification spec : ScalaCollections.javaList(fieldSpecs)) {
+            final List<Object> specValue = getValue(spec, key, value, consumerRecord.timestamp());
+            rowValues.add(specValue);
+            present.add(specValue != null);
+        }
+        final long absentCount = present.stream().filter(isPresent -> !isPresent.booleanValue()).count();
+        if (absentCount > 0) {
+            validateSingleMissingExpression(absentCount);
+            return buildRowWithMissingValues(rowValues, present, outputColumnCount);
+        }
+        return flatten(rowValues);
     }
 
     private static void validateSingleMissingExpression(final long absentCount) {
@@ -94,12 +103,17 @@ public final class RowBuilder {
 
     private static List<Object> getValue(final GlobalFieldSpecification spec,
             final ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumerRecord) {
+        return getValue(spec, consumerRecord.key(), consumerRecord.value(), consumerRecord.timestamp());
+    }
+
+    private static List<Object> getValue(final GlobalFieldSpecification spec, final Map<FieldSpecification, List<Object>> key,
+            final Map<FieldSpecification, List<Object>> value, final long timestamp) {
         if (spec instanceof KeySpecification) {
-            return getFromRecord(consumerRecord.key(), (FieldSpecification) spec);
+            return getFromRecord(key, (FieldSpecification) spec);
         } else if (spec instanceof ValueSpecification) {
-            return getFromRecord(consumerRecord.value(), (FieldSpecification) spec);
+            return getFromRecord(value, (FieldSpecification) spec);
         } else if (spec == FieldSpecificationSingletons.timestampField()) {
-            return List.of(consumerRecord.timestamp());
+            return List.of(timestamp);
         }
         throw new KafkaConnectorException(ExaError.messageBuilder("F-KCE-11")
                 .message("Unsupported field specification {{SPECIFICATION}} is provided.", spec)
