@@ -45,8 +45,8 @@ class KafkaConsumerPropertiesTest {
         this.properties = mutableMap("BOOTSTRAP_SERVERS", "kafka01", "SSL_ENDPOINT_IDENTIFICATION_ALGORITHM", "",
                 "GROUP_ID", "");
 
-        final var consumer = KafkaConsumerPropertiesSupport.create(KafkaConsumerPropertiesSupport
-                .create(ScalaCollections.immutableMap(this.properties)).mkString());
+        final var consumer = KafkaConsumerPropertiesSupport.create(
+                KafkaConsumerPropertiesSupport.create(this.properties).mkString());
 
         assertAll(() -> assertEquals("", consumer.getSSLEndpointIdentificationAlgorithm()),
                 () -> assertEquals("", consumer.getGroupId()));
@@ -618,7 +618,7 @@ class KafkaConsumerPropertiesTest {
     }
 
     private BaseProperties base() {
-        return new BaseProperties(ScalaCollections.immutableMap(this.properties));
+        return new BaseProperties(this.properties);
     }
 
     private void assertGetter(final String key, final String value, final StringSupplier getter) {
@@ -673,7 +673,7 @@ class KafkaConsumerPropertiesTest {
     }
 
     private static final class BaseProperties extends KafkaConsumerProperties {
-        private BaseProperties(final scala.collection.immutable.Map<String, String> params) {
+        private BaseProperties(final Map<String, String> params) {
             super(params);
         }
     }

@@ -20,8 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exasol.cloudetl.kafka.JsonArgumentMatcher;
 
-import scala.collection.immutable.Seq;
-
 @ExtendWith(MockitoExtension.class)
 class GenericRecordDeserializerTest {
     private final Schema schema = SchemaBuilder.record("test").fields()
@@ -34,7 +32,7 @@ class GenericRecordDeserializerTest {
     Deserializer<GenericRecord> delegateMock;
 
     private Map<FieldSpecification, List<Object>> extractFrom(
-            final GenericRecord genericRecord, final Seq<FieldSpecification> fieldList) {
+            final GenericRecord genericRecord, final List<FieldSpecification> fieldList) {
         when(delegateMock.deserialize(anyString(), any(byte[].class))).thenReturn(genericRecord);
         return new GenericRecordDeserializer(fieldList, delegateMock).deserialize("", new byte[0]);
     }

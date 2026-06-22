@@ -30,11 +30,11 @@ import com.exasol.cloudetl.kafka.deserialization.*;
 class KafkaRecordConsumerTest {
     private static final String TOPIC_NAME = "topicName";
     private static final TopicPartition TOPIC_PARTITION = new TopicPartition(TOPIC_NAME, 0);
-    private static final scala.collection.immutable.Map<String, String> DEFAULT_PROPERTIES = map(
+    private static final Map<String, String> DEFAULT_PROPERTIES = map(
             entry("TOPIC_NAME", TOPIC_NAME), entry("RECORD_KEY_FORMAT", "string"), entry("RECORD_VALUE_FORMAT", "string"));
-    private static final scala.collection.immutable.Map<String, String> MIN_MAX_THRESHOLD_PROPERTIES = map(
+    private static final Map<String, String> MIN_MAX_THRESHOLD_PROPERTIES = map(
             entry("MIN_RECORDS_PER_RUN", "2"), entry("MAX_RECORDS_PER_RUN", "4"));
-    private static final scala.collection.immutable.Map<String, String> CONSUME_ALL_OFFSETS_PROPERTIES = map(
+    private static final Map<String, String> CONSUME_ALL_OFFSETS_PROPERTIES = map(
             entry("CONSUME_ALL_OFFSETS", "true"));
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMillis(30000);
     private static final long DEFAULT_END_OFFSET = 4L;
@@ -167,28 +167,28 @@ class KafkaRecordConsumerTest {
     }
 
     private KafkaImportChecker checker(
-            final scala.collection.immutable.Map<String, String> additionalProperties) {
+            final Map<String, String> additionalProperties) {
         return checker(additionalProperties, 0L);
     }
 
-    private KafkaImportChecker checker(final scala.collection.immutable.Map<String, String> additionalProperties,
+    private KafkaImportChecker checker(final Map<String, String> additionalProperties,
             final long startOffset) {
         return new KafkaImportChecker(additionalProperties, startOffset);
     }
 
-    private scala.collection.immutable.Map<String, String> merge(
-            final scala.collection.immutable.Map<String, String> first,
-            final scala.collection.immutable.Map<String, String> second) {
-        final Map<String, String> merged = new LinkedHashMap<>(javaMap(first));
-        merged.putAll(javaMap(second));
-        return ScalaCollections.immutableMap(merged);
+    private Map<String, String> merge(
+            final Map<String, String> first,
+            final Map<String, String> second) {
+        final Map<String, String> merged = new LinkedHashMap<>(first);
+        merged.putAll(second);
+        return merged;
     }
 
     private final class KafkaImportChecker {
-        private final scala.collection.immutable.Map<String, String> additionalProperties;
+        private final Map<String, String> additionalProperties;
         private final long startOffset;
 
-        private KafkaImportChecker(final scala.collection.immutable.Map<String, String> additionalProperties,
+        private KafkaImportChecker(final Map<String, String> additionalProperties,
                 final long startOffset) {
             this.additionalProperties = additionalProperties;
             this.startOffset = startOffset;

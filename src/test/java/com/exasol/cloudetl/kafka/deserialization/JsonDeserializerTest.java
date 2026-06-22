@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import com.exasol.cloudetl.kafka.JsonArgumentMatcher;
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
 
-import scala.collection.immutable.Seq;
-
 class JsonDeserializerTest {
     @Test
     void deserializesJsonRecordWithPrimitives() {
@@ -57,7 +55,7 @@ class JsonDeserializerTest {
 
     @Test
     void failsWhenAllFieldsAreReferenced() {
-        final Seq<FieldSpecification> fields = seq(RecordValueFields.INSTANCE);
+        final List<FieldSpecification> fields = seq(RecordValueFields.INSTANCE);
         assertThrows(KafkaConnectorException.class,
                 () -> deserialize(fields, "{\"number\":1}"));
     }
@@ -78,7 +76,7 @@ class JsonDeserializerTest {
     }
 
     private Map<FieldSpecification, List<Object>> deserialize(
-            final Seq<FieldSpecification> fields, final String json) {
+            final List<FieldSpecification> fields, final String json) {
         return new JsonDeserializer(fields, new StringDeserializer()).deserialize("randomTopic",
                 json.getBytes(StandardCharsets.UTF_8));
     }

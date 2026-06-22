@@ -6,12 +6,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
 import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
-
-import scala.collection.immutable.Seq;
 
 class JsonDeserializationTest {
     @Test
@@ -25,7 +25,7 @@ class JsonDeserializationTest {
     @Test
     void rejectsWildcardFieldSelectionForJson() {
         final var properties = new KafkaConsumerProperties(map());
-        final Seq<FieldSpecification> fields = seq(RecordValueFields.INSTANCE);
+        final List<FieldSpecification> fields = seq(RecordValueFields.INSTANCE);
 
         final KafkaConnectorException thrown = assertThrows(KafkaConnectorException.class,
                 () -> JsonDeserialization.getDeserializer(properties, fields));

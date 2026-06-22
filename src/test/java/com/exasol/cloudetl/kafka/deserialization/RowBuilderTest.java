@@ -6,6 +6,7 @@ import static org.mockito.Mockito.lenient;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
@@ -15,19 +16,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exasol.cloudetl.kafka.KafkaConnectorException;
 
-import scala.collection.immutable.Map;
-import scala.collection.immutable.Seq;
-
 @ExtendWith(MockitoExtension.class)
 class RowBuilderTest {
     private static final long TIMESTAMP = 123456789L;
 
     @Mock
-    ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> recordMock;
+    ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> recordMock;
 
-    private ConsumerRecord<scala.collection.immutable.Map<FieldSpecification, Seq<Object>>, scala.collection.immutable.Map<FieldSpecification, Seq<Object>>> createRecord(
-            final scala.collection.immutable.Map<FieldSpecification, Seq<Object>> key,
-            final scala.collection.immutable.Map<FieldSpecification, Seq<Object>> value) {
+    private ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> createRecord(
+            final Map<FieldSpecification, List<Object>> key,
+            final Map<FieldSpecification, List<Object>> value) {
         lenient().when(recordMock.key()).thenReturn(key);
         lenient().when(recordMock.value()).thenReturn(value);
         lenient().when(recordMock.timestamp()).thenReturn(TIMESTAMP);
@@ -104,8 +102,8 @@ class RowBuilderTest {
 
     @Test
     void failsWithTwoAllFieldsReferencesAndNullValue() {
-        final Seq<GlobalFieldSpecification> fieldSequence = seq(RecordKeyFields.INSTANCE, TimestampField.INSTANCE, RecordValueFields.INSTANCE);
-        final ConsumerRecord<Map<FieldSpecification, Seq<Object>>, Map<FieldSpecification, Seq<Object>>> consumerRecord = createRecord(null, null);
+        final List<GlobalFieldSpecification> fieldSequence = seq(RecordKeyFields.INSTANCE, TimestampField.INSTANCE, RecordValueFields.INSTANCE);
+        final ConsumerRecord<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumerRecord = createRecord(null, null);
         assertThrows(KafkaConnectorException.class, () -> RowBuilder.buildRow(fieldSequence, consumerRecord, 4));
     }
 }

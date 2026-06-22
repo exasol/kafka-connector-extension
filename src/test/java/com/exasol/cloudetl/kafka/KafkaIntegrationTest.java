@@ -35,7 +35,7 @@ abstract class KafkaIntegrationTest {
 
     @BeforeAll
     void startEmbeddedKafka() {
-        final var emptyMap = ScalaCollections.immutableMap(Map.<String, String>of());
+        final var emptyMap = Map.<String, String>of();
         EmbeddedKafka.start(EmbeddedKafkaConfig.apply(6001, 6000, 6002, emptyMap, emptyMap, emptyMap, emptyMap));
     }
 
@@ -91,7 +91,7 @@ abstract class KafkaIntegrationTest {
             final List<Long> offsets) throws Exception {
         final ExaIterator mockedIterator = mock(ExaIterator.class);
         when(mockedIterator.getString(0)).thenReturn(KafkaConsumerPropertiesSupport
-                .create(ScalaCollections.immutableMap(params)).mkString());
+                .create(params).mkString());
 
         final Boolean[] brokers = new Boolean[partitions.size()];
         for (int index = 0; index < partitions.size(); index++) {
