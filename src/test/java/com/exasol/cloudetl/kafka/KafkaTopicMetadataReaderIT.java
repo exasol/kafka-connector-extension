@@ -22,6 +22,7 @@ class KafkaTopicMetadataReaderIT extends KafkaIntegrationTest {
 
     @Test
     void emitsDefaultPartitionIdMaxOffsetPairsWithSingleTopicPartition() throws Exception {
+        createCustomTopic(this.topic);
         final var iterator = mockExasolIterator(this.properties, List.of(0), List.of(-1L));
         KafkaTopicMetadataReader.run(mock(ExaMetadata.class), iterator);
         verify(iterator).emit(0, -1L);
