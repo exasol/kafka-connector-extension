@@ -1,4 +1,4 @@
-# Exasol Kafka Connector Extension 1.7.18, released 2026-07-28
+# Exasol Kafka Connector Extension 2.0.0, released 2026-07-28
 
 Code name: Fixed vulnerabilities CVE-2026-10532, CVE-2026-13006, CVE-2025-12383, CVE-2026-54512, CVE-2026-54513, CVE-2026-54514, CVE-2026-54515, CVE-2026-54518, CVE-2026-59888, CVE-2026-59889, CVE-2026-9563, CVE-2026-59901, CVE-2026-10050, CVE-2026-59949
 
@@ -182,7 +182,9 @@ Improper Validation of Array Index.
 * Updated `ch.qos.logback:logback-classic:1.5.34` to `1.6.1`
 * Updated `com.exasol:error-reporting-java:1.0.1` to `1.0.2`
 * Updated `com.exasol:import-export-udf-common-scala:2.0.2` to `2.0.3`
+* Updated `io.confluent:kafka-avro-serializer:7.9.2` to `8.3.0`
 * Added `jakarta.xml.bind:jakarta.xml.bind-api:4.0.5`
+* Updated `org.apache.kafka:kafka-clients:3.9.2` to `8.3.0-ce`
 * Updated `org.scala-lang.modules:scala-collection-compat_2.13:2.13.0` to `2.14.0`
 * Updated `org.scala-lang:scala-library:2.13.16` to `2.13.18`
 * Updated `org.slf4j:slf4j-api:2.0.17` to `2.0.18`
@@ -195,6 +197,9 @@ Improper Validation of Array Index.
 * Updated `com.exasol:test-db-builder-java:3.6.2` to `4.0.1`
 * Updated `com.exasol:udf-debugging-java:0.6.18` to `0.6.20`
 * Updated `com.google.code.gson:gson:2.13.1` to `2.14.0`
+* Updated `io.confluent:kafka-streams-avro-serde:7.9.5` to `8.3.0`
+* Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:7.9.2` to `8.3.0`
+* Updated `org.apache.kafka:kafka_2.13:3.9.2` to `8.3.0-ce`
 * Updated `org.apache.mina:mina-core:2.2.8` to `2.2.9`
 * Updated `org.jacoco:org.jacoco.agent:0.8.14` to `0.8.15`
 * Updated `org.mockito:mockito-junit-jupiter:5.18.0` to `5.23.0`
