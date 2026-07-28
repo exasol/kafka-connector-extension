@@ -1,5 +1,6 @@
 package com.exasol.cloudetl.kafka.consumer;
 
+import static java.util.Collections.emptyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
@@ -21,7 +22,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exasol.ExaIterator;
-import com.exasol.cloudetl.kafka.*;
+import com.exasol.cloudetl.kafka.KafkaConnectorException;
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
 import com.exasol.cloudetl.kafka.deserialization.*;
 
 @SuppressWarnings("unchecked")
@@ -38,7 +40,7 @@ class KafkaRecordConsumerTest {
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMillis(30000);
     private static final long DEFAULT_END_OFFSET = 4L;
     private static final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> EMPTY_CONSUMER_RECORDS = new ConsumerRecords<>(
-            Collections.emptyMap());
+            emptyMap(), emptyMap());
 
     @Mock
     ExaIterator iteratorMock;
@@ -162,7 +164,7 @@ class KafkaRecordConsumerTest {
                     Map.of(RecordKey.INSTANCE, List.of("key")),
                     Map.of(RecordValue.INSTANCE, List.of(String.valueOf(offset)))));
         }
-        return new ConsumerRecords<>(Map.of(TOPIC_PARTITION, records));
+        return new ConsumerRecords<>(Map.of(TOPIC_PARTITION, records), emptyMap());
     }
 
     private KafkaImportChecker checker(
