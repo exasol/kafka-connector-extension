@@ -197,14 +197,18 @@ class KafkaRecordConsumerTest {
 
         void assertEmitCount(final int count) throws Exception {
             final var properties = new KafkaConsumerProperties(merge(DEFAULT_PROPERTIES, this.additionalProperties));
-            new TestKafkaRecordConsumer(properties, this.startOffset).emit(iteratorMock);
+            KafkaRecordConsumer.builder()
+                    .withProperties(properties)
+                    .withPartitionId(0)
+                    .withPartitionStartOffset(this.startOffset)
+                    .withOutputColumnTypes(List.of(String.class, Long.class, Long.class))
+                    .withTableColumnCount(3)
+                    .withNodeId(1L)
+                    .withVmId("vm1")
+                    .withConsumer(consumerMock)
+                    .build()
+                    .emit(iteratorMock);
             verify(iteratorMock, times(count)).emit(any(Object[].class));
-        }
-    }
-
-    private final class TestKafkaRecordConsumer extends KafkaRecordConsumer {
-        private TestKafkaRecordConsumer(final KafkaConsumerProperties properties, final long startOffset) {
-            super(properties, 0, startOffset, List.of(String.class, Long.class, Long.class), 3, 1L, "vm1", consumerMock);
         }
     }
 }
