@@ -8,7 +8,7 @@
     <description>Exasol Kafka Extension for accessing Apache Kafka</description>
     <url>https://github.com/exasol/kafka-connector-extension/</url>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <!-- Upgrading to Scala 3 will cause compile errors -->
         <scala.version>2.13.18</scala.version>
         <scala.compat.version>2.13</scala.compat.version>

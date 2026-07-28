@@ -87,7 +87,7 @@ jobs:
         with:
           distribution: temurin
           java-version: |-
-            11
+            17
             21
           server-id: maven-central-portal
           server-username: MAVEN_USERNAME
@@ -101,7 +101,7 @@ jobs:
         with:
           distribution: temurin
           java-version: |-
-            11
+            17
             21
           cache: maven
       - name: Fail if not running on main or release branch
