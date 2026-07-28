@@ -40,7 +40,7 @@ class KafkaRecordConsumerTest {
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMillis(30000);
     private static final long DEFAULT_END_OFFSET = 4L;
     private static final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> EMPTY_CONSUMER_RECORDS = new ConsumerRecords<>(
-            emptyMap());
+            emptyMap(), emptyMap());
 
     @Mock
     ExaIterator iteratorMock;
@@ -164,7 +164,7 @@ class KafkaRecordConsumerTest {
                     Map.of(RecordKey.INSTANCE, List.of("key")),
                     Map.of(RecordValue.INSTANCE, List.of(String.valueOf(offset)))));
         }
-        return new ConsumerRecords<>(Map.of(TOPIC_PARTITION, records));
+        return new ConsumerRecords<>(Map.of(TOPIC_PARTITION, records), emptyMap());
     }
 
     private KafkaImportChecker checker(
@@ -204,12 +204,7 @@ class KafkaRecordConsumerTest {
 
     private final class TestKafkaRecordConsumer extends KafkaRecordConsumer {
         private TestKafkaRecordConsumer(final KafkaConsumerProperties properties, final long startOffset) {
-            super(properties, 0, startOffset, List.of(String.class, Long.class, Long.class), 3, 1L, "vm1");
-        }
-
-        @Override
-        protected KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> getRecordConsumer() {
-            return consumerMock;
+            super(properties, 0, startOffset, List.of(String.class, Long.class, Long.class), 3, 1L, "vm1", consumerMock);
         }
     }
 }

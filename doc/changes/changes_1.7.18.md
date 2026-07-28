@@ -132,7 +132,7 @@ In Eclipse Parsson published Maven Central artifacts before version 1.1.8, the J
 
 ## Remaining Known Vulnerabilities
 
-The following findings are excluded from the OSS Index audit: HdrHistogram 2.2.2 is the latest published version; `wire-runtime-jvm` is required by the embedded Schema Registry test dependency; and the latest Java 11-compatible Jetty 9.4 line is required by that same test stack.
+The following findings are excluded from the OSS Index audit: HdrHistogram 2.2.2 is the latest published version, and `wire-runtime-jvm` is required by the embedded Schema Registry test dependency.
 
 ### CVE-2026-14683 (CWE-400) in dependency `org.hdrhistogram:HdrHistogram:jar:2.2.2:test`
 
@@ -157,46 +157,6 @@ Improper Validation of Array Index.
 #### References
 
 * https://guide.sonatype.com/vulnerability/CVE-2026-45799?component-type=maven&component-name=com.squareup.wire%2Fwire-runtime-jvm&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
-
-### CVE-2023-36479 (CWE-149) in dependency `org.eclipse.jetty:jetty-servlets:jar:9.4.58.v20250814:test`
-
-Improper Neutralization of Quoting Syntax.
-
-#### References
-
-* https://guide.sonatype.com/vulnerability/CVE-2023-36479?component-type=maven&component-name=org.eclipse.jetty%2Fjetty-servlets&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
-
-### CVE-2024-6763 (CWE-1286) in dependency `org.eclipse.jetty:jetty-http:jar:9.4.58.v20250814:test`
-
-Improper Validation of Syntactic Correctness of Input.
-
-#### References
-
-* https://guide.sonatype.com/vulnerability/CVE-2024-6763?component-type=maven&component-name=org.eclipse.jetty%2Fjetty-http&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
-
-### CVE-2025-1948 (CWE-400) in dependency `org.eclipse.jetty.http2:http2-common:jar:9.4.58.v20250814:test`
-
-Uncontrolled Resource Consumption ('Resource Exhaustion').
-
-#### References
-
-* https://guide.sonatype.com/vulnerability/CVE-2025-1948?component-type=maven&component-name=org.eclipse.jetty.http2%2Fhttp2-common&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
-
-### CVE-2026-10050 (CWE-173) in dependency `org.eclipse.jetty:jetty-security:jar:9.4.58.v20250814:test`
-
-Improper Handling of Alternate Encoding.
-
-#### References
-
-* https://guide.sonatype.com/vulnerability/CVE-2026-10050?component-type=maven&component-name=org.eclipse.jetty%2Fjetty-security&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
-
-### CVE-2026-2332 (CWE-444) in dependency `org.eclipse.jetty:jetty-http:jar:9.4.58.v20250814:test`
-
-Inconsistent Interpretation of HTTP Requests ('HTTP Request Smuggling').
-
-#### References
-
-* https://guide.sonatype.com/vulnerability/CVE-2026-2332?component-type=maven&component-name=org.eclipse.jetty%2Fjetty-http&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
 
 ## Security
 
@@ -223,7 +183,6 @@ Inconsistent Interpretation of HTTP Requests ('HTTP Request Smuggling').
 * Updated `com.exasol:error-reporting-java:1.0.1` to `1.0.2`
 * Updated `com.exasol:import-export-udf-common-scala:2.0.2` to `2.0.3`
 * Added `jakarta.xml.bind:jakarta.xml.bind-api:4.0.5`
-* Added `javax.xml.bind:jaxb-api:2.3.1`
 * Updated `org.scala-lang.modules:scala-collection-compat_2.13:2.13.0` to `2.14.0`
 * Updated `org.scala-lang:scala-library:2.13.16` to `2.13.18`
 * Updated `org.slf4j:slf4j-api:2.0.17` to `2.0.18`

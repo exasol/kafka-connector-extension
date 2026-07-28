@@ -34,22 +34,21 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>2024.0.18</version>
+                <version>2025.0.6</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <!-- Jetty 12 requires Java 17; the embedded Schema Registry test stack supports this Java 11-compatible line. -->
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-bom</artifactId>
-                <version>9.4.58.v20250814</version>
+                <version>12.1.11</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey</groupId>
                 <artifactId>jersey-bom</artifactId>
-                <version>2.48</version>
+                <version>4.0.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -108,16 +107,14 @@
             <version>1.0.2</version>
         </dependency>
         <dependency>
-            <!-- Keep the Kafka client API compatible with the Java 11 embedded Kafka broker used by integration tests. -->
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>3.9.2</version>
+            <version>8.3.0-ce</version>
         </dependency>
         <dependency>
-            <!-- Confluent 8.3 requires Kafka client APIs not available in the Java 11-compatible 3.9 line. -->
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>7.9.2</version>
+            <version>8.3.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -153,12 +150,6 @@
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>4.0.5</version>
-        </dependency>
-        <dependency>
-            <!-- Required by the legacy Jackson JAXB annotation module, which still uses the javax.xml.bind namespace. -->
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -205,8 +196,7 @@
         <dependency>
             <groupId>io.github.embeddedkafka</groupId>
             <artifactId>embedded-kafka-schema-registry_${scala.compat.version}</artifactId>
-            <!-- Confluent 8.3 embeds a Java 17 Kafka broker; keep the test broker compatible with Java 11. -->
-            <version>7.9.2</version>
+            <version>8.3.0</version>
             <scope>test</scope>
             <exclusions>
                 <!-- [CVE-2025-48734] CWE-284: Improper Access Control (8.8); https://ossindex.sonatype.org/vulnerability/CVE-2025-48734?component-type=maven&component-name=commons-beanutils%2Fcommons-beanutils&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
@@ -239,10 +229,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Keep the test SerDe compatible with the Java 11 Kafka client and Confluent serializer lines. -->
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
-            <version>7.9.5</version>
+            <version>8.3.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -265,10 +254,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- Keep the embedded Kafka broker compatible with Java 11. -->
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_${scala.compat.version}</artifactId>
-            <version>3.9.2</version>
+            <version>8.3.0-ce</version>
             <scope>test</scope>
             <exclusions>
                 <!-- Confluent Cloud-internal artifacts are not published to the public Maven repositories. -->
@@ -320,7 +308,6 @@
     </dependencies>
     <build>
         <plugins>
-            <!-- [CVE-2025-1948] CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion') (8.7); https://ossindex.sonatype.org/vulnerability/CVE-2025-1948?component-type=maven&component-name=org.eclipse.jetty.http2%2Fhttp2-common&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1 -->
             <plugin>
                 <groupId>org.basepom.maven</groupId>
                 <artifactId>duplicate-finder-maven-plugin</artifactId>
@@ -377,26 +364,10 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <!-- Avoid major version update for Kafka client -->
-                        <exclude>org.apache.kafka:kafka-clients</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.sonatype.ossindex.maven</groupId>
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-                        <!-- The latest Java 11-compatible Jetty 9.4 line is required by the embedded Schema Registry test stack. -->
-                        <exclude>CVE-2023-36479</exclude>
-                        <exclude>CVE-2024-6763</exclude>
-                        <exclude>CVE-2025-1948</exclude>
-                        <exclude>CVE-2026-10050</exclude>
-                        <exclude>CVE-2026-2332</exclude>
                         <!-- Test dependency com.squareup.wire:wire-runtime-jvm:jar:5.1.0 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
                         <exclude>CVE-2026-45799</exclude>
                         <!-- HdrHistogram 2.2.2 is the latest published version. -->
