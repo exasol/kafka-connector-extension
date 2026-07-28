@@ -9,7 +9,8 @@
     <url>https://github.com/exasol/kafka-connector-extension/</url>
     <properties>
         <java.version>11</java.version>
-        <scala.version>3.8.4</scala.version>
+        <!-- Upgrading to Scala 3 will cause compile errors -->
+        <scala.version>2.13.18</scala.version>
         <scala.compat.version>2.13</scala.compat.version>
     </properties>
     <repositories>
@@ -51,7 +52,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>3.9.2</version>
+            <version>8.3.0-ce</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
@@ -86,6 +87,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>2.0.18</version>
+        </dependency>
+        <dependency>
+            <!-- Required by the JSON mapper's auto-discovered Jakarta XML Bind module. -->
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.5</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -195,6 +202,45 @@
             <artifactId>kafka_${scala.compat.version}</artifactId>
             <version>8.3.0-ce</version>
             <scope>test</scope>
+            <exclusions>
+                <!-- Confluent Cloud-internal artifacts are not published to the public Maven repositories. -->
+                <exclusion>
+                    <groupId>io.confluent.cloud</groupId>
+                    <artifactId>events-schema</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.networking</groupId>
+                    <artifactId>cc-custom-dns-resolver-java18</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.resourcemanager</groupId>
+                    <artifactId>apiserver-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.resourcemanager</groupId>
+                    <artifactId>apiserver-openapi-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.rm</groupId>
+                    <artifactId>rm-core-schemas</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.rri</groupId>
+                    <artifactId>client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent</groupId>
+                    <artifactId>cc-switchover-core-schemas-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.auth.dataplane</groupId>
+                    <artifactId>auth-dataplane-v2</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.rri</groupId>
+                    <artifactId>apis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <!-- Update to fix CVE-2026-24308 -->
@@ -239,6 +285,14 @@
                         <arg>-Werror</arg>
                     </compilerArgs>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <configuration>
+                            <proc>none</proc>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

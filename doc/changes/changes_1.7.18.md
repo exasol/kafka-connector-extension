@@ -155,8 +155,10 @@ In Eclipse Parsson published Maven Central artifacts before version 1.1.8, the J
 * Updated `com.exasol:error-reporting-java:1.0.1` to `1.0.2`
 * Updated `com.exasol:import-export-udf-common-scala:2.0.2` to `2.0.3`
 * Updated `io.confluent:kafka-avro-serializer:7.9.2` to `8.3.0`
+* Added `jakarta.xml.bind:jakarta.xml.bind-api:4.0.5`
+* Updated `org.apache.kafka:kafka-clients:3.9.2` to `8.3.0-ce`
 * Updated `org.scala-lang.modules:scala-collection-compat_2.13:2.13.0` to `2.14.0`
-* Updated `org.scala-lang:scala-library:2.13.16` to `3.8.4`
+* Updated `org.scala-lang:scala-library:2.13.16` to `2.13.18`
 * Updated `org.slf4j:slf4j-api:2.0.17` to `2.0.18`
 
 ### Test Dependency Updates
