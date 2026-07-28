@@ -130,6 +130,26 @@ In Eclipse Parsson published Maven Central artifacts before version 1.1.8, the J
 * https://github.com/eclipse-ee4j/parsson/pull/169
 * https://gitlab.eclipse.org/security/vulnerability-reports/-/work_items/444
 
+## Remaining Known Vulnerabilities
+
+The test-scoped dependency `org.hdrhistogram:HdrHistogram:2.2.2` is currently the latest published version. OSS Index reports the following vulnerabilities for this dependency. They are excluded from the audit until an upstream fix is released.
+
+### CVE-2026-14683 (CWE-400) in dependency `org.hdrhistogram:HdrHistogram:jar:2.2.2:test`
+
+Uncontrolled Resource Consumption ('Resource Exhaustion').
+
+#### References
+
+* https://guide.sonatype.com/vulnerability/CVE-2026-14683?component-type=maven&component-name=org.hdrhistogram%2FHdrHistogram&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
+
+### CVE-2026-14686 (CWE-697) in dependency `org.hdrhistogram:HdrHistogram:jar:2.2.2:test`
+
+Incorrect Comparison.
+
+#### References
+
+* https://guide.sonatype.com/vulnerability/CVE-2026-14686?component-type=maven&component-name=org.hdrhistogram%2FHdrHistogram&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1
+
 ## Security
 
 * #204: Fixed vulnerability CVE-2026-10532 in dependency `ch.qos.logback:logback-core:jar:1.5.34:compile`

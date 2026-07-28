@@ -31,6 +31,56 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-bom</artifactId>
+                <version>2024.0.18</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-bom</artifactId>
+                <version>12.0.37</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.azure</groupId>
+                <artifactId>azure-sdk-bom</artifactId>
+                <version>1.3.8</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom</artifactId>
+                <version>1.64.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>2.26.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.6.2</version>
+            </dependency>
+            <dependency>
+                <groupId>at.yawk.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>1.11.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hdrhistogram</groupId>
+                <artifactId>HdrHistogram</artifactId>
+                <version>2.2.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -323,18 +373,11 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-                        <exclude>CVE-2025-1948</exclude>
-                        <!-- Test dependency org.eclipse.jetty:jetty-servlets:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
-                        <exclude>CVE-2023-36479</exclude>
-                        <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.56.v20240826 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
-                        <exclude>CVE-2024-6763</exclude>
-                        <!-- Test dependency org.eclipse.jetty.http2:http2-common:jar:9.4.57.v20241219 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
-                        <exclude>CVE-2025-5115</exclude>
-                        <!-- Test dependency org.eclipse.jetty:jetty-http:jar:9.4.57.v20241219:test; is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
-                        <exclude>CVE-2025-11143</exclude>
-                        <exclude>CVE-2026-2332</exclude>
                         <!-- Test dependency com.squareup.wire:wire-runtime-jvm:jar:5.1.0 is required by io.github.embeddedkafka:embedded-kafka-schema-registry_2.13 -->
                         <exclude>CVE-2026-45799</exclude>
+                        <!-- HdrHistogram 2.2.2 is the latest published version. -->
+                        <exclude>CVE-2026-14683</exclude>
+                        <exclude>CVE-2026-14686</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
