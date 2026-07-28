@@ -223,6 +223,7 @@ Inconsistent Interpretation of HTTP Requests ('HTTP Request Smuggling').
 * Updated `com.exasol:error-reporting-java:1.0.1` to `1.0.2`
 * Updated `com.exasol:import-export-udf-common-scala:2.0.2` to `2.0.3`
 * Added `jakarta.xml.bind:jakarta.xml.bind-api:4.0.5`
+* Added `javax.xml.bind:jaxb-api:2.3.1`
 * Updated `org.scala-lang.modules:scala-collection-compat_2.13:2.13.0` to `2.14.0`
 * Updated `org.scala-lang:scala-library:2.13.16` to `2.13.18`
 * Updated `org.slf4j:slf4j-api:2.0.17` to `2.0.18`
