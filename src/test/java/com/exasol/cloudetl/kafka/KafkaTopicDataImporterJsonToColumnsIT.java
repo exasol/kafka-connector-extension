@@ -1,10 +1,12 @@
 package com.exasol.cloudetl.kafka;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -37,10 +39,11 @@ class KafkaTopicDataImporterJsonToColumnsIT extends KafkaIntegrationTest {
     static ExaMetadata mockMetadata(final Class<?>... outputColumnTypes) throws Exception {
         final ExaMetadata metadata = mock(ExaMetadata.class);
         when(metadata.getOutputColumnCount()).thenReturn((long) outputColumnTypes.length);
-        when(metadata.getOutputColumnType(anyInt())).thenAnswer((InvocationOnMock invocation) -> {
+        when(metadata.getOutputColumnType(anyInt())).thenAnswer((final InvocationOnMock invocation) -> {
             final int columnIndex = invocation.getArgument(0);
             return outputColumnTypes[columnIndex];
         });
+        when(metadata.getVmId()).thenReturn("vm-1");
         return metadata;
     }
 }

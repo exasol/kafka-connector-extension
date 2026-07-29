@@ -106,6 +106,7 @@ class RecordFieldSpecificationIT extends KafkaTopicDataImporterAvroIT {
         final ExaMetadata metadata = mock(ExaMetadata.class);
         when(metadata.getOutputColumnCount()).thenReturn((long) outputColumnTypesWithMeta.size());
         when(metadata.getOutputColumnType(anyInt())).thenAnswer(invocation -> outputColumnTypesWithMeta.get(invocation.getArgument(0)));
+        when(metadata.getVmId()).thenReturn("vm-1");
         KafkaTopicDataImporter.run(metadata, iterator);
 
         final ArgumentCaptor<Object[]> captor = ArgumentCaptor.forClass(Object[].class);
