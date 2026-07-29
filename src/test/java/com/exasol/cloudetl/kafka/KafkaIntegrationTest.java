@@ -7,9 +7,9 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.*;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.common.serialization.*;
 import org.junit.jupiter.api.*;
 
 import com.exasol.ExaIterator;
@@ -21,6 +21,8 @@ import io.github.embeddedkafka.schemaregistry.EmbeddedKafkaConfig;
 abstract class KafkaIntegrationTest {
     static final String BOOTSTRAP_SERVERS = "localhost:6001";
     static final String SCHEMA_REGISTRY_URL = "http://localhost:6002";
+    private static final long TOPIC_METADATA_TIMEOUT_MILLIS = 30_000L;
+    private static final long TOPIC_METADATA_RETRY_INTERVAL_MILLIS = 100L;
 
     String topic;
     Map<String, String> properties;
@@ -65,12 +67,28 @@ abstract class KafkaIntegrationTest {
         adminProperties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
         try (Admin admin = Admin.create(adminProperties)) {
             admin.createTopics(List.of(new NewTopic(topicName, partitions, (short) 1))).all().get();
+            waitForTopicMetadata(adminProperties, topicName, partitions);
         } catch (final InterruptedException exception) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Interrupted while creating topic " + topicName, exception);
         } catch (final ExecutionException exception) {
             throw new IllegalStateException("Failed to create topic " + topicName, exception);
         }
+    }
+
+    private void waitForTopicMetadata(final Properties adminProperties, final String topicName, final int partitions)
+            throws InterruptedException {
+        final long timeoutAt = System.currentTimeMillis() + TOPIC_METADATA_TIMEOUT_MILLIS;
+        do {
+            try (KafkaConsumer<Void, Void> consumer = new KafkaConsumer<>(adminProperties, new VoidDeserializer(),
+                    new VoidDeserializer())) {
+                if (consumer.partitionsFor(topicName).size() == partitions) {
+                    return;
+                }
+            }
+            Thread.sleep(TOPIC_METADATA_RETRY_INTERVAL_MILLIS);
+        } while (System.currentTimeMillis() < timeoutAt);
+        throw new IllegalStateException("Timed out waiting for metadata of topic " + topicName);
     }
 
     void publishStringToKafka(final String topicName, final String value) {

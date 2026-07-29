@@ -1,35 +1,18 @@
 package com.exasol.cloudetl.kafka.consumer;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import com.exasol.ExaDataTypeException;
-import com.exasol.ExaIterator;
-import com.exasol.ExaIterationException;
-import com.exasol.cloudetl.kafka.KafkaConnectorConstants;
-import com.exasol.cloudetl.kafka.KafkaConnectorException;
-import com.exasol.cloudetl.kafka.KafkaConsumerFactory;
-import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
-import com.exasol.cloudetl.kafka.deserialization.DeserializationFactory;
-import com.exasol.cloudetl.kafka.deserialization.FieldConverter;
-import com.exasol.cloudetl.kafka.deserialization.FieldParser;
-import com.exasol.cloudetl.kafka.deserialization.FieldSpecification;
-import com.exasol.cloudetl.kafka.deserialization.GlobalFieldSpecification;
-import com.exasol.cloudetl.kafka.deserialization.RowBuilder;
-import com.exasol.errorreporting.ExaError;
-
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.AuthenticationException;
-import org.apache.kafka.common.errors.AuthorizationException;
-import org.apache.kafka.common.errors.InvalidTopicException;
+import org.apache.kafka.common.errors.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.exasol.*;
+import com.exasol.cloudetl.kafka.*;
+import com.exasol.cloudetl.kafka.deserialization.*;
+import com.exasol.errorreporting.ExaError;
 
 public class KafkaRecordConsumer implements RecordConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaRecordConsumer.class);
@@ -49,23 +32,82 @@ public class KafkaRecordConsumer implements RecordConsumer {
     private final Duration timeout;
     private final List<GlobalFieldSpecification> recordFieldSpecifications;
 
-    public KafkaRecordConsumer(final KafkaConsumerProperties properties, final int partitionId,
-            final long partitionStartOffset, final List<Class<?>> outputColumnTypes,
-            final int tableColumnCount, final long nodeId, final String vmId) {
-        this.properties = properties;
-        this.partitionId = partitionId;
-        this.partitionStartOffset = partitionStartOffset;
-        this.outputColumnTypes = outputColumnTypes;
-        this.tableColumnCount = tableColumnCount;
-        this.nodeId = nodeId;
-        this.vmId = vmId;
-        this.topic = properties.getTopic();
-        this.consumer = getRecordConsumer();
+    private KafkaRecordConsumer(final Builder builder) {
+        this.properties = builder.properties;
+        this.partitionId = builder.partitionId;
+        this.partitionStartOffset = builder.partitionStartOffset;
+        this.outputColumnTypes = builder.outputColumnTypes;
+        this.tableColumnCount = builder.tableColumnCount;
+        this.nodeId = builder.nodeId;
+        this.vmId = builder.vmId;
+        this.topic = this.properties.getTopic();
+        this.consumer = builder.consumer == null
+                ? createRecordConsumer(this.properties, this.partitionId, this.partitionStartOffset)
+                : builder.consumer;
         this.partitionEndOffset = getPartitionEndOffset();
-        this.maxRecordsPerRun = properties.getMaxRecordsPerRun();
-        this.minRecordsPerRun = properties.getMinRecordsPerRun();
-        this.timeout = Duration.ofMillis(properties.getPollTimeoutMs());
-        this.recordFieldSpecifications = FieldParser.get(properties.getRecordFields());
+        this.maxRecordsPerRun = this.properties.getMaxRecordsPerRun();
+        this.minRecordsPerRun = this.properties.getMinRecordsPerRun();
+        this.timeout = Duration.ofMillis(this.properties.getPollTimeoutMs());
+        this.recordFieldSpecifications = FieldParser.get(this.properties.getRecordFields());
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private KafkaConsumerProperties properties;
+        private int partitionId;
+        private long partitionStartOffset;
+        private List<Class<?>> outputColumnTypes;
+        private int tableColumnCount;
+        private long nodeId;
+        private String vmId;
+        private KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumer;
+
+        public Builder withProperties(final KafkaConsumerProperties properties) {
+            this.properties = Objects.requireNonNull(properties);
+            return this;
+        }
+
+        public Builder withPartitionId(final int partitionId) {
+            this.partitionId = partitionId;
+            return this;
+        }
+
+        public Builder withPartitionStartOffset(final long partitionStartOffset) {
+            this.partitionStartOffset = partitionStartOffset;
+            return this;
+        }
+
+        public Builder withOutputColumnTypes(final List<Class<?>> outputColumnTypes) {
+            this.outputColumnTypes = Objects.requireNonNull(outputColumnTypes);
+            return this;
+        }
+
+        public Builder withTableColumnCount(final int tableColumnCount) {
+            this.tableColumnCount = tableColumnCount;
+            return this;
+        }
+
+        public Builder withNodeId(final long nodeId) {
+            this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder withVmId(final String vmId) {
+            this.vmId = Objects.requireNonNull(vmId);
+            return this;
+        }
+
+        Builder withConsumer(final KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> consumer) {
+            this.consumer = Objects.requireNonNull(consumer);
+            return this;
+        }
+
+        public KafkaRecordConsumer build() {
+            return new KafkaRecordConsumer(this);
+        }
     }
 
     @Override
@@ -75,8 +117,7 @@ public class KafkaRecordConsumer implements RecordConsumer {
         long totalRecordCount = 0L;
         try {
             do {
-                final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> records =
-                        this.consumer.poll(this.timeout);
+                final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> records = this.consumer.poll(this.timeout);
                 recordCount = records.count();
                 totalRecordCount += recordCount;
                 recordOffset = updateRecordOffset(emitRecords(iterator, records));
@@ -94,16 +135,16 @@ public class KafkaRecordConsumer implements RecordConsumer {
         return currentOffset == -1L ? getPartitionCurrentOffset() : currentOffset;
     }
 
-    protected KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> getRecordConsumer() {
-        final TopicPartition topicPartition = new TopicPartition(this.topic, this.partitionId);
-        final List<GlobalFieldSpecification> recordFields = FieldParser.get(this.properties.getRecordFields());
-        final DeserializationFactory.RecordDeserializers recordDeserializers =
-                DeserializationFactory.getSerializers(recordFields, this.properties);
-        final KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> newConsumer =
-                KafkaConsumerFactory.apply(this.properties, recordDeserializers.getKeyDeserializer(),
-                        recordDeserializers.getValueDeserializer());
+    private static KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> createRecordConsumer(
+            final KafkaConsumerProperties properties, final int partitionId, final long partitionStartOffset) {
+        final TopicPartition topicPartition = new TopicPartition(properties.getTopic(), partitionId);
+        final List<GlobalFieldSpecification> recordFields = FieldParser.get(properties.getRecordFields());
+        final DeserializationFactory.RecordDeserializers recordDeserializers = DeserializationFactory.getSerializers(recordFields, properties);
+        final KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> newConsumer = KafkaConsumerFactory.apply(properties,
+                recordDeserializers.getKeyDeserializer(),
+                recordDeserializers.getValueDeserializer());
         newConsumer.assign(Arrays.asList(topicPartition));
-        newConsumer.seek(topicPartition, this.partitionStartOffset);
+        newConsumer.seek(topicPartition, partitionStartOffset);
         return newConsumer;
     }
 

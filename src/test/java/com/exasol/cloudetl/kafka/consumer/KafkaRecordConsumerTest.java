@@ -1,5 +1,6 @@
 package com.exasol.cloudetl.kafka.consumer;
 
+import static java.util.Collections.emptyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
@@ -21,7 +22,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exasol.ExaIterator;
-import com.exasol.cloudetl.kafka.*;
+import com.exasol.cloudetl.kafka.KafkaConnectorException;
+import com.exasol.cloudetl.kafka.KafkaConsumerProperties;
 import com.exasol.cloudetl.kafka.deserialization.*;
 
 @SuppressWarnings("unchecked")
@@ -38,7 +40,7 @@ class KafkaRecordConsumerTest {
     private static final Duration DEFAULT_TIMEOUT = Duration.ofMillis(30000);
     private static final long DEFAULT_END_OFFSET = 4L;
     private static final ConsumerRecords<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> EMPTY_CONSUMER_RECORDS = new ConsumerRecords<>(
-            Collections.emptyMap());
+            emptyMap(), emptyMap());
 
     @Mock
     ExaIterator iteratorMock;
@@ -162,7 +164,7 @@ class KafkaRecordConsumerTest {
                     Map.of(RecordKey.INSTANCE, List.of("key")),
                     Map.of(RecordValue.INSTANCE, List.of(String.valueOf(offset)))));
         }
-        return new ConsumerRecords<>(Map.of(TOPIC_PARTITION, records));
+        return new ConsumerRecords<>(Map.of(TOPIC_PARTITION, records), emptyMap());
     }
 
     private KafkaImportChecker checker(
@@ -195,19 +197,18 @@ class KafkaRecordConsumerTest {
 
         void assertEmitCount(final int count) throws Exception {
             final var properties = new KafkaConsumerProperties(merge(DEFAULT_PROPERTIES, this.additionalProperties));
-            new TestKafkaRecordConsumer(properties, this.startOffset).emit(iteratorMock);
+            KafkaRecordConsumer.builder()
+                    .withProperties(properties)
+                    .withPartitionId(0)
+                    .withPartitionStartOffset(this.startOffset)
+                    .withOutputColumnTypes(List.of(String.class, Long.class, Long.class))
+                    .withTableColumnCount(3)
+                    .withNodeId(1L)
+                    .withVmId("vm1")
+                    .withConsumer(consumerMock)
+                    .build()
+                    .emit(iteratorMock);
             verify(iteratorMock, times(count)).emit(any(Object[].class));
-        }
-    }
-
-    private final class TestKafkaRecordConsumer extends KafkaRecordConsumer {
-        private TestKafkaRecordConsumer(final KafkaConsumerProperties properties, final long startOffset) {
-            super(properties, 0, startOffset, List.of(String.class, Long.class, Long.class), 3, 1L, "vm1");
-        }
-
-        @Override
-        protected KafkaConsumer<Map<FieldSpecification, List<Object>>, Map<FieldSpecification, List<Object>>> getRecordConsumer() {
-            return consumerMock;
         }
     }
 }

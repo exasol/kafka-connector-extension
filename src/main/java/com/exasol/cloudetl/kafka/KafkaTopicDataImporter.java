@@ -32,6 +32,15 @@ public final class KafkaTopicDataImporter {
         final String vmId = metadata.getVmId();
         LOGGER.info("Starting Kafka consumer for partition '{}' at next offset '{}' for node '{}' and vm '{}'.",
                 partitionId, partitionNextOffset, nodeId, vmId);
-        new KafkaRecordConsumer(kafkaProperties, partitionId, partitionNextOffset, outputColumnTypes, outputColumnCount, nodeId, vmId).emit(iterator);
+        KafkaRecordConsumer.builder()
+                .withProperties(kafkaProperties)
+                .withPartitionId(partitionId)
+                .withPartitionStartOffset(partitionNextOffset)
+                .withOutputColumnTypes(outputColumnTypes)
+                .withTableColumnCount(outputColumnCount)
+                .withNodeId(nodeId)
+                .withVmId(vmId)
+                .build()
+                .emit(iterator);
     }
 }
