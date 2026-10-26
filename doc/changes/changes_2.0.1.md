@@ -6,64 +6,6 @@ Code name: Dependency security updates
 
 This update fixes 56 dependency vulnerabilities.
 
-- Fixes #221
-- Fixes #222
-- Fixes #223
-- Fixes #225
-- Fixes #226
-- Fixes #228
-- Fixes #229
-- Fixes #230
-- Fixes #232
-- Fixes #233
-- Fixes #234
-- Fixes #235
-- Fixes #236
-- Fixes #237
-- Fixes #238
-- Fixes #240
-- Fixes #241
-- Fixes #242
-- Fixes #243
-- Fixes #244
-- Fixes #245
-- Fixes #246
-- Fixes #247
-- Fixes #248
-- Fixes #249
-- Fixes #251
-- Fixes #252
-- Fixes #253
-- Fixes #254
-- Fixes #255
-- Fixes #257
-- Fixes #258
-- Fixes #259
-- Fixes #260
-- Fixes #261
-- Fixes #262
-- Fixes #263
-- Fixes #264
-- Fixes #266
-- Fixes #267
-- Fixes #268
-- Fixes #269
-- Fixes #270
-- Fixes #271
-- Fixes #272
-- Fixes #273
-- Fixes #274
-- Fixes #275
-- Fixes #276
-- Fixes #277
-- Fixes #278
-- Fixes #279
-- Fixes #280
-- Fixes #281
-- Fixes #282
-- Fixes #283
-- Fixes #285
-
 ## Security
 
 * #253: Fixed CVE-2026-15432 (timing side-channel information exposure) in `com.google.crypto.tink:tink:jar:1.20.0:test`
