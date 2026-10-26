@@ -18,8 +18,9 @@ import com.exasol.udfdebugging.UdfTestSetup;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class BaseDockerIntegrationTest {
     private static final String JAR_NAME_PATTERN = "exasol-kafka-connector-extension-";
-    private static final String DEFAULT_EXASOL_DOCKER_IMAGE = "2026.1.0";
-    private static final String TESTCONTAINERS_SSHD_IMAGE = "testcontainers/sshd:1.3.0";
+    private static final String DEFAULT_EXASOL_DOCKER_IMAGE = "2026.1.2";
+    // https://hub.docker.com/r/testcontainers/sshd/tags
+    private static final String TESTCONTAINERS_SSHD_IMAGE = "testcontainers/sshd:1.4.0";
     private static final int JACOCO_SERVER_PORT = 3002;
 
     final DockerNamedNetwork network = DockerNamedNetwork.get("kafka-it-tests", true);
