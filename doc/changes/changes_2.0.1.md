@@ -91,6 +91,7 @@ This update fixes 56 dependency vulnerabilities.
 * Updated `org.apache.mina:mina-core:2.2.9` to `2.2.10`
 * Updated `org.apache.zookeeper:zookeeper:3.9.5` to `3.9.6`
 * Updated `org.mockito:mockito-junit-jupiter:5.23.0` to `5.24.0`
+* Replaced `org.testcontainers:kafka:1.21.4` with `org.testcontainers:testcontainers-kafka:2.0.5`
 
 ### Plugin Dependency Updates
 
