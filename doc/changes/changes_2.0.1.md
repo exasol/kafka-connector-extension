@@ -83,6 +83,7 @@ This update fixes 56 dependency vulnerabilities.
 * Updated `com.exasol:udf-debugging-java:0.6.20` to `0.6.22`
 * Updated `com.google.code.gson:gson:2.14.0` to `2.15.0`
 * Added `com.squareup.wire:wire-runtime:6.4.7`
+* Added `io.confluent:kafka-schema-registry:8.4.0`
 * Updated `io.confluent:kafka-streams-avro-serde:8.3.0` to `8.4.0`
 * Updated `io.github.embeddedkafka:embedded-kafka-schema-registry_2.13:8.3.0` to `8.3.1`
 * Updated `nl.jqno.equalsverifier:equalsverifier:4.5` to `4.5.2`
@@ -91,7 +92,8 @@ This update fixes 56 dependency vulnerabilities.
 * Updated `org.apache.mina:mina-core:2.2.9` to `2.2.10`
 * Updated `org.apache.zookeeper:zookeeper:3.9.5` to `3.9.6`
 * Updated `org.mockito:mockito-junit-jupiter:5.23.0` to `5.24.0`
-* Replaced `org.testcontainers:kafka:1.21.4` with `org.testcontainers:testcontainers-kafka:2.0.5`
+* Removed `org.testcontainers:kafka:1.21.4`
+* Added `org.testcontainers:testcontainers-kafka:2.0.5`
 
 ### Plugin Dependency Updates
 

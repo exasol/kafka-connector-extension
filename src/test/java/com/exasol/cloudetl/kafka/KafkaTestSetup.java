@@ -13,7 +13,9 @@ import org.testcontainers.utility.DockerImageName;
 
 public class KafkaTestSetup implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(KafkaTestSetup.class.getName());
-    public static final String DEFAULT_CONFLUENT_PLATFORM_VERSION = "7.7.1";
+    // https://hub.docker.com/r/confluentinc/cp-kafka/tags
+    // Confluent Platform 8 removed ZooKeeper, which this test setup still uses.
+    public static final String DEFAULT_CONFLUENT_PLATFORM_VERSION = "7.9.10";
     private final ConfluentKafkaContainer container;
 
     private KafkaTestSetup(final ConfluentKafkaContainer container) {

@@ -247,6 +247,13 @@
             </exclusions>
         </dependency>
         <dependency>
+            <!-- The embedded library still pulls Schema Registry 8.3.1, which references Kafka 4.3's LogContext. -->
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-schema-registry</artifactId>
+            <version>8.4.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.squareup.wire</groupId>
             <artifactId>wire-runtime</artifactId>
             <version>6.4.7</version>
