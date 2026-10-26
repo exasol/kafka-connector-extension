@@ -8,30 +8,30 @@ import java.util.logging.Logger;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.KafkaFuture;
-import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@SuppressWarnings("deprecation") // org.testcontainers.containers.KafkaContainer is deprecated
 public class KafkaTestSetup implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(KafkaTestSetup.class.getName());
-    public static final String DEFAULT_CONFLUENT_PLATFORM_VERSION = "7.7.1";
-    private final KafkaContainer container;
+    // https://hub.docker.com/r/confluentinc/cp-kafka/tags
+    // Confluent Platform 8 removed ZooKeeper, which this test setup still uses.
+    public static final String DEFAULT_CONFLUENT_PLATFORM_VERSION = "7.9.10";
+    private final ConfluentKafkaContainer container;
 
-    private KafkaTestSetup(final KafkaContainer container) {
+    private KafkaTestSetup(final ConfluentKafkaContainer container) {
         this.container = container;
     }
 
     public String getBootstrapServers() {
-        return this.container.getBootstrapServers() //
+        return this.container.getBootstrapServers()
                 .replaceAll("localhost", IntegrationTestConstants.DOCKER_IP_ADDRESS);
     }
 
     static KafkaTestSetup create() throws ExecutionException, InterruptedException {
         @SuppressWarnings("resource")
-        final KafkaContainer kafkaContainer = new KafkaContainerTweaked(
-                DockerImageName.parse("confluentinc/cp-kafka:" + DEFAULT_CONFLUENT_PLATFORM_VERSION))//
-                .withEmbeddedZookeeper()//
-                .withReuse(true);
+        final ConfluentKafkaContainer kafkaContainer = new ConfluentKafkaContainer(
+                DockerImageName.parse("confluentinc/cp-kafka:" + DEFAULT_CONFLUENT_PLATFORM_VERSION))
+                        .withReuse(true);
         kafkaContainer.start();
         return new KafkaTestSetup(kafkaContainer);
     }
@@ -83,20 +83,4 @@ public class KafkaTestSetup implements AutoCloseable {
         this.container.close();
     }
 
-    /**
-     * This class was created because the original kafkaContainer only accepted localhost connections and was tough to
-     * set up to do otherwise manually.
-     * <p>
-     * This is a Q&D workaround for this issue.
-     */
-    private static class KafkaContainerTweaked extends KafkaContainer {
-        public KafkaContainerTweaked(final DockerImageName dockerImage) {
-            super(dockerImage);
-        }
-
-        @Override
-        public String getHost() {
-            return IntegrationTestConstants.DOCKER_IP_ADDRESS;
-        }
-    }
 }

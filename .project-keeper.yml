@@ -8,11 +8,10 @@ sources:
 version:
   fromSource: pom.xml
 build:
-  runnerOs: ubuntu-24.04
   freeDiskSpace: true
   exasolDbVersions:
-    - "2026.1.0"
-    - "2025.1.13"
+    - "2026.1.2"
+    - "2025.1.16"
   workflows:
     - name: ci-build.yml
       stepCustomizations:
@@ -23,4 +22,3 @@ build:
             name: Fix "VM Crashed" error by allowing unprivileged user namespaces
             id: fix-vm-crashed
             run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-excludes:

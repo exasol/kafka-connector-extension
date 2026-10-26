@@ -3,11 +3,11 @@ package com.exasol.cloudetl.kafka;
 import java.io.File;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.*;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.GenericContainer;
 
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.dialects.Column;
@@ -18,8 +18,7 @@ import com.exasol.udfdebugging.UdfTestSetup;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class BaseDockerIntegrationTest {
     private static final String JAR_NAME_PATTERN = "exasol-kafka-connector-extension-";
-    private static final String DEFAULT_EXASOL_DOCKER_IMAGE = "2026.1.0";
-    private static final String TESTCONTAINERS_SSHD_IMAGE = "testcontainers/sshd:1.3.0";
+    private static final String DEFAULT_EXASOL_DOCKER_IMAGE = "2026.1.2";
     private static final int JACOCO_SERVER_PORT = 3002;
 
     final DockerNamedNetwork network = DockerNamedNetwork.get("kafka-it-tests", true);
@@ -82,14 +81,13 @@ abstract class BaseDockerIntegrationTest {
     }
 
     private String getTestcontainersPortForwarderAddress() {
-        return DockerClientFactory.lazyClient().listContainersCmd()
-                .withAncestorFilter(List.of(TESTCONTAINERS_SSHD_IMAGE))
-                .withStatusFilter(List.of("running"))
-                .exec().stream()
-                .max(Comparator.comparing(com.github.dockerjava.api.model.Container::getCreated))
-                .map(container -> container.getNetworkSettings().getNetworks().values().iterator().next().getIpAddress())
-                .orElseThrow(() -> new IllegalStateException("Could not find running " + TESTCONTAINERS_SSHD_IMAGE
-                        + " container for forwarding host port " + JACOCO_SERVER_PORT));
+        // Exasol replaces /etc/hosts at startup, so use the IP behind Testcontainers' host alias.
+        final String alias = GenericContainer.INTERNAL_HOST_HOSTNAME + ":";
+        return this.exasolContainer.getExtraHosts().stream()
+                .filter(host -> host.startsWith(alias))
+                .map(host -> host.substring(alias.length()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No Testcontainers host forwarding address configured"));
     }
 
     private Connection getConnection() {
