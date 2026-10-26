@@ -23,14 +23,14 @@ public class KafkaTestSetup implements AutoCloseable {
     }
 
     public String getBootstrapServers() {
-        return this.container.getBootstrapServers() //
+        return this.container.getBootstrapServers()
                 .replaceAll("localhost", IntegrationTestConstants.DOCKER_IP_ADDRESS);
     }
 
     static KafkaTestSetup create() throws ExecutionException, InterruptedException {
         @SuppressWarnings("resource")
         final ConfluentKafkaContainer kafkaContainer = new ConfluentKafkaContainer(
-                DockerImageName.parse("confluentinc/cp-kafka:" + DEFAULT_CONFLUENT_PLATFORM_VERSION))//
+                DockerImageName.parse("confluentinc/cp-kafka:" + DEFAULT_CONFLUENT_PLATFORM_VERSION))
                         .withReuse(true);
         kafkaContainer.start();
         return new KafkaTestSetup(kafkaContainer);
